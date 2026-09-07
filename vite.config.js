@@ -6,8 +6,21 @@ import { pathToFileURL } from 'node:url'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  if (env.MONGODB_URI) process.env.MONGODB_URI = env.MONGODB_URI
-  if (env.MONGODB_DB) process.env.MONGODB_DB = env.MONGODB_DB
+  for (const name of [
+    'MONGODB_URI',
+    'MONGODB_DB',
+    'APP_URL',
+    'MAIL_FROM',
+    'RESET_DEST_EMAIL',
+    'SMTP_HOST',
+    'SMTP_PORT',
+    'SMTP_USER',
+    'SMTP_PASSWORD',
+    'SMTP_SECURE',
+    'MSG91_AUTH_KEY',
+  ]) {
+    if (env[name]) process.env[name] = env[name]
+  }
 
   return {
   server: { host: true },
