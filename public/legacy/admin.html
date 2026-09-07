@@ -1626,16 +1626,21 @@
 
   // ---- WhatsApp enquiries table ----
   let waStatus = 'all';
-  let waAllDates = false;
+  let waDateMode = 'today';
   let liveWhatsApp = [];
   function escapeWhatsAppHtml(value){ return String(value ?? '—').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])); }
   function waRows(){
     const search = document.getElementById('whatsappSearch').value.trim().toLowerCase();
+    const selectedDate = document.getElementById('whatsappDate').value;
+    const enquiryDate = waDateMode === 'today' ? localTodayKey() : waDateMode === 'custom' ? selectedDate : '';
     return liveWhatsApp.filter(enquiry=>{
       const searchable = [enquiry.name, enquiry.mobile, enquiry.email, enquiry.message].join(' ').toLowerCase();
       const status = normalizeStatus(enquiry.status);
-      const date = isoDay(enquiry.createdAt);
-      return (!search || searchable.includes(search)) && (waStatus === 'all' || status === waStatus) && (waAllDates || matchesDateRange(date, date, 'whatsappRange', 'whatsappDate'));
+      const createdAt = enquiry.createdAt ? new Date(enquiry.createdAt) : null;
+      const createdDate = createdAt && !Number.isNaN(createdAt.getTime())
+        ? createdAt.getFullYear() + '-' + String(createdAt.getMonth() + 1).padStart(2, '0') + '-' + String(createdAt.getDate()).padStart(2, '0')
+        : '';
+      return (!search || searchable.includes(search)) && (waStatus === 'all' || status === waStatus) && (!enquiryDate || createdDate === enquiryDate);
     });
   }
   function renderWhatsApp(message){
@@ -1751,11 +1756,32 @@
   loadAdminEnquiries();
   document.querySelectorAll('[data-wa-status]').forEach(button=>button.addEventListener('click', ()=>{
     waStatus = button.dataset.waStatus;
-    waAllDates = waStatus === 'all';
+    if(waStatus === 'all') waDateMode = 'all';
     document.querySelectorAll('[data-wa-status]').forEach(item=>item.classList.toggle('sel', item === button));
+    syncWhatsAppFilters();
     renderWhatsApp();
   }));
-  ['whatsappSearch','whatsappDate'].forEach(id=>document.getElementById(id).addEventListener(id === 'whatsappDate' ? 'change' : 'input', renderWhatsApp));  document.getElementById('whatsappExport').addEventListener('click', ()=>{    const rows = waRows();
+  function syncWhatsAppFilters(){
+    const todayButton = document.querySelector('#page-whatsapp .today-filter');
+    const allButton = document.querySelector('#page-whatsapp [data-wa-status="all"]');
+    todayButton?.classList.toggle('sel', waDateMode === 'today');
+    allButton?.classList.toggle('sel', waDateMode === 'all' && waStatus === 'all');
+  }
+  ['whatsappSearch','whatsappDate'].forEach(id=>document.getElementById(id).addEventListener(id === 'whatsappDate' ? 'change' : 'input', ()=>{
+    if(id === 'whatsappDate') waDateMode = 'custom';
+    syncWhatsAppFilters();
+    renderWhatsApp();
+  }));
+  document.querySelector('#page-whatsapp .today-filter').addEventListener('click', ()=>{
+    waStatus = 'all';
+    waDateMode = 'today';
+    document.getElementById('whatsappDate').value = '';
+    document.querySelectorAll('#page-whatsapp [data-wa-status]').forEach(item=>item.classList.remove('sel'));
+    syncWhatsAppFilters();
+    renderWhatsApp();
+  });
+  syncWhatsAppFilters();
+  document.getElementById('whatsappExport').addEventListener('click', ()=>{    const rows = waRows();
     if(!rows.length){ showToast('No data available to export'); return; }
     exportCsv(`turfon24-whatsapp-enquiries-${new Date().toISOString().slice(0,10)}.csv`, [{key:'name',label:'Name'},{key:'phone',label:'Phone'},{key:'email',label:'Email'},{key:'message',label:'Message'},{key:'received',label:'Received'},{key:'status',label:'Status'}], rows.map(w=>({name:w.name,phone:w.mobile,email:w.email,message:w.message,received:w.createdAt,status:w.status})));
   });
@@ -1764,18 +1790,24 @@
   // ---- Chatbot conversations table ----
   let liveChatbot = [];
   let chatStatus = 'all';
-  let chatAllDates = false;
+  let chatDateMode = 'today';
   function chatMessage(conversation){
     return conversation.lastMessage || conversation.messages?.[conversation.messages.length - 1]?.message || '—';
   }
   function chatRows(){
     const search = (document.getElementById('chatSearch').value || '').trim().toLowerCase();
+    const selectedDate = document.getElementById('chatDate').value;
+    const conversationDate = chatDateMode === 'today' ? localTodayKey() : chatDateMode === 'custom' ? selectedDate : '';
     return liveChatbot.filter(conversation=>{
       const message = chatMessage(conversation);
       const matchesStatus = chatStatus === 'all' || normalizeStatus(conversation.status) === chatStatus;
       const matchesSearch = !search || [conversation.name, conversation.mobile, conversation.email, message].join(' ').toLowerCase().includes(search);
-      const date = isoDay(conversation.updatedAt || conversation.createdAt);
-      return matchesStatus && matchesSearch && (chatAllDates || matchesDateRange(date, date, 'chatRange', 'chatDate'));
+      const timestamp = conversation.updatedAt || conversation.createdAt;
+      const createdAt = timestamp ? new Date(timestamp) : null;
+      const date = createdAt && !Number.isNaN(createdAt.getTime())
+        ? createdAt.getFullYear() + '-' + String(createdAt.getMonth() + 1).padStart(2, '0') + '-' + String(createdAt.getDate()).padStart(2, '0')
+        : '';
+      return matchesStatus && matchesSearch && (!conversationDate || date === conversationDate);
     });
   }
   function renderChatbot(){
@@ -1799,11 +1831,31 @@
   }
   document.querySelectorAll('[data-chat-status]').forEach(button=>button.addEventListener('click', ()=>{
     chatStatus = button.dataset.chatStatus;
-    chatAllDates = chatStatus === 'all';
+    if(chatStatus === 'all') chatDateMode = 'all';
     document.querySelectorAll('[data-chat-status]').forEach(item=>item.classList.toggle('sel', item === button));
+    syncChatbotFilters();
     renderChatbot();
   }));
-  ['chatSearch','chatDate'].forEach(id=>document.getElementById(id).addEventListener(id === 'chatDate' ? 'change' : 'input', renderChatbot));
+  function syncChatbotFilters(){
+    const todayButton = document.querySelector('#page-chatbot .today-filter');
+    const allButton = document.querySelector('#page-chatbot [data-chat-status="all"]');
+    todayButton?.classList.toggle('sel', chatDateMode === 'today');
+    allButton?.classList.toggle('sel', chatDateMode === 'all' && chatStatus === 'all');
+  }
+  ['chatSearch','chatDate'].forEach(id=>document.getElementById(id).addEventListener(id === 'chatDate' ? 'change' : 'input', ()=>{
+    if(id === 'chatDate') chatDateMode = 'custom';
+    syncChatbotFilters();
+    renderChatbot();
+  }));
+  document.querySelector('#page-chatbot .today-filter').addEventListener('click', ()=>{
+    chatStatus = 'all';
+    chatDateMode = 'today';
+    document.getElementById('chatDate').value = '';
+    document.querySelectorAll('#page-chatbot [data-chat-status]').forEach(item=>item.classList.remove('sel'));
+    syncChatbotFilters();
+    renderChatbot();
+  });
+  syncChatbotFilters();
   loadAdminChatbot();
 
   // ---- customers table ----
