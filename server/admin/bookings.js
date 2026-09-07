@@ -143,6 +143,7 @@ export default async function handler(req, res) {
 
     const { page, limit } = parsePagination(req.query || {})
     const date = parseDate(req.query?.date)
+    const createdDate = parseDate(req.query?.createdDate)
     const startDate = parseDate(req.query?.startDate)
     const endDate = parseDate(req.query?.endDate)
     if ((startDate && !endDate) || (!startDate && endDate)) throw new Error('Both start and end dates are required.')
@@ -161,6 +162,15 @@ export default async function handler(req, res) {
     if (bookingStatus) filter.bookingStatus = bookingStatus
     if (paymentStatus) filter.paymentStatus = paymentStatus
     if (mobile) filter.mobile = mobile
+    if (createdDate) {
+      const nextDate = new Date(`${createdDate}T00:00:00.000Z`)
+      nextDate.setUTCDate(nextDate.getUTCDate() + 1)
+      const nextDateKey = nextDate.toISOString().slice(0, 10)
+      filter.$or = [
+        { createdAt: { $gte: new Date(`${createdDate}T00:00:00.000Z`), $lt: nextDate } },
+        { createdAt: { $gte: `${createdDate}T00:00:00.000Z`, $lt: `${nextDateKey}T00:00:00.000Z` } },
+      ]
+    }
 
     const collection = db.collection('bookings')
     const [total, bookings] = await Promise.all([

@@ -121,6 +121,7 @@ export default async function handler(req, res) {
     if (mobile && !/^\d{3,15}$/.test(mobile)) throw new Error('Invalid mobile.')
     const startDate = parseDate(req.query?.startDate, 'start date')
     const endDate = parseDate(req.query?.endDate, 'end date')
+    const createdDate = parseDate(req.query?.createdDate, 'enquiry date')
     const filter = {}
     if (status) filter.status = status
     if (mobile) filter.mobile = mobile
@@ -131,6 +132,15 @@ export default async function handler(req, res) {
       filter.endDate = { $gte: startDate }
     } else if (endDate) {
       filter.startDate = { $lte: endDate }
+    }
+    if (createdDate) {
+      const nextDate = new Date(`${createdDate}T00:00:00.000Z`)
+      nextDate.setUTCDate(nextDate.getUTCDate() + 1)
+      const nextDateKey = nextDate.toISOString().slice(0, 10)
+      filter.$or = [
+        { createdAt: { $gte: new Date(`${createdDate}T00:00:00.000Z`), $lt: nextDate } },
+        { createdAt: { $gte: `${createdDate}T00:00:00.000Z`, $lt: `${nextDateKey}T00:00:00.000Z` } },
+      ]
     }
 
     const collection = db.collection('extended_enquiries')

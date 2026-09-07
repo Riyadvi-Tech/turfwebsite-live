@@ -22,13 +22,6 @@ export default async function handler(req, res) {
     })
   }
 
-  if (!process.env.MONGODB_URI) {
-    return res.status(200).json({
-      authenticated: true,
-      mock: true,
-    })
-  }
-
   const hash = crypto
     .createHash('sha256')
     .update(raw)

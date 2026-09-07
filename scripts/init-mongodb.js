@@ -1,6 +1,6 @@
 import { loadEnvFile } from 'node:process'
 import dns from 'node:dns'
-import { getDb, getMongoClient } from '../api/_lib/mongodb.js'
+import { getDb, getMongoClient } from '../server/_lib/mongodb.js'
 
 try {
   loadEnvFile('.env')

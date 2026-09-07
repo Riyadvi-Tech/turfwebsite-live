@@ -39,7 +39,7 @@ export default defineConfig(({ mode }) => {
         })
       }
 
-      mountJsonApi('/api', './api/[...path].js')
+      mountJsonApi('/api', './api/index.js')
     },
   }],
   base: './',

@@ -20,28 +20,6 @@ export default async function handler(req, res) {
     })
   }
 
-  if (!process.env.MONGODB_URI) {
-    const mockEmail = 'ask@turfon24.com'
-    const mockPassword = 'Turfon24@139'
-
-    if (email === mockEmail && password === mockPassword) {
-      const rawSession = crypto.randomBytes(32).toString('hex')
-      res.setHeader(
-        'Set-Cookie',
-        cookie(
-          'turfon24_admin_session',
-          rawSession,
-          60 * 60 * 8,
-        ),
-      )
-      return res.status(200).json({ ok: true, mock: true })
-    }
-
-    return res.status(401).json({
-      message: 'Incorrect email or password.',
-    })
-  }
-
   try {
     const db = await getDb()
 

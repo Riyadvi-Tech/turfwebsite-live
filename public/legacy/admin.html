@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TurfOn24 Admin</title>
+  <link rel="icon" type="image/png" href="/logo-assets/LogoWater.png" />
+  <title>TurfOn24 Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -722,7 +723,7 @@
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Enquiry ID</th><th>Customer</th><th>Mobile</th><th>Start</th><th>End</th><th>Days</th><th>Preferred</th><th>Message</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Enquiry ID</th><th>Enquiry Date</th><th>Customer</th><th>Mobile</th><th>Start</th><th>End</th><th>Days</th><th>Preferred</th><th>Message</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="enquiriesBody"></tbody>
         </table>
         <div class="table-foot"><span>Showing all enquiries</span></div>
@@ -1664,10 +1665,16 @@
   }
   function enquiryRows(){
     const search = document.getElementById('enquirySearch').value.trim().toLowerCase();
+    const selectedDate = document.getElementById('enquiryDate').value;
+    const enquiryDate = enquiryDateMode === 'today' ? localTodayKey() : enquiryDateMode === 'custom' ? selectedDate : '';
     return liveEnquiries.filter(enquiry=>{
       const searchable = [enquiry._id, enquiry.mobile, enquiry.summary, enquiry.requirements].join(' ').toLowerCase();
       const status = String(enquiry.status || '').toLowerCase();
-      return (!search || searchable.includes(search)) && (enquiryStatus === 'all' || status === enquiryStatus);
+      const createdAt = enquiry.createdAt ? new Date(enquiry.createdAt) : null;
+      const createdDate = createdAt && !Number.isNaN(createdAt.getTime())
+        ? createdAt.getFullYear() + '-' + String(createdAt.getMonth() + 1).padStart(2, '0') + '-' + String(createdAt.getDate()).padStart(2, '0')
+        : '';
+      return (!search || searchable.includes(search)) && (enquiryStatus === 'all' || status === enquiryStatus) && (!enquiryDate || createdDate === enquiryDate);
     });
   }
   function renderEnquiries(message){
@@ -1675,11 +1682,12 @@
     document.getElementById('enquiriesBody').innerHTML = rows.length ? rows.map(enquiry=>{
       const status = String(enquiry.status || '').toLowerCase();
       const name = enquiry.name || String(enquiry.summary || '').split(' extended booking enquiry for ')[0] || '—';
-      return `<tr><td class="mono">${escapeEnquiryHtml(enquiry._id)}</td><td>${escapeEnquiryHtml(name)}</td><td class="mono">${escapeEnquiryHtml(enquiry.mobile)}</td><td>${escapeEnquiryHtml(enquiry.startDate)}</td><td>${escapeEnquiryHtml(enquiry.endDate)}</td><td>${escapeEnquiryHtml(enquiryDays(enquiry.startDate, enquiry.endDate))}</td><td>${escapeEnquiryHtml(enquiry.preferredTime)}</td><td><span class="badge ${status === 'closed' ? 'cancelled' : status === 'confirmed' ? 'confirmed' : 'pending'}">${escapeEnquiryHtml(enquiryStatusLabels[status] || status)}</span></td><td><div class="row-actions"><button onclick="loadEnquiryDetail('${escapeEnquiryHtml(enquiry._id)}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button><button onclick="showToast('Calling ${escapeEnquiryHtml(enquiry.mobile)}...')" title="Call"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11 11 0 0 0 3.4.55 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11 11 0 0 0 .55 3.4 1 1 0 0 1-.25 1Z"/></svg></button></div></td></tr>`;
-    }).join('') : `<tr><td colspan="10" class="tbl-empty">${escapeEnquiryHtml(message || 'No enquiries found')}</td></tr>`;
+      const enquiryDate = enquiry.createdAt ? new Date(enquiry.createdAt).toLocaleString() : '—';
+      return `<tr><td class="mono">${escapeEnquiryHtml(enquiry._id)}</td><td>${escapeEnquiryHtml(enquiryDate)}</td><td>${escapeEnquiryHtml(name)}</td><td class="mono">${escapeEnquiryHtml(enquiry.mobile)}</td><td>${escapeEnquiryHtml(enquiry.startDate)}</td><td>${escapeEnquiryHtml(enquiry.endDate)}</td><td>${escapeEnquiryHtml(enquiryDays(enquiry.startDate, enquiry.endDate))}</td><td>${escapeEnquiryHtml(enquiry.preferredTime)}</td><td><span class="badge ${status === 'closed' ? 'cancelled' : status === 'confirmed' ? 'confirmed' : 'pending'}">${escapeEnquiryHtml(enquiryStatusLabels[status] || status)}</span></td><td><div class="row-actions"><button onclick="loadEnquiryDetail('${escapeEnquiryHtml(enquiry._id)}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button><button onclick="showToast('Calling ${escapeEnquiryHtml(enquiry.mobile)}...')" title="Call"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11 11 0 0 0 3.4.55 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11 11 0 0 0 .55 3.4 1 1 0 0 1-.25 1Z"/></svg></button></div></td></tr>`;
+    }).join('') : `<tr><td colspan="11" class="tbl-empty">${escapeEnquiryHtml(message || 'No enquiries found')}</td></tr>`;
     if(rows.length){
       document.querySelectorAll('#enquiriesBody tr').forEach((row, index)=>{
-        const messageCell = row.insertCell(7);
+        const messageCell = row.insertCell(8);
         messageCell.textContent = rows[index].requirements || '—';
         messageCell.style.whiteSpace = 'normal';
         messageCell.style.maxWidth = '240px';
@@ -1691,12 +1699,12 @@
     const params = new URLSearchParams({limit:'100', page:'1'});
     if(enquiryStatus !== 'all') params.set('status', enquiryStatus);
     const selectedDate = document.getElementById('enquiryDate').value;
-    if(enquiryDateMode === 'custom' && selectedDate){ params.set('startDate', selectedDate); params.set('endDate', selectedDate); }
-    if(enquiryDateMode === 'today'){ params.set('startDate', localTodayKey()); params.set('endDate', localTodayKey()); }
+    if(enquiryDateMode === 'custom' && selectedDate) params.set('createdDate', selectedDate);
+    if(enquiryDateMode === 'today') params.set('createdDate', localTodayKey());
     const search = document.getElementById('enquirySearch').value.trim();
     const mobile = search.replace(/\D/g, '');
     if(mobile.length >= 3) params.set('mobile', mobile);
-    document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="10" class="tbl-empty">Loading enquiries...</td></tr>';
+    document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class="tbl-empty">Loading enquiries...</td></tr>';
     try {
       const response = await fetch('/api/admin/extended-enquiries?' + params.toString(), {credentials:'include'});
       const data = await response.json().catch(()=>({}));
@@ -1722,15 +1730,23 @@
       openModal('detailModal');
     } catch(error) { showToast(error.message); }
   }
+  function syncEnquiryFilters(){
+    const todayButton = document.querySelector('#page-enquiries .today-filter');
+    const allButton = document.querySelector('#page-enquiries [data-enquiry-status="all"]');
+    todayButton?.classList.toggle('sel', enquiryDateMode === 'today');
+    allButton?.classList.toggle('sel', enquiryDateMode === 'all' && enquiryStatus === 'all');
+  }
   document.querySelectorAll('[data-enquiry-status]').forEach(button=>button.addEventListener('click', ()=>{
     enquiryStatus = button.dataset.enquiryStatus;
     enquiryDateMode = 'all';
     document.querySelectorAll('[data-enquiry-status]').forEach(item=>item.classList.toggle('sel', item === button));
+    syncEnquiryFilters();
     loadAdminEnquiries();
   }));
   document.getElementById('enquirySearch').addEventListener('input', loadAdminEnquiries);
-  document.getElementById('enquiryDate').addEventListener('change', ()=>{ enquiryDateMode = 'custom'; loadAdminEnquiries(); });
-  document.querySelector('#page-enquiries .today-filter').addEventListener('click', ()=>{ enquiryDateMode = 'today'; document.getElementById('enquiryDate').value = ''; loadAdminEnquiries(); });
+  document.getElementById('enquiryDate').addEventListener('change', ()=>{ enquiryDateMode = 'custom'; syncEnquiryFilters(); loadAdminEnquiries(); });
+  document.querySelector('#page-enquiries .today-filter').addEventListener('click', ()=>{ enquiryStatus = 'all'; enquiryDateMode = 'today'; document.getElementById('enquiryDate').value = ''; document.querySelectorAll('#page-enquiries [data-enquiry-status]').forEach(item=>item.classList.remove('sel')); syncEnquiryFilters(); loadAdminEnquiries(); });
+  syncEnquiryFilters();
   document.getElementById('enquiryExport').addEventListener('click', ()=>exportCsv(`extended-enquiries-${new Date().toISOString().slice(0,10)}.csv`, [{key:'id',label:'Enquiry ID'},{key:'mobile',label:'Mobile'},{key:'start',label:'Start Date'},{key:'end',label:'End Date'},{key:'preferred',label:'Preferred Time'},{key:'status',label:'Status'},{key:'summary',label:'Summary'}], enquiryRows().map(enquiry=>({id:enquiry._id,mobile:enquiry.mobile,start:enquiry.startDate,end:enquiry.endDate,preferred:enquiry.preferredTime,status:enquiry.status,summary:enquiry.summary}))));
   loadAdminEnquiries();
   document.querySelectorAll('[data-wa-status]').forEach(button=>button.addEventListener('click', ()=>{
@@ -1815,10 +1831,16 @@
   }
   function bookingRows(){
     const search = document.getElementById('bookingSearch').value.trim().toLowerCase();
+    const selectedDate = document.getElementById('bookingDate').value;
+    const bookingCreatedDate = bookingDateMode === 'today' ? localTodayKey() : bookingDateMode === 'custom' ? selectedDate : '';
     return liveBookings.filter(booking=>{
       const searchable = [booking._id, booking.paymentReference, booking.mobile].join(' ').toLowerCase();
       const status = String(booking.bookingStatus || '').toUpperCase();
-      return (!search || searchable.includes(search)) && (bookingStatus === 'ALL' || (bookingStatus === 'PENDING' ? false : status === bookingStatus));
+      const createdAt = booking.createdAt ? new Date(booking.createdAt) : null;
+      const createdDate = createdAt && !Number.isNaN(createdAt.getTime())
+        ? createdAt.getFullYear() + '-' + String(createdAt.getMonth() + 1).padStart(2, '0') + '-' + String(createdAt.getDate()).padStart(2, '0')
+        : '';
+      return (!search || searchable.includes(search)) && (bookingStatus === 'ALL' || (bookingStatus === 'PENDING' ? false : status === bookingStatus)) && (!bookingCreatedDate || createdDate === bookingCreatedDate);
     });
   }
   function bookingRowHtml(booking){
@@ -1841,8 +1863,8 @@
     const requestId = ++bookingRequestId;
     const params = new URLSearchParams({limit:'100', page:'1'});
     const selectedDate = document.getElementById('bookingDate').value;
-    if(bookingDateMode === 'custom' && selectedDate) params.set('date', selectedDate);
-    if(bookingDateMode === 'today') params.set('date', localTodayKey());
+    if(bookingDateMode === 'custom' && selectedDate) params.set('createdDate', selectedDate);
+    if(bookingDateMode === 'today') params.set('createdDate', localTodayKey());
     if(['CONFIRMED','CANCELLED','COMPLETED','NO_SHOW'].includes(bookingStatus)) params.set('bookingStatus', bookingStatus);
     const rawSearch = document.getElementById('bookingSearch').value.trim();
     const mobileSearch = rawSearch.replace(/\D/g, '');
@@ -1887,12 +1909,21 @@
   }
   document.querySelectorAll('[data-booking-status]').forEach(button=>button.addEventListener('click', ()=>{
     bookingStatus = String(button.dataset.bookingStatus || 'all').toUpperCase();
+    bookingDateMode = 'all';
     document.querySelectorAll('[data-booking-status]').forEach(item=>item.classList.toggle('sel', item === button));
+    syncBookingFilters();
     loadAdminBookings();
   }));
   document.getElementById('bookingSearch').addEventListener('input', loadAdminBookings);
-  document.getElementById('bookingDate').addEventListener('change', ()=>{ bookingDateMode = 'custom'; loadAdminBookings(); });
-  document.querySelector('#page-bookings .today-filter').addEventListener('click', ()=>{ bookingDateMode = 'today'; document.getElementById('bookingDate').value = ''; loadAdminBookings(); });
+  function syncBookingFilters(){
+    const todayButton = document.querySelector('#page-bookings .today-filter');
+    const allButton = document.querySelector('#page-bookings [data-booking-status="all"]');
+    todayButton?.classList.toggle('sel', bookingDateMode === 'today');
+    allButton?.classList.toggle('sel', bookingDateMode === 'all' && bookingStatus === 'ALL');
+  }
+  document.getElementById('bookingDate').addEventListener('change', ()=>{ bookingDateMode = 'custom'; syncBookingFilters(); loadAdminBookings(); });
+  document.querySelector('#page-bookings .today-filter').addEventListener('click', ()=>{ bookingStatus = 'ALL'; bookingDateMode = 'today'; document.getElementById('bookingDate').value = ''; document.querySelectorAll('#page-bookings [data-booking-status]').forEach(item=>item.classList.remove('sel')); syncBookingFilters(); loadAdminBookings(); });
+  syncBookingFilters();
   document.getElementById('bookingExport').addEventListener('click', ()=>exportCsv(`bookings-${new Date().toISOString().slice(0,10)}.csv`, [{key:'id',label:'Booking ID'},{key:'mobile',label:'Mobile'},{key:'date',label:'Date'},{key:'time',label:'Time'},{key:'duration',label:'Duration'},{key:'amount',label:'Amount'},{key:'payment',label:'Payment Status'},{key:'status',label:'Booking Status'}], bookingRows().map(booking=>({id:booking._id,mobile:booking.mobile,date:booking.date,time:booking.time,duration:booking.duration,amount:booking.amount,payment:booking.paymentStatus,status:booking.bookingStatus}))));
 
   loadAdminBookings();

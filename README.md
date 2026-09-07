@@ -12,11 +12,11 @@ Never expose SMTP or database credentials through Vite variables or frontend cod
 
 ### Deployment checklist (Vercel)
 
-1. **Project root = the `react-app` folder.** The single catch-all function at `api/[...path].js` dispatches every existing `/api/*` endpoint to its implementation under `server/`, otherwise `/api/admin/login` returns 404 and the login form shows "Incorrect email or password."
+1. **Project root = the `react-app` folder.** The single function at `api/index.js` dispatches every existing `/api/*` endpoint through the rewrite in `vercel.json` to its implementation under `server/`, otherwise `/api/admin/login` returns 404 and the login form shows "Incorrect email or password."
 2. **Build framework = Vite** (build command `npm run build`, output `dist`).
 3. **Set the server-only env vars** listed above in the Vercel project (Production). `APP_URL` must be the deployed HTTPS origin, e.g. `https://turfon24.vercel.app` — never `localhost`.
-4. **Configure MongoDB Atlas** and create the required admin and payment documents. The admin sign-in that works locally is `ask@turfon24.com` with the password handled by the Vite dev server's local mock.
-5. Local development is a mocked login (`vite.config.js` intercepts `/api/admin/login`). It intentionally never touches the real database or SMTP, which is why login "works" locally even when the production environment is unconfigured.
+4. **Configure MongoDB Atlas** and create the required admin and payment documents. Local and production admin sign-in both query the real `admin_users` and `admin_sessions` collections.
+5. Local development uses the same API handlers and MongoDB connection path as production. If Atlas is unavailable or `MONGODB_URI` is missing, database-backed requests return HTTP 503 instead of using temporary mock data.
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 

@@ -51,10 +51,13 @@ const handlers = {
 }
 
 function getRoute(req) {
+  const configuredRoute = req.query?.route
+  if (typeof configuredRoute === 'string' && configuredRoute) {
+    return configuredRoute.replace(/^\/+|\/+$/g, '')
+  }
+
   const pathname = new URL(req.url || '/', 'http://localhost').pathname
-  return pathname
-    .replace(/^\/api\/?/, '')
-    .replace(/^\/+|\/+$/g, '')
+  return pathname.replace(/^\/api\/?/, '').replace(/^\/+|\/+$/g, '')
 }
 
 export default async function handler(req, res) {

@@ -36,7 +36,12 @@ export default async function handler(req, res) {
       })
       const url = resetUrl(rawToken)
       const recipient = (process.env.RESET_DEST_EMAIL || '').trim() || admin.email
-      await getMailer().sendMail({ from: process.env.MAIL_FROM, to: recipient, subject: 'Turfon24 Admin Password Reset', text: `We received a request to reset your Turfon24 admin password.\n\nReset your password here: ${url}\n\nThis link expires in 30 minutes and can only be used once. If you did not request this, ignore this email.`, html: `<p>We received a request to reset your Turfon24 admin password.</p><p><a href="${url}">Reset admin password</a></p><p>This link expires in 30 minutes and can only be used once.</p><p>If you did not request this, you can safely ignore this email.</p><p>Turfon24</p>` })
+      try {
+        await getMailer().sendMail({ from: process.env.MAIL_FROM, to: recipient, subject: 'Turfon24 Admin Password Reset', text: `We received a request to reset your Turfon24 admin password.\n\nReset your password here: ${url}\n\nThis link expires in 30 minutes and can only be used once. If you did not request this, ignore this email.`, html: `<p>We received a request to reset your Turfon24 admin password.</p><p><a href="${url}">Reset admin password</a></p><p>This link expires in 30 minutes and can only be used once. If you did not request this, you can safely ignore this email.</p><p>Turfon24</p>` })
+      } catch (mailError) {
+        await db.collection('password_reset_tokens').updateOne({ tokenHash }, { $set: { usedAt: now } })
+        throw mailError
+      }
     }
     return res.status(200).json({ message: GENERIC_RESET_MESSAGE })
   } catch (error) {
