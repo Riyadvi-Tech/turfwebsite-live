@@ -4,7 +4,9 @@ import { MongoClient } from 'mongodb'
 let client
 let clientPromise
 
-dns.setServers(['8.8.8.8', '1.1.1.1'])
+if (process.env.VERCEL !== '1') {
+  dns.setServers(['8.8.8.8', '1.1.1.1'])
+}
 
 function getDeepValue(obj, path) {
   return path.split('.').reduce((value, key) => value?.[key], obj)
@@ -73,7 +75,13 @@ async function getMongoClient() {
     }
 
     client = new MongoClient(uri)
-    clientPromise = client.connect().catch((error) => {
+    clientPromise = client.connect().catch(async (error) => {
+      if (!/querySrv|ECONNREFUSED|EAI_AGAIN|ENOTFOUND/i.test(error.message || '')) throw error
+
+      dns.setServers(['8.8.8.8', '1.1.1.1'])
+      client = new MongoClient(uri)
+      return client.connect()
+    }).catch((error) => {
       clientPromise = undefined
       client = undefined
       throw error
