@@ -295,7 +295,7 @@
   .fn-rent-list{list-style:none; margin:14px 0 0; padding:0; display:flex; gap:8px; flex-wrap:wrap; position:relative; z-index:1;}
   .fn-rent-list li{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; color:var(--white); line-height:1; font-weight:500; background:rgba(57,255,122,0.07); border:1px solid rgba(57,255,122,0.18); border-radius:100px; padding:6px 12px;}
   .fn-rent-list li::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--neon); box-shadow:0 0 8px var(--neon); flex-shrink:0;}
-  .fn-strip{position:relative; display:flex; align-items:center; width:calc(100% + 16vw); margin:34px 0 0 -8vw; height:52px; border:1px solid rgba(57,255,122,0.16); border-radius:0; background:linear-gradient(150deg, rgba(18,27,23,.92) 0%, rgba(7,13,11,.97) 100%); overflow:hidden;}
+  .fn-strip{position:relative; display:flex; align-items:center; width:100%; margin:34px 0 0; height:52px; border:1px solid rgba(57,255,122,0.16); border-radius:10px; background:linear-gradient(150deg, rgba(18,27,23,.92) 0%, rgba(7,13,11,.97) 100%); overflow:hidden;}
   .fn-strip::before{content:""; position:absolute; inset:0; background:radial-gradient(120% 100% at 15% 0%, rgba(57,255,122,0.07), transparent 55%); pointer-events:none;}
   .fn-strip-track{display:flex; width:max-content; align-items:center; gap:0; padding:0; transform:translateX(0); animation:fnStripScroll 90s linear infinite;}
   .fn-strip-half{display:flex; align-items:center; gap:0; flex-shrink:0;}
@@ -315,7 +315,7 @@
   }
   @media(max-width:620px){
     .fn-showcase{padding:72px 6vw;}
-    .fn-strip{width:calc(100% + 12vw); margin-left:-6vw;}
+    .fn-strip{width:100%; margin-left:0;}
     .fn-featured{aspect-ratio:16/12; min-height:0; height:auto;}
     .fn-featured-copy{padding:20px 16px 22px;}
     .fn-featured-copy h3{font-size:18px;}
@@ -1502,7 +1502,7 @@
     <div class="reveal" style="text-align:center;">
       <div class="eyebrow" style="justify-content:center;">Pricing</div>
       <h2 class="section-title">One flat rate. Any hour, any day.</h2>
-      <p class="section-sub" style="margin-left:auto;margin-right:auto;">Standard price is a clean ₹800/hour. Add hours as you like — the total scales linearly. Need the turf for more than 1 day? <span class="enquiry-link" onclick="openModal('extendedModal')">Send us an enquiry.</span></p>
+      <p class="section-sub" style="margin-left:auto;margin-right:auto;">Standard price is a clean <span data-site-rate-text>₹800</span>/hour. Add hours as you like — the total scales linearly. Need the turf for more than 1 day? <span class="enquiry-link" onclick="openModal('extendedModal')">Send us an enquiry.</span></p>
     </div>
     <div class="pricing-cols reveal">
       <div class="pricing-card"><div class="pulse-bg"></div>
@@ -1540,7 +1540,7 @@
     <div class="reveal" style="text-align:center;">
       <div class="eyebrow" style="justify-content:center;">Book your slot</div>
       <h2 class="section-title">Reserve the pitch</h2>
-      <p class="section-sub" style="margin-left:auto;margin-right:auto;">Verify your number, then pick any date and time, day or night — ₹800 per hour.</p>
+      <p class="section-sub" style="margin-left:auto;margin-right:auto;">Verify your number, then pick any date and time, day or night — <span data-site-rate-text>₹800</span> per hour.</p>
     </div>
 
     <div class="booking-shell reveal">
@@ -1695,9 +1695,9 @@
     </div>
     <div class="contact-grid reveal">
       <div class="contact-card"><div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11 11 0 0 0 3.4.55 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11 11 0 0 0 .55 3.4 1 1 0 0 1-.25 1Z"/></svg></div><h4>Call</h4><p><a href="tel:+918939989366">+91 89399 89366</a></p></div>
-      <div class="contact-card"><div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg></div><h4>WhatsApp</h4><p><a href="https://wa.me/918939989366" target="_blank" rel="noopener">Chat with us</a></p></div>
+      <div class="contact-card"><div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg></div><h4>WhatsApp</h4><p><a href="https://wa.me/918939989366" target="_blank" rel="noopener" data-site-whatsapp>+91 89399 89366</a></p></div>
       <div class="contact-card"><div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div><h4>Email</h4><p><a href="mailto:ask@turfon24.com">ask@turfon24.com</a></p></div>
-      <div class="contact-card"><div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg></div><h4>Location</h4><p><a href="https://maps.app.goo.gl/P8Ec2JFPX9ZHEwLv5?g_st=ac" target="_blank" rel="noopener">Cuddalore</a></p></div>
+      <div class="contact-card"><div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg></div><h4>Location</h4><p><a href="https://maps.app.goo.gl/VLJPhLtD6h64UD63A?g_st=aw" target="_blank" rel="noopener" data-site-address>Cuddalore</a></p></div>
     </div>
     <div class="reveal"><div class="live-pulse"><span class="live-dot"></span>Support team online now</div></div>
   </section>
@@ -1820,9 +1820,15 @@
     if(phoneLink){ phoneLink.textContent=settings.phone; phoneLink.href=`tel:${settings.phone.replace(/\D/g,'')}`; }
     if(whatsappLink){ whatsappLink.href=`https://wa.me/${settings.whatsapp.replace(/\D/g,'')}`; }
     if(emailLink){ emailLink.textContent=settings.email; emailLink.href=`mailto:${settings.email}`; }
-    if(addressLink){ addressLink.textContent=settings.address; addressLink.href='https://maps.app.goo.gl/P8Ec2JFPX9ZHEwLv5?g_st=ac'; }
+    if(addressLink){ addressLink.textContent=settings.address; addressLink.href='https://maps.app.goo.gl/VLJPhLtD6h64UD63A?g_st=aw'; }
+    document.querySelectorAll('[data-site-address]').forEach(el=>{ el.textContent=settings.address; });
+    document.querySelectorAll('[data-site-rate]').forEach(el=>{ el.dataset.count = String(Number(settings.hourlyRate) || 800); });
     document.querySelectorAll('[data-site-rate]').forEach(el=>{ el.textContent=`₹${settings.hourlyRate}`; });
+    document.querySelectorAll('[data-site-rate-text]').forEach(el=>{ el.textContent=`₹${settings.hourlyRate}`; });
+    document.querySelectorAll('[data-site-whatsapp]').forEach(el=>{ el.textContent=settings.whatsapp; });
     document.querySelectorAll('[data-site-upi]').forEach(el=>{ el.textContent=settings.upi; });
+    document.querySelectorAll('a[aria-label="WhatsApp"]').forEach(el=>{ el.href=`https://wa.me/${settings.whatsapp.replace(/\D/g,'')}`; });
+    if(typeof WA_NUMBER !== 'undefined') WA_NUMBER = settings.whatsapp.replace(/\D/g,'');
   }
   async function readWebsiteSettings(){
     let localSettings = {};
@@ -3469,7 +3475,7 @@
   // ===== Floating communication widget: WhatsApp enquiry + "ON Assistant" chatbot (UI-only demo) =====
   const commPanel = document.getElementById('commPanel');
   const commBody = document.getElementById('commBody');
-  const WA_NUMBER = '918939989366';
+  let WA_NUMBER = '918939989366';
   const commFabWrap = document.querySelector('.comm-fab-wrap');
   const contactSection = document.getElementById('contact');
   if(commFabWrap && contactSection){
@@ -3668,7 +3674,7 @@
   function commResponseMarkup(q){
     const message = chatQA[q];
     if(q === 'Book a Slot') return `Head to <a class="enquiry-link" href="#book">Book Your Slot</a>, verify your mobile with OTP, then pick a date, time and duration — you'll get a UPI QR code to pay.`;
-    if(q === 'Location') return `You'll find our exact location in the Contact section — tap '<a class="enquiry-link" href="https://maps.app.goo.gl/P8Ec2JFPX9ZHEwLv5?g_st=ac" target="_blank" rel="noopener">View on Google Maps</a>' there.`;
+    if(q === 'Location') return `You'll find our exact location in the Contact section — tap '<a class="enquiry-link" href="https://maps.app.goo.gl/VLJPhLtD6h64UD63A?g_st=aw" target="_blank" rel="noopener">View on Google Maps</a>' there.`;
     if(q === 'Contact Support') return `Phone, WhatsApp, or email — all in the <a class="enquiry-link" href="#contact">Contact section</a>. Or just keep chatting with me here.`;
     if(q === 'Extended Booking') return `Need the turf for more than one day? Use the <a class="enquiry-link" href="#pricing">extended-booking enquiry form</a> in the Pricing section and our team will send a custom quote.`;
     return message;

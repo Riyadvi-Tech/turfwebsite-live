@@ -17,7 +17,7 @@ async function currentAdmin(req, db) {
 }
 
 function publicProfile(admin) {
-  return { name: admin.name || 'Admin', email: admin.email }
+  return { name: admin.name || 'Admin', email: admin.email, profilePicture: admin.profilePicture || null }
 }
 
 function validEmail(email) {
@@ -37,14 +37,17 @@ export default async function handler(req, res) {
     const email = String(req.body?.email || '').trim().toLowerCase()
     const name = String(req.body?.name || '').trim()
     const newPassword = String(req.body?.newPassword || '')
+    const profilePicture = req.body?.profilePicture
     if (!validEmail(email)) return res.status(400).json({ message: 'Enter a valid email address.' })
     if (name.length > 120) return res.status(400).json({ message: 'Name is too long.' })
     if (newPassword && newPassword.length < PASSWORD_MIN_LENGTH) return res.status(400).json({ message: `Password must be at least ${PASSWORD_MIN_LENGTH} characters.` })
+    if (profilePicture !== undefined && profilePicture !== null && (!/^data:image\/(png|jpeg|webp);base64,/.test(String(profilePicture)) || String(profilePicture).length > 4 * 1024 * 1024)) return res.status(400).json({ message: 'Choose a valid image smaller than 3 MB.' })
 
     const duplicate = await db.collection('admin_users').findOne({ email, _id: { $ne: admin._id }, active: true }, { projection: { _id: 1 } })
     if (duplicate) return res.status(409).json({ message: 'That email address is already in use.' })
 
     const updates = { email, name: name || 'Admin', updatedAt: new Date() }
+    if (profilePicture !== undefined) updates.profilePicture = profilePicture || null
     if (newPassword) updates.passwordHash = await bcrypt.hash(newPassword, 12)
     await db.collection('admin_users').updateOne({ _id: admin._id }, { $set: updates })
     return res.status(200).json({ profile: publicProfile({ ...admin, ...updates }) })

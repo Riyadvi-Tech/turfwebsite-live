@@ -223,6 +223,7 @@
   /* Reduced filter pill text */
   .filt-pill{padding:8px 14px; border:1px solid var(--border); border-radius:100px; font-size:11.5px; color:var(--muted); cursor:pointer; transition:all .2s ease;}
   .filt-pill.sel, .filt-pill:hover{border-color:var(--neon); color:var(--neon); background:rgba(57,255,122,0.06);}
+  .booking-status-filters{display:flex; align-items:center; gap:8px; flex:0 0 auto; white-space:nowrap;}
   .history-switch{display:inline-flex; gap:4px; padding:4px; background:var(--charcoal); border:1px solid var(--border); border-radius:10px;}
   .history-switch .filt-pill{border:0; padding:7px 14px; background:transparent; color:var(--muted);}
   .history-switch .filt-pill.sel{background:rgba(57,255,122,0.12);}
@@ -447,6 +448,9 @@
     .toolbar{gap:8px;}
     .toolbar input[type="text"]{width:100%; min-width:0; flex:1 1 100%; height:36px !important; min-height:36px !important; max-height:36px !important; box-sizing:border-box; font-size:12.8px !important;}
     .filt-pill{font-size:10.5px; padding:6px 10px;}
+    .booking-status-filters{gap:6px; overflow-x:auto; max-width:100%; scrollbar-width:none;}
+    .booking-status-filters::-webkit-scrollbar{display:none;}
+    .booking-status-filters .filt-pill{flex:0 0 auto;}
     .toolbar .btn-ghost{font-size:11px; padding:8px 12px;}
     .history-switch{width:100%;}
     .history-switch .filt-pill{flex:1; text-align:center; font-size:11px; padding:8px 6px;}
@@ -673,7 +677,7 @@
       <div class="toolbar">
         <input id="bookingSearch" type="text" placeholder="Search by name, mobile, booking ID...">
         <div class="filt-pill sel today-filter" aria-label="Showing today">Today</div><span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input id="bookingDate" class="date-filter" type="text" readonly aria-label="Choose booking date" title="Choose booking date"><input id="bookingDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
-        <div class="filt-pill" data-booking-status="all">All</div><div class="filt-pill" data-booking-status="pending">Pending</div><div class="filt-pill" data-booking-status="confirmed">Confirmed</div><div class="filt-pill" data-booking-status="cancelled">Cancelled</div>
+        <div class="booking-status-filters"><div class="filt-pill" data-booking-status="all">All</div><div class="filt-pill" data-booking-status="pending">Pending</div><div class="filt-pill" data-booking-status="confirmed">Confirmed</div><div class="filt-pill" data-booking-status="cancelled">Cancelled</div></div>
         <div class="spacer"></div>
         <button class="btn btn-ghost" id="bookingExport"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
       </div>
@@ -809,7 +813,7 @@
         <h3>Business details</h3>
         <div class="form-grid">
           <div class="fgroup"><label>Business name</label><input id="settingBusinessName" type="text" value="TurfOn24"></div>
-          <div class="fgroup"><label>Hourly rate (₹)</label><input id="settingHourlyRate" type="text" value="800" readonly></div>
+          <div class="fgroup"><label>Hourly rate (₹)</label><input id="settingHourlyRate" type="number" min="1" step="1" value="800"></div>
           <div class="fgroup"><label>Phone</label><input id="settingPhone" type="text" value="+91 89399 89366"></div>
           <div class="fgroup"><label>WhatsApp</label><input id="settingWhatsApp" type="text" value="+91 89399 89366"></div>
           <div class="fgroup"><label>Email</label><input id="settingEmail" type="text" value="ask@turfon24.com"></div>
@@ -879,11 +883,9 @@
   function showLoggedIn(){
     const err = document.getElementById('loginErr');
     const loginBtn = document.getElementById('loginBtn');
-    const loginSuccess = document.getElementById('loginSuccess');
     if (err) err.style.display = 'none';
     if (loginBtn) loginBtn.style.display = 'none';
-    if (loginSuccess) loginSuccess.style.display = 'flex';
-    setTimeout(showDashboard, 700);
+    showDashboard();
   }
   async function restoreAdminSession(){
     try {
@@ -1120,7 +1122,6 @@
       const settings = data.settings || {};
       Object.entries({businessName:'settingBusinessName', hourlyRate:'settingHourlyRate', phone:'settingPhone', whatsapp:'settingWhatsApp', email:'settingEmail', upiId:'settingUpi', address:'settingAddress'}).forEach(([key,id])=>{ const field=document.getElementById(id); if(field) field.value=settings[key] ?? ''; });
       settingFields.forEach(field=>{ field.disabled = false; });
-      document.getElementById('settingHourlyRate').disabled = true;
       if(saveButton) saveButton.disabled = false;
     } catch(error) { showToast(error.message); }
   }
@@ -1141,6 +1142,7 @@
   loadWebsiteSettings();
   const PROFILE_PICTURE_KEY = 'turfon24-admin-profile-picture';
   const PROFILE_PICTURE_SOURCE = '/logo-assets/LogoWater.png';
+  let currentProfilePicture = null;
   function applyProfilePicture(source){
     const preview = document.getElementById('profilePicturePreview');
     const injectedAvatar = document.querySelector('.side-foot .admin-profile-avatar');
@@ -1158,7 +1160,7 @@
     const file = event.target.files[0];
     if(!file || file.size > 2 * 1024 * 1024) { showToast('Choose an image smaller than 2 MB'); return; }
     const reader = new FileReader();
-    reader.onload = () => { localStorage.setItem(PROFILE_PICTURE_KEY, reader.result); applyProfilePicture(reader.result); window.parent.postMessage({type:'turfon24-profile-picture', source:reader.result}, '*'); showToast('Profile picture updated'); };
+    reader.onload = () => { currentProfilePicture = reader.result; localStorage.setItem(PROFILE_PICTURE_KEY, reader.result); applyProfilePicture(reader.result); window.parent.postMessage({type:'turfon24-profile-picture', source:reader.result}, '*'); showToast('Profile picture updated'); };
     reader.readAsDataURL(file);
   }
   async function loadAdminProfile(){
@@ -1169,6 +1171,8 @@
       const profile = data.profile || {};
       document.getElementById('profileName').value = profile.name || 'Admin';
       document.getElementById('profileEmail').value = profile.email || '';
+      currentProfilePicture = profile.profilePicture || null;
+      applyProfilePicture(profile.profilePicture || PROFILE_PICTURE_SOURCE);
     } catch(error) {}
   }
   async function saveProfileChanges(){
@@ -1180,15 +1184,18 @@
     const confirmation = document.getElementById('profileConfirmPassword').value;
     if(newPassword !== confirmation){ showToast('Passwords do not match'); return; }
     try {
-      const response = await fetch('/api/admin/profile', {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, email, newPassword})});
+      const response = await fetch('/api/admin/profile', {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, email, newPassword, profilePicture: currentProfilePicture || savedProfilePicture || null})});
       const data = await response.json().catch(() => ({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to update profile.'));
+      const sidebarEmail = document.querySelector('.side-foot .admin-profile-email');
+      if(sidebarEmail) sidebarEmail.textContent = data.profile?.email || email;
+      applyProfilePicture(data.profile?.profilePicture || PROFILE_PICTURE_SOURCE);
+      currentProfilePicture = data.profile?.profilePicture || currentProfilePicture;
       document.getElementById('profileNewPassword').value = '';
       document.getElementById('profileConfirmPassword').value = '';
       showToast('Profile updated');
     } catch(error) { showToast(error.message); }
   }
-  localStorage.removeItem(PROFILE_PICTURE_KEY);
   applyProfilePicture(PROFILE_PICTURE_SOURCE);
   loadAdminProfile();
   document.querySelectorAll('.nav-item[data-page]').forEach(item=>{
@@ -1304,6 +1311,8 @@
 
   // ---- toast ----
   function showToast(msg){
+    const loginScreen = document.getElementById('loginScreen');
+    if (loginScreen && loginScreen.style.display !== 'none' && /^(Your admin session has expired\.|Admin authentication required\.)$/.test(String(msg))) return;
     const stack = document.getElementById('toastStack');
     const t = document.createElement('div');
     t.className='toast';
