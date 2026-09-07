@@ -2,7 +2,7 @@
 
 ## Secure Admin Password Reset
 
-The reset flow uses the Vercel serverless functions in `api/admin`, MongoDB Atlas, bcrypt, and SMTP. The MongoDB database must contain the `admin_users`, `admin_sessions`, and `password_reset_tokens` collections.
+The reset flow uses the Vercel serverless API function, MongoDB Atlas, bcrypt, and SMTP. The MongoDB database must contain the `admin_users`, `admin_sessions`, and `password_reset_tokens` collections.
 
 Configure these server-only Vercel environment variables:
 
@@ -12,7 +12,7 @@ Never expose SMTP or database credentials through Vite variables or frontend cod
 
 ### Deployment checklist (Vercel)
 
-1. **Project root = the `react-app` folder.** The serverless functions under `api/` must be at the Vercel project root, otherwise `/api/admin/login` returns 404 and the login form shows "Incorrect email or password."
+1. **Project root = the `react-app` folder.** The single catch-all function at `api/[...path].js` dispatches every existing `/api/*` endpoint to its implementation under `server/`, otherwise `/api/admin/login` returns 404 and the login form shows "Incorrect email or password."
 2. **Build framework = Vite** (build command `npm run build`, output `dist`).
 3. **Set the server-only env vars** listed above in the Vercel project (Production). `APP_URL` must be the deployed HTTPS origin, e.g. `https://turfon24.vercel.app` — never `localhost`.
 4. **Configure MongoDB Atlas** and create the required admin and payment documents. The admin sign-in that works locally is `ask@turfon24.com` with the password handled by the Vite dev server's local mock.
