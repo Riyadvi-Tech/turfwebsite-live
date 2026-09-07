@@ -70,6 +70,12 @@ function normalizeMobile(value) {
   return mobile
 }
 
+function normalizeName(value) {
+  const name = String(value || '').trim().replace(/\s+/g, ' ')
+  if (!name || name.length > 120) throw invalidBooking('A valid name is required.')
+  return name
+}
+
 export function normalizeHourlyBookingData(input) {
   if (!input || input.type !== 'hourly') throw invalidBooking('Only hourly bookings are supported.')
 
@@ -122,6 +128,7 @@ export function normalizeHourlyBookingData(input) {
   const amount = money(duration * HOURLY_RATE)
   return {
     type: 'hourly',
+    name: normalizeName(input.name),
     mobile: normalizeMobile(input.mobile),
     date,
     time: slots.map((slot) => `${slot.start} - ${slot.end}`).join(', '),

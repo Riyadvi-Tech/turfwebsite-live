@@ -1,3 +1,4 @@
+import crypto from 'node:crypto'
 import { ObjectId } from 'mongodb'
 import { getDb } from './_lib/mongodb.js'
 
@@ -45,6 +46,7 @@ export default async function handler(req, res) {
     }
 
     const result = await db.collection('chatbot_conversations').insertOne({
+      sessionId: crypto.randomUUID(),
       name,
       mobile,
       email,

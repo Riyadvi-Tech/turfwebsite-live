@@ -161,6 +161,7 @@ export async function materializeHourlyPayment(db, reference, { transitionToPaid
       }
 
       const bookingDocument = {
+        name: normalized.name,
         mobile: normalized.mobile,
         date: normalized.date,
         time: normalized.time,
@@ -198,7 +199,7 @@ export async function materializeHourlyPayment(db, reference, { transitionToPaid
       await db.collection('customers').updateOne(
         { mobile: normalized.mobile },
         {
-          $set: { mobile: normalized.mobile, updatedAt: now },
+          $set: { mobile: normalized.mobile, name: normalized.name, updatedAt: now },
           $setOnInsert: { createdAt: now, totalBookings: 0, totalSpent: 0 },
           $inc: { totalBookings: 1, totalSpent: normalized.amount },
         },

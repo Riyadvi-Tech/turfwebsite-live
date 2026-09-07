@@ -584,7 +584,7 @@
               <div class="notification-item unread" data-notification-type="booking" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span><span class="notification-copy"><strong>Hourly booking</strong><span>New booking from Rahul for 2 hours today at 7:00 PM.</span><span class="notification-time">2 min ago</span></span><span class="notification-dot"></span></div>
               <div class="notification-item unread" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg></span><span class="notification-copy"><strong>Extended booking</strong><span>Tournament enquiry received for a weekend booking.</span><span class="notification-time">18 min ago</span></span><span class="notification-dot"></span></div>
               <div class="notification-item unread" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg></span><span class="notification-copy"><strong>WhatsApp enquiry</strong><span>New availability question from Priya on WhatsApp.</span><span class="notification-time">32 min ago</span></span><span class="notification-dot"></span></div>
-              <div class="notification-item unread" data-notification-type="chat" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg></span><span class="notification-copy"><strong>AI chat</strong><span>A visitor asked about today's available time slots.</span><span class="notification-time">45 min ago</span></span><span class="notification-dot"></span></div>
+              <div class="notification-item" data-notification-type="chat" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg></span><span class="notification-copy"><strong>AI chat</strong><span>A visitor asked about today's available time slots.</span><span class="notification-time">45 min ago</span></span><span class="notification-dot"></span></div>
               <div class="notification-item unread" data-notification-type="booking" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span><span class="notification-copy"><strong>Payment verified</strong><span>Payment of ₹2,100 verified against booking #BK1040.</span><span class="notification-time">1 hr ago</span></span><span class="notification-dot"></span></div>
               <div class="notification-item" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6m0-6-6 6"/></svg></span><span class="notification-copy"><strong>Booking cancelled</strong><span>Booking #BK1039 was cancelled by the customer.</span><span class="notification-time">3 hrs ago</span></span></div>
               <div class="notification-item" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg></span><span class="notification-copy"><strong>WhatsApp enquiry</strong><span>Kabir Nair asked about hosting a corporate tournament.</span><span class="notification-time">7 hrs ago</span></span></div>
@@ -1242,6 +1242,7 @@
   }
   function markSectionNotificationsRead(type){
     document.querySelectorAll(`.notification-item.unread[data-notification-type="${type}"]`).forEach(item=>item.classList.remove('unread'));
+    if(type === 'chat') markChatbotNoticeRead();
     syncSectionNotice(type);
     syncNotificationBadge();
   }
@@ -1261,8 +1262,30 @@
   }
   window.addEventListener('new-booking', ()=>notifyNew('booking'));
   window.addEventListener('new-chat-message', ()=>notifyNew('chat'));
+  function setChatbotNotice(hasNew){
+    const dot = document.querySelector('.nav-item[data-page="chatbot"] .nav-notice');
+    if(dot) dot.style.display = hasNew ? 'block' : 'none';
+  }
+  function markChatbotNoticeRead(){
+    const seen = JSON.parse(localStorage.getItem('turfon24-seen-chatbot-conversations') || '[]');
+    const ids = Array.isArray(liveChatbot) ? liveChatbot.map(conversation => conversation._id).filter(Boolean) : [];
+    localStorage.setItem('turfon24-seen-chatbot-conversations', JSON.stringify([...new Set([...seen, ...ids])].slice(-500)));
+    setChatbotNotice(false);
+  }
+  async function refreshChatbotNotice(){
+    try {
+      const response = await fetch('/api/admin/chatbot-conversations', {credentials:'include'});
+      if(!response.ok) return;
+      const data = await response.json().catch(()=>({}));
+      const seen = JSON.parse(localStorage.getItem('turfon24-seen-chatbot-conversations') || '[]');
+      const hasNew = Array.isArray(data.conversations) && data.conversations.some(conversation => normalizeStatus(conversation.status) === 'new' && !seen.includes(conversation._id));
+      setChatbotNotice(hasNew);
+    } catch(error) {}
+  }
   syncSectionNotice('booking');
   syncSectionNotice('chat');
+  refreshChatbotNotice();
+  setInterval(refreshChatbotNotice, 30000);
   function syncNotificationBadge(){
     const hasUnread = document.querySelector('.notification-item.unread');
     document.querySelector('#notificationBtn .dot-badge').style.display = hasUnread ? 'block' : 'none';
@@ -1827,6 +1850,7 @@
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load chatbot conversations.'));
       liveChatbot = Array.isArray(data.conversations) ? data.conversations : [];
       renderChatbot();
+      if(document.getElementById('page-chatbot').classList.contains('active')) markChatbotNoticeRead();
     } catch(error) { liveChatbot = []; renderChatbot(error.message); showToast(error.message); }
   }
   document.querySelectorAll('[data-chat-status]').forEach(button=>button.addEventListener('click', ()=>{

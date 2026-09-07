@@ -68,6 +68,7 @@ function parsePagination(query) {
 
 function bookingProjection() {
   return {
+    name: 1,
     mobile: 1,
     date: 1,
     time: 1,
@@ -119,11 +120,11 @@ export default async function handler(req, res) {
           ),
           db.collection('customers').findOne(
             { mobile: booking.mobile },
-            { projection: { _id: 0, mobile: 1, totalBookings: 1, totalSpent: 1, createdAt: 1, updatedAt: 1 } },
+            { projection: { _id: 0, name: 1, mobile: 1, totalBookings: 1, totalSpent: 1, createdAt: 1, updatedAt: 1 } },
           ),
         ])
 
-        return res.status(200).json({ booking: publicBooking(booking), payment: payment || null, customer: customer || null })
+        return res.status(200).json({ booking: publicBooking({ ...booking, name: booking.name || customer?.name }), payment: payment || null, customer: customer || null })
       }
 
       const requestedStatus = parseStatus(req.body?.bookingStatus ?? req.body?.status, BOOKING_STATUSES, 'booking status')
@@ -182,8 +183,15 @@ export default async function handler(req, res) {
         .toArray(),
     ])
 
+    const customerNames = bookings.length
+      ? new Map((await db.collection('customers').find(
+        { mobile: { $in: bookings.map((booking) => booking.mobile).filter(Boolean) } },
+        { projection: { _id: 0, mobile: 1, name: 1 } },
+      ).toArray()).map((customer) => [customer.mobile, customer.name]))
+      : new Map()
+
     return res.status(200).json({
-      bookings: bookings.map(publicBooking),
+      bookings: bookings.map((booking) => publicBooking({ ...booking, name: booking.name || customerNames.get(booking.mobile) })),
       page,
       limit,
       total,

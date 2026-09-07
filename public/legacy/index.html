@@ -1558,6 +1558,7 @@
 
       <!-- PANE 1 — PHONE VERIFICATION -->
       <div id="bkPane1" class="bk-pane">
+        <div class="fm-field" style="margin-bottom:16px;"><label>Full name</label><input type="text" id="bkName" placeholder="Your name" maxlength="120" autocomplete="name"></div>
         <div class="fm-field" style="margin-bottom:16px;">
           <label>Mobile number</label>
           <div class="otp-inline"><input type="tel" id="bkMobile" placeholder="98xxx xxxxx"><button class="btn btn-outline magnetic" id="bkSendOtpBtn" onclick="bkSendOtp()">Send OTP</button></div>
@@ -1571,7 +1572,7 @@
           <div class="bk-otp-row"><button class="bk-resend-btn" id="bkResendOtpBtn" type="button" onclick="bkResendOtp()" disabled>Resend OTP</button><span class="bk-resend-timer" id="bkResendTimer"></span></div>
         </div>
         <div class="bk-note">Booking actions stay locked until your number is verified.</div>
-        <button class="btn btn-glow magnetic" id="bkVerifyContinue" style="width:100%; justify-content:center; margin-top:18px;" disabled onclick="bkGoStep(2)">Continue to date selection →</button>
+        <button class="btn btn-glow magnetic" id="bkVerifyContinue" style="width:100%; justify-content:center; margin-top:18px;" disabled onclick="bkContinueFromVerification()">Continue to date selection →</button>
       </div>
 
       <!-- PANE 2 — DATE -->
@@ -2695,6 +2696,15 @@
     if(n===6) bkFillPayment();
     bkPersist();
   }
+  function bkContinueFromVerification(){
+    const name = document.getElementById('bkName').value.trim();
+    if(!name){
+      document.getElementById('bkName').focus();
+      bkOtpMsg('Enter your full name to continue.', 'err');
+      return;
+    }
+    bkGoStep(2);
+  }
   function bkGoBack(){
     if(bkCurrentStep > 1) bkGoStep(bkCurrentStep - 1);
   }
@@ -3174,7 +3184,7 @@
     document.getElementById('bkPayAmt').textContent = 'Preparing…';
     document.getElementById('bkPayTotal').textContent = 'Preparing…';
     try {
-      const bookingRequest = {type:'hourly', hours:bkTotalHours(), startTime:bkState.start, endTime:bkState.end, duration:bkTotalHours(), date:bkIsoDate(bkState.date), mobile:bkVerifiedMobile, otpAccessToken:bkOtpAccessToken, slots:bkSlots.map(s=>({start:s.startLabel, end:s.endLabel, hours:s.hours}))};
+      const bookingRequest = {type:'hourly', name:document.getElementById('bkName').value.trim(), hours:bkTotalHours(), startTime:bkState.start, endTime:bkState.end, duration:bkTotalHours(), date:bkIsoDate(bkState.date), mobile:bkVerifiedMobile, otpAccessToken:bkOtpAccessToken, slots:bkSlots.map(s=>({start:s.startLabel, end:s.endLabel, hours:s.hours}))};
       const bookingFingerprint = JSON.stringify(bookingRequest);
       if(!bkPaymentIdempotencyKey || bkPaymentIdempotencyFingerprint !== bookingFingerprint){
         bkPaymentIdempotencyKey = (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID().replaceAll('-', '') : `bk-${Date.now()}-${Math.random().toString(36).slice(2)}`;
