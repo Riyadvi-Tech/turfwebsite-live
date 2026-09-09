@@ -10,9 +10,21 @@ export function getMailer() {
   return nodemailer.createTransport({ host: process.env.SMTP_HOST, port: Number(process.env.SMTP_PORT), secure: process.env.SMTP_SECURE === 'true', auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASSWORD } })
 }
 
-export function resetUrl(token) {
-  const baseUrl = process.env.APP_URL
-  if (!baseUrl) throw new Error('APP_URL is not configured')
+function getRequestOrigin(req) {
+  if (!req) return null
+
+  const forwardedProto = req.headers?.['x-forwarded-proto']
+  const forwardedHost = req.headers?.['x-forwarded-host'] || req.headers?.host
+  const proto = Array.isArray(forwardedProto) ? forwardedProto[0] : (forwardedProto || 'https')
+  const host = Array.isArray(forwardedHost) ? forwardedHost[0] : (forwardedHost || 'localhost')
+
+  if (!host) return null
+  return `${proto.replace(/\/$/, '')}://${host.replace(/^\/+|\/+$/g, '')}`
+}
+
+export function resetUrl(token, req = null) {
+  const baseUrl = process.env.APP_URL || getRequestOrigin(req)
+  if (!baseUrl) throw new Error('APP_URL is not configured and no request origin is available')
   return `${baseUrl.replace(/\/$/, '')}/admin/reset-password?token=${encodeURIComponent(token)}`
 }
 
