@@ -88,7 +88,7 @@ export default async function handler(req, res) {
       chatbotConversations,
     ] = await Promise.all([
       bookings.countDocuments({}),
-      bookings.countDocuments({ date: todayKey }),
+      bookings.countDocuments({ createdAt: { $gte: start, $lt: end } }),
       bookings.countDocuments({ bookingStatus: 'PENDING' }),
       bookings.countDocuments({ bookingStatus: 'CONFIRMED' }),
       bookings.countDocuments({ bookingStatus: 'CANCELLED' }),

@@ -59,7 +59,8 @@ function safeCustomer(customer, includeHistory = true) {
   }
   if (includeHistory) {
     result.hourlyHistory = (customer.hourlyHistory || []).map((booking) => ({
-      date: booking.date || null,
+      bookingDate: booking.createdAt || booking.updatedAt || null,
+      date: booking.date || booking.dateLabel || booking.bookingDate || null,
       time: booking.time || null,
       duration: booking.duration || 0,
       amount: Number(booking.amount || 0),
@@ -71,6 +72,7 @@ function safeCustomer(customer, includeHistory = true) {
       status: booking.bookingStatus || null,
     }))
     result.extendedHistory = (customer.extendedHistory || []).map((enquiry) => ({
+      bookingDate: enquiry.bookingDate || enquiry.createdAt || enquiry.updatedAt || null,
       startDate: enquiry.startDate || null,
       endDate: enquiry.endDate || null,
       preferredTime: enquiry.preferredTime || null,
@@ -94,6 +96,7 @@ function extendedOnlyCustomer(enquiries) {
     updatedAt: first.updatedAt || first.createdAt || null,
     hourlyHistory: [],
     extendedHistory: enquiries.map((enquiry) => ({
+      bookingDate: enquiry.bookingDate || enquiry.createdAt || enquiry.updatedAt || null,
       startDate: enquiry.startDate || null,
       endDate: enquiry.endDate || null,
       preferredTime: enquiry.preferredTime || null,
@@ -115,7 +118,8 @@ function hourlyOnlyCustomer(bookings) {
     createdAt: first.createdAt || null,
     updatedAt: first.updatedAt || first.createdAt || null,
     hourlyHistory: bookings.map((booking) => ({
-      date: booking.date || null,
+      bookingDate: booking.createdAt || booking.updatedAt || null,
+      date: booking.date || booking.dateLabel || booking.bookingDate || null,
       time: booking.time || null,
       duration: booking.duration || 0,
       amount: Number(booking.amount || 0),
@@ -129,6 +133,40 @@ function hourlyOnlyCustomer(bookings) {
     })),
     extendedHistory: [],
   }
+}
+
+function enrichHistoryDates(customers, bookings, enquiries) {
+  const bookingsByMobile = new Map()
+  const enquiriesByMobile = new Map()
+  bookings.forEach((booking) => {
+    const mobile = String(booking.mobile || '').trim()
+    if (mobile) (bookingsByMobile.get(mobile) || bookingsByMobile.set(mobile, []).get(mobile)).push(booking)
+  })
+  enquiries.forEach((enquiry) => {
+    const mobile = String(enquiry.mobile || '').trim()
+    if (mobile) (enquiriesByMobile.get(mobile) || enquiriesByMobile.set(mobile, []).get(mobile)).push(enquiry)
+  })
+
+  customers.forEach((customer) => {
+    const mobile = String(customer.mobile || '').trim()
+    const customerBookings = bookingsByMobile.get(mobile) || []
+    const customerEnquiries = enquiriesByMobile.get(mobile) || []
+    customer.hourlyHistory = (customer.hourlyHistory || []).map((history, index) => {
+      if (history.createdAt || history.bookingDate || history.updatedAt) return history
+      const match = customerBookings.find((booking) => (
+        booking.date === history.date
+        && Number(booking.amount || 0) === Number(history.amount || 0)
+        && String(booking.time || '') === String(history.time || '')
+      )) || customerBookings[index]
+      return { ...history, createdAt: history.bookingDate || match?.createdAt || match?.updatedAt || null }
+    })
+    customer.extendedHistory = (customer.extendedHistory || []).map((history, index) => {
+      if (history.createdAt || history.bookingDate || history.updatedAt) return history
+      const match = customerEnquiries.find((enquiry) => enquiry.startDate === history.startDate && enquiry.endDate === history.endDate) || customerEnquiries[index]
+      return { ...history, createdAt: history.bookingDate || match?.createdAt || match?.updatedAt || null }
+    })
+  })
+  return customers
 }
 
 function fail(res, status, message) {
@@ -149,7 +187,7 @@ async function withHistory(collection, filter, sort, page, limit) {
           { $match: { $expr: { $eq: ['$mobile', '$$mobile'] } } },
           { $sort: { createdAt: -1, _id: -1 } },
           { $limit: 50 },
-          { $project: { _id: 0, date: 1, time: 1, duration: 1, amount: 1, slots: 1, bookingStatus: 1, name: 1, customerName: 1 } },
+          { $project: { _id: 0, createdAt: 1, updatedAt: 1, date: 1, dateLabel: 1, bookingDate: 1, time: 1, duration: 1, amount: 1, slots: 1, bookingStatus: 1, name: 1, customerName: 1 } },
         ],
         as: 'hourlyHistory',
       },
@@ -162,7 +200,7 @@ async function withHistory(collection, filter, sort, page, limit) {
           { $match: { $expr: { $eq: ['$mobile', '$$mobile'] } } },
           { $sort: { createdAt: -1, _id: -1 } },
           { $limit: 50 },
-          { $project: { _id: 0, name: 1, startDate: 1, endDate: 1, preferredTime: 1, status: 1, requirements: 1, message: 1, summary: 1 } },
+          { $project: { _id: 0, name: 1, createdAt: 1, startDate: 1, endDate: 1, preferredTime: 1, status: 1, requirements: 1, message: 1, summary: 1 } },
         ],
         as: 'extendedHistory',
       },
@@ -203,7 +241,7 @@ export default async function handler(req, res) {
       collection.countDocuments(filter),
       withHistory(collection, filter, sort, page, limit),
       db.collection('extended_enquiries').find({}, { projection: { _id: 0, mobile: 1, name: 1, startDate: 1, endDate: 1, preferredTime: 1, status: 1, requirements: 1, message: 1, summary: 1, createdAt: 1, updatedAt: 1 } }).sort({ createdAt: -1, _id: -1 }).limit(500).toArray(),
-      db.collection('bookings').find({}, { projection: { _id: 0, mobile: 1, name: 1, customerName: 1, date: 1, time: 1, duration: 1, amount: 1, slots: 1, bookingStatus: 1, createdAt: 1, updatedAt: 1 } }).sort({ createdAt: -1, _id: -1 }).limit(500).toArray(),
+      db.collection('bookings').find({}, { projection: { _id: 0, mobile: 1, name: 1, customerName: 1, date: 1, dateLabel: 1, bookingDate: 1, time: 1, duration: 1, amount: 1, slots: 1, bookingStatus: 1, createdAt: 1, updatedAt: 1 } }).sort({ createdAt: -1, _id: -1 }).limit(500).toArray(),
     ])
 
     const customerMobiles = new Set(customers.map((customer) => String(customer.mobile || '')))
@@ -218,8 +256,9 @@ export default async function handler(req, res) {
       return groups
     }, {})).map(hourlyOnlyCustomer)
 
+    const combinedCustomers = enrichHistoryDates([...customers, ...extendedOnly, ...bookingOnly], allBookings, extendedEnquiries)
     return res.status(200).json({
-      customers: [...customers, ...extendedOnly, ...bookingOnly].map((customer) => safeCustomer(customer)),
+      customers: combinedCustomers.map((customer) => safeCustomer(customer)),
       page,
       limit,
       total: total + extendedOnly.length + bookingOnly.length,

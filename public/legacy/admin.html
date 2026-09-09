@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" sizes="32x32" href="/logo-assets/LogoWater.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/logo-assets/LogoWater-favicon-tight.png?v=2" />
+  <link rel="shortcut icon" type="image/png" href="/logo-assets/LogoWater-favicon-tight.png?v=2" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/logo-assets/LogoWater-favicon-tight.png?v=2" />
   <title>TurfOn24</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -288,6 +290,11 @@
   .profile-picture-actions input{display:none;}
   .profile-picture-actions label{display:inline-flex; padding:10px 14px; border:1px solid var(--border); border-radius:8px; color:var(--white); cursor:pointer; font-size:12px;}
   .profile-picture-actions label:hover{border-color:var(--neon); color:var(--neon);}
+  .password-field{position:relative;}
+  .password-field input{padding-right:42px !important;}
+  .password-toggle-btn{position:absolute; right:12px; top:50%; transform:translateY(-50%); width:28px; height:28px; border:none; background:transparent; color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:8px; transition:color .2s ease, background .2s ease;}
+  .password-toggle-btn:hover{color:var(--neon); background:rgba(57,255,122,0.08);}
+  .password-toggle-btn svg{width:16px; height:16px; stroke:currentColor;}
 
   /* calendar */
   .cal-head{display:flex; align-items:center; gap:12px; margin-bottom:16px;}
@@ -557,7 +564,7 @@
     <button type="button" class="modal-close" onclick="closePasswordReset()" aria-label="Close">✕</button>
     <div class="reset-stage active" id="resetRequestStage"><h3>Forgot password</h3><p>Enter your admin email and we'll send you a verification link.</p><div class="fgroup"><label for="resetEmail">Admin email</label><input id="resetEmail" type="email" required autocomplete="email"></div><div class="password-reset-error" id="resetRequestError"></div><button class="btn btn-glow" type="button" onclick="requestPasswordReset()">Send verification email</button><button class="reset-back" type="button" onclick="closePasswordReset()">Back to login</button></div>
     <div class="reset-stage" id="resetSentStage"><h3>Check your email</h3><p>If an account is registered with that email, we've sent a password reset link. The link expires in 30 minutes.</p><div class="password-reset-error" id="resetSentError"></div><button class="btn btn-outline" type="button" onclick="requestPasswordReset()">Resend email</button><button class="reset-back" type="button" onclick="closePasswordReset()">Back to login</button></div>
-    <div class="reset-stage" id="resetPasswordStage"><h3>Reset password</h3><p>Create a new password for your admin account.</p><form onsubmit="resetAdminPassword(event)"><div class="fgroup"><label for="resetPassword">New password</label><input id="resetPassword" type="password" minlength="12" required autocomplete="new-password"></div><div class="fgroup"><label for="resetPasswordConfirm">Confirm password</label><input id="resetPasswordConfirm" type="password" minlength="12" required autocomplete="new-password"></div><div class="password-reset-error" id="passwordResetError"></div><button class="btn btn-glow" type="submit">Save new password</button></form></div>
+    <div class="reset-stage" id="resetPasswordStage"><h3>Reset password</h3><p>Create a new password for your admin account.</p><form onsubmit="resetAdminPassword(event)"><div class="fgroup"><label for="resetPassword">New password</label><div class="password-field"><input id="resetPassword" type="password" minlength="12" required autocomplete="new-password"><button type="button" class="password-toggle-btn" data-target="resetPassword" aria-label="Show password" onclick="togglePasswordVisibility(this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div><div class="fgroup"><label for="resetPasswordConfirm">Confirm password</label><div class="password-field"><input id="resetPasswordConfirm" type="password" minlength="12" required autocomplete="new-password"><button type="button" class="password-toggle-btn" data-target="resetPasswordConfirm" aria-label="Show password" onclick="togglePasswordVisibility(this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div><div class="password-reset-error" id="passwordResetError"></div><button class="btn btn-glow" type="submit">Save new password</button></form></div>
     <div class="reset-stage" id="resetSuccessStage"><h3>Password updated successfully</h3><p>Your admin password has been changed. Please log in again with your new password.</p><button class="btn btn-glow" type="button" onclick="closePasswordReset()">Back to login</button></div>
   </div>
 </div>
@@ -597,16 +604,7 @@
           <button class="icon-btn" id="notificationBtn" aria-label="Open notifications" aria-expanded="false" onclick="toggleNotifications()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="dot-badge"></span></button>
           <div class="notification-panel" id="notificationPanel" role="dialog" aria-label="Notifications">
             <div class="notification-head"><h3>Notifications</h3><button type="button" onclick="markAllNotificationsRead()">Mark all read</button></div>
-            <div class="notification-list">
-              <div class="notification-item" data-notification-type="booking" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span><span class="notification-copy"><strong>Hourly booking</strong><span>New booking from Rahul for 2 hours today at 7:00 PM.</span><span class="notification-time">2 min ago</span></span><span class="notification-dot"></span></div>
-              <div class="notification-item" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg></span><span class="notification-copy"><strong>Extended booking</strong><span>Tournament enquiry received for a weekend booking.</span><span class="notification-time">18 min ago</span></span><span class="notification-dot"></span></div>
-              <div class="notification-item" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg></span><span class="notification-copy"><strong>WhatsApp enquiry</strong><span>New availability question from Priya on WhatsApp.</span><span class="notification-time">32 min ago</span></span><span class="notification-dot"></span></div>
-              <div class="notification-item" data-notification-type="chat" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg></span><span class="notification-copy"><strong>AI chat</strong><span>A visitor asked about today's available time slots.</span><span class="notification-time">45 min ago</span></span><span class="notification-dot"></span></div>
-              <div class="notification-item" data-notification-type="booking" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span><span class="notification-copy"><strong>Payment verified</strong><span>Payment of ₹2,100 verified against booking #BK1040.</span><span class="notification-time">1 hr ago</span></span><span class="notification-dot"></span></div>
-              <div class="notification-item" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6m0-6-6 6"/></svg></span><span class="notification-copy"><strong>Booking cancelled</strong><span>Booking #BK1039 was cancelled by the customer.</span><span class="notification-time">3 hrs ago</span></span></div>
-              <div class="notification-item" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg></span><span class="notification-copy"><strong>WhatsApp enquiry</strong><span>Kabir Nair asked about hosting a corporate tournament.</span><span class="notification-time">7 hrs ago</span></span></div>
-              <div class="notification-item" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg></span><span class="notification-copy"><strong>AI chat</strong><span>Karan Mehta asked about hourly pricing options.</span><span class="notification-time">Yesterday</span></span></div>
-            </div>
+            <div class="notification-list" id="notificationList"></div>
           </div>
         </div>
       </div>
@@ -696,7 +694,7 @@
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Booking ID</th><th>Customer</th><th>Mobile</th><th>Booking Date</th><th>Date</th><th>Slot</th><th>Time</th><th>Duration</th><th>Amount</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Booking ID</th><th>Customer</th><th>Booked On</th><th>Mobile</th><th>Play Date</th><th>Slot</th><th>Time</th><th>Duration</th><th>Amount</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="bookingsBody"></tbody>
         </table>
         <div class="table-foot"><span>Showing all bookings</span></div>
@@ -845,8 +843,8 @@
         <div class="form-grid">
           <div class="fgroup"><label>Name</label><input id="profileName" type="text" value="Admin"></div>
           <div class="fgroup"><label>Email</label><input id="profileEmail" type="email" value="ask@turfon24.com"></div>
-          <div class="fgroup"><label>New password</label><input id="profileNewPassword" type="password" placeholder="************" aria-label="New password; leave blank to keep current password"></div>
-          <div class="fgroup"><label>Confirm password</label><input id="profileConfirmPassword" type="password" placeholder="************" aria-label="Confirm new password"></div>
+          <div class="fgroup"><label>New password</label><div class="password-field"><input id="profileNewPassword" type="password" placeholder="************" aria-label="New password; leave blank to keep current password"><button type="button" class="password-toggle-btn" data-target="profileNewPassword" aria-label="Show password" onclick="togglePasswordVisibility(this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+          <div class="fgroup"><label>Confirm password</label><div class="password-field"><input id="profileConfirmPassword" type="password" placeholder="************" aria-label="Confirm new password"><button type="button" class="password-toggle-btn" data-target="profileConfirmPassword" aria-label="Show password" onclick="togglePasswordVisibility(this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
         </div>
         <button class="btn btn-glow" style="width:auto; padding:12px 26px;" onclick="saveProfileChanges()">Save changes</button>
       </div>
@@ -1014,6 +1012,18 @@
   function togglePw(){
     const pw = document.getElementById('loginPass');
     pw.type = pw.type === 'password' ? 'text' : 'password';
+  }
+  function togglePasswordVisibility(button){
+    const targetId = button?.dataset?.target;
+    const field = targetId ? document.getElementById(targetId) : null;
+    if (!field) return;
+    const isText = field.type === 'text';
+    field.type = isText ? 'password' : 'text';
+    const nextLabel = isText ? 'Show password' : 'Hide password';
+    button.setAttribute('aria-label', nextLabel);
+    button.innerHTML = isText
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.58 10.58A2 2 0 0 0 13.42 13.42"/><path d="M9.88 5.24A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a16.8 16.8 0 0 1-4.3 5.12"/><path d="M7.29 7.29A15.8 15.8 0 0 0 2 12s3.5 7 10 7a10.5 10.5 0 0 0 5.17-1.45"/></svg>';
   }
   async function logout(){
     try {
@@ -1260,6 +1270,46 @@
     const wrap = document.getElementById('notificationWrap');
     const isOpen = wrap.classList.toggle('open');
     document.getElementById('notificationBtn').setAttribute('aria-expanded', String(isOpen));
+  }
+  function escapeNotificationHtml(value){
+    return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+  function formatNotificationRelative(value){
+    const target = value ? new Date(value) : new Date();
+    if(Number.isNaN(target.getTime())) return 'Just now';
+    const diffMs = Date.now() - target.getTime();
+    const minutes = Math.max(0, Math.round(diffMs / 60000));
+    if(minutes < 1) return 'Just now';
+    if(minutes < 60) return `${minutes} min ago`;
+    const hours = Math.round(minutes / 60);
+    if(hours < 24) return `${hours} hr ago`;
+    const days = Math.round(hours / 24);
+    return `${days} day${days === 1 ? '' : 's'} ago`;
+  }
+  function renderNotifications(items){
+    const list = document.getElementById('notificationList');
+    if(!list) return;
+    const safeItems = Array.isArray(items) ? items.filter(Boolean) : [];
+    if(!safeItems.length){
+      list.innerHTML = '<div class="notification-item"><span class="notification-copy"><strong>No current notifications</strong><span>New activity will appear here as it happens.</span></span></div>';
+      syncNotificationBadge();
+      return;
+    }
+    list.innerHTML = safeItems.slice(0, 8).map((item) => {
+      const text = String(item.text || 'New activity');
+      const [title, ...rest] = text.split(' — ');
+      const detail = rest.join(' — ') || text;
+      const type = item.type === 'chat' || item.type === 'whatsapp' ? 'chat' : 'booking';
+      const icon = item.type === 'chat'
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg>'
+        : item.type === 'whatsapp'
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg>'
+          : item.type === 'payment'
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>'
+            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>';
+      return `<div class="notification-item unread" data-notification-type="${type}" onclick="markNotificationRead(this)"><span class="notification-icon">${icon}</span><span class="notification-copy"><strong>${escapeNotificationHtml(title || 'New activity')}</strong><span>${escapeNotificationHtml(detail || 'New activity')}</span><span class="notification-time">${escapeNotificationHtml(formatNotificationRelative(item.createdAt || new Date()))}</span></span><span class="notification-dot"></span></div>`;
+    }).join('');
+    syncNotificationBadge();
   }
   function markNotificationRead(item){
     item.classList.remove('unread');
@@ -1579,6 +1629,7 @@
     });
 
     const activity = Array.isArray(data.recentActivity) ? data.recentActivity : [];
+    renderNotifications(activity);
     document.getElementById('activityList').innerHTML = activity.length
       ? activity.map(item=>`<div class="activity-row"><span class="adot"></span>${escapePaymentHtml(item.text)}<span class="atime">${escapePaymentHtml(formatDateDDMMYYYY(item.createdAt))}</span></div>`).join('')
       : '<div class="tbl-empty">No recent activity</div>';
@@ -1636,7 +1687,7 @@
       document.querySelectorAll('#page-bookings [data-booking-status]').forEach(item => {
         const status = item.dataset.bookingStatus;
         item.style.display = visible.includes(status) ? '' : 'none';
-        item.classList.toggle('sel', status === selectedStatus);
+        item.classList.toggle('sel', status === selectedStatus && bookingDateMode !== 'today');
       });
       const todayButton = document.querySelector('#page-bookings .today-filter');
       if(todayButton) todayButton.classList.toggle('sel', bookingDateMode === 'today');
@@ -2150,7 +2201,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const slotDurations = slotRows.map(item => `${item.hours || 0} hr${Number(item.hours) === 1 ? '' : 's'}`).join('<br>');
     const duration = escapeBookingHtml(`${booking.duration || 0} hr${Number(booking.duration) === 1 ? '' : 's'}`);
     const amount = `₹${Number(booking.amount || 0).toLocaleString('en-IN')}`;
-    return `<tr><td class="mono">${id}</td><td>${customer}</td><td class="mono">${mobile}</td><td>${escapeBookingHtml(bookingCreatedDate)}</td><td>${date}</td><td>${slot}</td><td>${time}</td><td>${slotDurations || duration}</td><td class="mono">${amount}</td><td><span class="badge ${payment === 'PAID' ? 'verified' : payment === 'CANCELLED' ? 'cancelled' : 'pending'}">${paymentStatusLabels[payment] || escapeBookingHtml(payment)}</span></td><td><span class="badge ${status.toLowerCase()}">${bookingStatusLabels[status] || escapeBookingHtml(status)}</span></td><td><div class="row-actions"><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button><button onclick="updateBookingStatus('${id}','CONFIRMED')" title="Confirm"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button><button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div></td></tr>`;
+    return `<tr><td class="mono">${id}</td><td>${customer}</td><td>${escapeBookingHtml(bookingCreatedDate)}</td><td class="mono">${mobile}</td><td>${date}</td><td>${slot}</td><td>${time}</td><td>${slotDurations || duration}</td><td class="mono">${amount}</td><td><span class="badge ${payment === 'PAID' ? 'verified' : payment === 'CANCELLED' ? 'cancelled' : 'pending'}">${paymentStatusLabels[payment] || escapeBookingHtml(payment)}</span></td><td><span class="badge ${status.toLowerCase()}">${bookingStatusLabels[status] || escapeBookingHtml(status)}</span></td><td><div class="row-actions"><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button><button onclick="updateBookingStatus('${id}','CONFIRMED')" title="Confirm"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button><button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div></td></tr>`;
   }
   function renderBookings(message){
     const rows = bookingRows();
@@ -2382,6 +2433,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   };
   let activeHistoryType = 'hourly';
   let liveCustomers = [];
+  let liveExtendedEnquiries = [];
   let customerRequestId = 0;
   const historyHead = document.getElementById('customerHistoryHead');
   const historyBody = document.getElementById('customerHistoryBody');
@@ -2393,32 +2445,50 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     return liveCustomers.flatMap(customer => {
       const history = activeHistoryType === 'hourly' ? customer.hourlyHistory : customer.extendedHistory;
       return history.map(item => activeHistoryType === 'hourly'
-        ? { customer: item.name || customer.name || 'Name not provided', mobile: customer.mobile || '—', date: item.date, slots: item.slots || [], slot: (item.slots || []).map((slot, index) => `Slot ${index + 1}`).join(' | ') || 'Slot 1', time: item.time, duration: `${item.duration} hr${Number(item.duration) === 1 ? '' : 's'}`, amount: `₹${Number(item.amount || 0).toLocaleString('en-IN')}`, status: hourlyBookingStatus(item.date) }
-        : { customer: item.name || customer.name || 'Name not provided', mobile: customer.mobile || '—', start: item.startDate, end: item.endDate, duration: enquiryDays(item.startDate, item.endDate) + ' days', preferredTime: item.preferredTime || '—', status: item.status || '—', message: item.message || 'No message provided' });
-    });
+        ? { customer: item.name || customer.name || 'Name not provided', mobile: customer.mobile || '—', bookedAt: item.bookingDate || liveBookings.find((booking) => String(booking.mobile || '') === String(customer.mobile || '') && booking.date === item.date && Number(booking.amount || 0) === Number(item.amount || 0) && String(booking.time || '') === String(item.time || ''))?.createdAt, date: item.date, slots: item.slots || [], slot: (item.slots || []).map((slot, index) => `Slot ${index + 1}`).join(' | ') || 'Slot 1', time: item.time, duration: `${item.duration} hr${Number(item.duration) === 1 ? '' : 's'}`, amount: `₹${Number(item.amount || 0).toLocaleString('en-IN')}`, status: hourlyBookingStatus(item.date) }
+        : { customer: item.name || customer.name || 'Name not provided', mobile: customer.mobile || '—', bookedAt: item.bookingDate || liveExtendedEnquiries.find((enquiry) => String(enquiry.mobile || '') === String(customer.mobile || '') && enquiry.startDate === item.startDate && enquiry.endDate === item.endDate)?.createdAt, start: item.startDate, end: item.endDate, duration: enquiryDays(item.startDate, item.endDate) + ' days', preferredTime: item.preferredTime || '—', status: item.status || '—', message: item.message || 'No message provided' });
+    }).sort((first, second) => activeHistoryType === 'extended' ? (Date.parse(second.bookedAt || '') || 0) - (Date.parse(first.bookedAt || '') || 0) : 0);
+  }
+  function formatBookingDate(value){
+    if(!value) return '—';
+    const date = new Date(value);
+    if(Number.isNaN(date.getTime())) return escapeBookingHtml(value);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const time = date.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' });
+    return `${day}/${month}/${year}, ${time}`;
   }
   function renderCustomerHistory(message){
     const rows = customerRows();
     const selectedDate = historyDate.value;
     historyHead.innerHTML = activeHistoryType === 'hourly'
-      ? '<tr><th>Customer</th><th>Mobile</th><th>Booking date</th><th>Slot</th><th>Time</th><th>Duration</th><th>Amount</th><th>Status</th></tr>'
-      : '<tr><th>Customer</th><th>Mobile</th><th>Start date</th><th>End date</th><th>Duration</th><th>Preferred time</th><th>Status</th><th>Message</th></tr>';
+      ? '<tr><th>Customer</th><th>Booked on</th><th>Mobile</th><th>Play Date</th><th>Slot</th><th>Time</th><th>Duration</th><th>Amount</th><th>Status</th></tr>'
+      : '<tr><th>Customer</th><th>Booked on</th><th>Mobile</th><th>Start date</th><th>End date</th><th>Duration</th><th>Preferred time</th><th>Status</th><th>Message</th></tr>';
     const filteredRows = rows.filter(row => !selectedDate || (activeHistoryType === 'hourly' ? row.date === selectedDate : selectedDate >= row.start && selectedDate <= row.end));
     historyBody.innerHTML = filteredRows.length ? filteredRows.map(row=>activeHistoryType === 'hourly'
-      ? `<tr><td>${escapeBookingHtml(row.customer)}</td><td class="mono">${escapeBookingHtml(row.mobile)}</td><td>${escapeBookingHtml(row.date)}</td><td>${(row.slots.length ? row.slots : [{start: row.time || '—', end: '', hours: row.duration.replace(/\D/g, '') || 0}]).map((slot, index) => `<div>Slot ${index + 1}</div>`).join('')}</td><td>${(row.slots.length ? row.slots : [{start: row.time || '—', end: ''}]).map(slot => escapeBookingHtml(slot.end ? `${slot.start} - ${slot.end}` : slot.start)).join('<br>')}</td><td>${(row.slots.length ? row.slots : [{hours: row.duration.replace(/\D/g, '') || 0}]).map(slot => `${slot.hours || 0} hr${Number(slot.hours) === 1 ? '' : 's'}`).join('<br>')}</td><td class="mono">${escapeBookingHtml(row.amount)}</td><td>${escapeBookingHtml(row.status)}</td></tr>`
-      : `<tr><td>${escapeBookingHtml(row.customer)}</td><td class="mono">${escapeBookingHtml(row.mobile)}</td><td>${escapeBookingHtml(row.start)}</td><td>${escapeBookingHtml(row.end)}</td><td>${escapeBookingHtml(row.duration)}</td><td>${escapeBookingHtml(row.preferredTime)}</td><td>${escapeBookingHtml(row.status)}</td><td>${escapeBookingHtml(row.message)}</td></tr>`).join('') : `<tr><td colspan="8" class="tbl-empty">${escapeBookingHtml(message || 'No customer history found')}</td></tr>`;
+      ? `<tr><td>${escapeBookingHtml(row.customer)}</td><td>${formatBookingDate(row.bookedAt)}</td><td class="mono">${escapeBookingHtml(row.mobile)}</td><td>${escapeBookingHtml(row.date)}</td><td>${(row.slots.length ? row.slots : [{start: row.time || '—', end: '', hours: row.duration.replace(/\D/g, '') || 0}]).map((slot, index) => `<div>Slot ${index + 1}</div>`).join('')}</td><td>${(row.slots.length ? row.slots : [{start: row.time || '—', end: ''}]).map(slot => escapeBookingHtml(slot.end ? `${slot.start} - ${slot.end}` : slot.start)).join('<br>')}</td><td>${(row.slots.length ? row.slots : [{hours: row.duration.replace(/\D/g, '') || 0}]).map(slot => `${slot.hours || 0} hr${Number(slot.hours) === 1 ? '' : 's'}`).join('<br>')}</td><td class="mono">${escapeBookingHtml(row.amount)}</td><td>${escapeBookingHtml(row.status)}</td></tr>`
+      : `<tr><td>${escapeBookingHtml(row.customer)}</td><td>${formatBookingDate(row.bookedAt)}</td><td class="mono">${escapeBookingHtml(row.mobile)}</td><td>${escapeBookingHtml(row.start)}</td><td>${escapeBookingHtml(row.end)}</td><td>${escapeBookingHtml(row.duration)}</td><td>${escapeBookingHtml(row.preferredTime)}</td><td>${escapeBookingHtml(row.status)}</td><td>${escapeBookingHtml(row.message)}</td></tr>`).join('') : `<tr><td colspan="9" class="tbl-empty">${escapeBookingHtml(message || 'No customer history found')}</td></tr>`;
     document.getElementById('customerHistoryCount').textContent = `Showing ${filteredRows.length} ${activeHistoryType} booking history${selectedDate ? ` for ${selectedDate}` : ''}`;
     return filteredRows;
   }
   async function loadCustomers(){
     const requestId = ++customerRequestId;
-    historyBody.innerHTML = '<tr><td colspan="7" class="tbl-empty">Loading customers...</td></tr>';
+    historyBody.innerHTML = '<tr><td colspan="9" class="tbl-empty">Loading customers...</td></tr>';
     try {
-      const response = await fetch('/api/admin/customers?limit=100&page=1&sort=updatedAt&direction=desc', {credentials:'include'});
+      const [response, bookingResponse, enquiryResponse] = await Promise.all([
+        fetch('/api/admin/customers?limit=100&page=1&sort=updatedAt&direction=desc', {credentials:'include'}),
+        fetch('/api/admin/bookings?limit=100&page=1', {credentials:'include'}),
+        fetch('/api/admin/extended-enquiries?limit=100&page=1', {credentials:'include'}),
+      ]);
       const data = await response.json().catch(()=>({}));
+      const bookingData = await bookingResponse.json().catch(()=>({}));
+      const enquiryData = await enquiryResponse.json().catch(()=>({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load customer records.'));
       if(requestId !== customerRequestId) return;
       liveCustomers = Array.isArray(data.customers) ? data.customers : [];
+      liveBookings = bookingResponse.ok && Array.isArray(bookingData.bookings) ? bookingData.bookings : [];
+      liveExtendedEnquiries = enquiryResponse.ok && Array.isArray(enquiryData.enquiries) ? enquiryData.enquiries : [];
       renderCustomerHistory();
     } catch(error) {
       if(requestId !== customerRequestId) return;
@@ -2439,8 +2509,8 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   document.getElementById('customerHistoryExport').addEventListener('click', ()=>{
     const filteredRows = renderCustomerHistory();
     const columns = activeHistoryType === 'hourly'
-      ? [{key:'customer',label:'Customer'},{key:'mobile',label:'Mobile'},{key:'date',label:'Booking Date'},{key:'slot',label:'Slot'},{key:'time',label:'Time'},{key:'duration',label:'Duration'},{key:'amount',label:'Amount'},{key:'status',label:'Status'}]
-      : [{key:'customer',label:'Customer'},{key:'mobile',label:'Mobile'},{key:'start',label:'Start Date'},{key:'end',label:'End Date'},{key:'duration',label:'Duration'},{key:'preferredTime',label:'Preferred Time'},{key:'status',label:'Status'},{key:'message',label:'Message'}];
+      ? [{key:'customer',label:'Customer'},{key:'bookedAt',label:'Booked on'},{key:'mobile',label:'Mobile'},{key:'date',label:'Play Date'},{key:'slot',label:'Slot'},{key:'time',label:'Time'},{key:'duration',label:'Duration'},{key:'amount',label:'Amount'},{key:'status',label:'Status'}]
+      : [{key:'customer',label:'Customer'},{key:'bookedAt',label:'Booked on'},{key:'mobile',label:'Mobile'},{key:'start',label:'Start Date'},{key:'end',label:'End Date'},{key:'duration',label:'Duration'},{key:'preferredTime',label:'Preferred Time'},{key:'status',label:'Status'},{key:'message',label:'Message'}];
     const rows = filteredRows;
     exportCsv(`customer-${activeHistoryType}-history-${new Date().toISOString().slice(0,10)}.csv`, columns, rows);
   });
@@ -2455,7 +2525,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     today:      { title:"Today's Bookings Analytics", label:'Bookings', subtitle:'Bookings grouped per day for the selected range', rows:()=>bookings, date:r=>r[9] },
     pendingConf:{ title:'Pending Confirmations Analytics', label:'Pending confirmations', subtitle:'Pending confirmations per day', rows:()=>bookings.filter(b=>normalizeStatus(b[8])==='pending'), date:r=>r[9] },
     pendingPay: { title:'Pending Payment Verification Analytics', label:'Pending payments', subtitle:'Pending payment verification records per day', rows:()=>bookings.filter(b=>normalizeStatus(b[7])==='pending'), date:r=>r[9] },
-    enq:        { title:'Extended Booking Enquiries Analytics', label:'Enquiries', subtitle:'Enquiries received per day', rows:()=>enquiries, date:r=>r[8] },
+    enq:        { title:'Extended Booking Enquiries Analytics', label:'Enquiries', subtitle:'Enquiries received per day', rows:()=>liveEnquiries, date:r=>isoDay(r.createdAt) },
     completed:  { title:'Completed Bookings Analytics', label:'Completed bookings', subtitle:'Completed bookings per day', rows:()=>bookings.filter(b=>normalizeStatus(b[8])==='confirmed'), date:r=>r[9] },
     cancelled:  { title:'Cancelled Bookings Analytics', label:'Cancelled bookings', subtitle:'Cancelled bookings per day', rows:()=>bookings.filter(b=>normalizeStatus(b[8])==='cancelled'), date:r=>r[9] },
     customers:  { title:'Total Customers Analytics', label:'Customers', subtitle:'Unique booking customers per day', rows:()=>customerHistory.hourly.concat(customerHistory.extended), date:r=>r[2], uniqueByDay:true },
@@ -2703,9 +2773,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   }
   function paymentAnalyticsDate(payment, metricKey){
     if(metricKey === 'pendingPay') return isoDay(payment.createdAt);
-    const bookingDate = payment.bookingData && (payment.bookingData.date || payment.bookingData.dateLabel);
-    if(/^\d{4}-\d{2}-\d{2}$/.test(String(bookingDate || '').slice(0, 10))) return String(bookingDate).slice(0, 10);
-    return isoDay(payment.paidAt || payment.createdAt);
+    return isoDay(payment.createdAt || payment.paidAt);
   }
   function paymentAnalyticsPoints(start, end, metricKey){
     const map = {};
@@ -2963,7 +3031,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     if(list.length){
       document.getElementById('calDetailBody').innerHTML =
         '<div class="table-wrap cal-detail-table-wrap"><table>' +
-        '<thead><tr><th>Customer</th><th>Mobile</th><th>Date</th><th>Slot</th><th>Time</th><th>Duration</th><th>Amount</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>' +
+        '<thead><tr><th>Customer</th><th>Booked on</th><th>Mobile</th><th>Play Date</th><th>Slot</th><th>Time</th><th>Duration</th><th>Amount</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>' +
         '<tbody>' + list.map(function(b){
           var slotRows = Array.isArray(b.slots) && b.slots.length ? b.slots : [{start: b.time || '—', end: '', hours: b.duration || 0}];
           var slotHtml = slotRows.map(function(slot, index){ return '<div>Slot ' + (index + 1) + '</div>'; }).join('');
@@ -2972,8 +3040,10 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
           var paymentStatus = effectiveCalendarPaymentStatus(b);
           var paymentClass = paymentStatus === 'PAID' ? 'verified' : paymentStatus === 'CANCELLED' ? 'cancelled' : 'pending';
           var paymentText = paymentStatusLabels[paymentStatus] || escapeBookingHtml(paymentStatus);
+          var bookedOnValue = formatDateDDMMYYYY(b.createdAt || b.createdAtDate || b.date || dateKey);
           return '<tr>' +
             '<td>' + escapeBookingHtml(b.name || b.customerName || '—') + '</td>' +
+            '<td>' + escapeBookingHtml(bookedOnValue) + '</td>' +
             '<td class="mono">' + escapeBookingHtml(b.mobile) + '</td>' +
             '<td>' + escapeBookingHtml(b.date) + '</td>' +
             '<td>' + slotHtml + '</td>' +
@@ -3013,7 +3083,11 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load calendar bookings.'));
       if(requestId !== calendarRequestId) return;
       bookingsByDate = {};
-      (data.bookings || []).forEach(function(booking){ (bookingsByDate[booking.date] = bookingsByDate[booking.date] || []).push(booking); });
+      (data.bookings || []).forEach(function(booking){
+        var bookedOnKey = booking.createdAt ? new Date(booking.createdAt).toISOString().slice(0, 10) : (booking.date || '');
+        if(!bookedOnKey) return;
+        (bookingsByDate[bookedOnKey] = bookingsByDate[bookedOnKey] || []).push(booking);
+      });
     } catch(error) {
       if(requestId !== calendarRequestId) return;
       calGrid.innerHTML = '<div class="cal-empty">' + escapeBookingHtml(error.message) + '</div>';
