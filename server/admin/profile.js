@@ -1,10 +1,11 @@
 import bcrypt from 'bcryptjs'
 import crypto from 'node:crypto'
 import { getDb } from '../_lib/mongodb.js'
+import { parseAdminSessionToken } from '../_lib/cookies.js'
 import { PASSWORD_MIN_LENGTH } from '../_lib/security.js'
 
 function sessionToken(req) {
-  return req.headers.cookie?.match(/(?:^|; )turfon24_admin_session=([^;]+)/)?.[1]
+  return parseAdminSessionToken(req)
 }
 
 async function currentAdmin(req, db) {

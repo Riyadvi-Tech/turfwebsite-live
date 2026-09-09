@@ -1,11 +1,12 @@
 import crypto from 'node:crypto'
 import { ObjectId } from 'mongodb'
 import { getDb } from '../_lib/mongodb.js'
+import { parseAdminSessionToken } from '../_lib/cookies.js'
 
 const SORT_FIELDS = new Set(['createdAt', 'updatedAt', 'totalBookings', 'totalSpent', 'mobile'])
 
 function sessionToken(req) {
-  return req.headers.cookie?.match(/(?:^|; )turfon24_admin_session=([^;]+)/)?.[1]
+  return parseAdminSessionToken(req)
 }
 
 async function requireAdmin(req, db) {
@@ -62,6 +63,11 @@ function safeCustomer(customer, includeHistory = true) {
       time: booking.time || null,
       duration: booking.duration || 0,
       amount: Number(booking.amount || 0),
+      slots: Array.isArray(booking.slots) ? booking.slots.map((slot) => ({
+        start: slot.start || null,
+        end: slot.end || null,
+        hours: Number(slot.hours || 0),
+      })) : [],
       status: booking.bookingStatus || null,
     }))
     result.extendedHistory = (customer.extendedHistory || []).map((enquiry) => ({
@@ -113,6 +119,11 @@ function hourlyOnlyCustomer(bookings) {
       time: booking.time || null,
       duration: booking.duration || 0,
       amount: Number(booking.amount || 0),
+      slots: Array.isArray(booking.slots) ? booking.slots.map((slot) => ({
+        start: slot.start || null,
+        end: slot.end || null,
+        hours: Number(slot.hours || 0),
+      })) : [],
       bookingStatus: booking.bookingStatus || null,
       name: booking.name || booking.customerName || null,
     })),
@@ -138,7 +149,7 @@ async function withHistory(collection, filter, sort, page, limit) {
           { $match: { $expr: { $eq: ['$mobile', '$$mobile'] } } },
           { $sort: { createdAt: -1, _id: -1 } },
           { $limit: 50 },
-          { $project: { _id: 0, date: 1, time: 1, duration: 1, amount: 1, bookingStatus: 1, name: 1, customerName: 1 } },
+          { $project: { _id: 0, date: 1, time: 1, duration: 1, amount: 1, slots: 1, bookingStatus: 1, name: 1, customerName: 1 } },
         ],
         as: 'hourlyHistory',
       },
@@ -192,7 +203,7 @@ export default async function handler(req, res) {
       collection.countDocuments(filter),
       withHistory(collection, filter, sort, page, limit),
       db.collection('extended_enquiries').find({}, { projection: { _id: 0, mobile: 1, name: 1, startDate: 1, endDate: 1, preferredTime: 1, status: 1, requirements: 1, message: 1, summary: 1, createdAt: 1, updatedAt: 1 } }).sort({ createdAt: -1, _id: -1 }).limit(500).toArray(),
-      db.collection('bookings').find({}, { projection: { _id: 0, mobile: 1, name: 1, customerName: 1, date: 1, time: 1, duration: 1, amount: 1, bookingStatus: 1, createdAt: 1, updatedAt: 1 } }).sort({ createdAt: -1, _id: -1 }).limit(500).toArray(),
+      db.collection('bookings').find({}, { projection: { _id: 0, mobile: 1, name: 1, customerName: 1, date: 1, time: 1, duration: 1, amount: 1, slots: 1, bookingStatus: 1, createdAt: 1, updatedAt: 1 } }).sort({ createdAt: -1, _id: -1 }).limit(500).toArray(),
     ])
 
     const customerMobiles = new Set(customers.map((customer) => String(customer.mobile || '')))

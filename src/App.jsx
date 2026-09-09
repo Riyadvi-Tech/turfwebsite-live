@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import QRCode from 'qrcode'
 import taglineLogo from './assets/Tagline.png'
-import Countdown from './components/Countdown'
 import './App.css'
 
 window.renderPaymentQr = (image, status, uri) => QRCode.toDataURL(uri, { width: 320, margin: 2, errorCorrectionLevel: 'M' }).then((dataUrl) => {
@@ -14,11 +13,10 @@ function App() {
   const getRoute = () => {
     const path = window.location.pathname
     if (path.startsWith('/admin')) return 'admin'
-    if (path.startsWith('/countdown')) return 'countdown'
     return 'home'
   }
   const [route, setRoute] = useState(getRoute)
-  const pageTitle = route === 'admin' ? 'TurfOn24 Admin' : (route === 'countdown' ? 'TurfOn24 — Coming Soon' : 'TurfOn24')
+  const pageTitle = 'TurfOn24'
   const adminUrl = `${import.meta.env.BASE_URL}legacy/admin.html`
   const homeUrl = `${import.meta.env.BASE_URL}legacy/index.html`
 
@@ -27,13 +25,6 @@ function App() {
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
   }, [])
-
-  const goHome = () => {
-    if (getRoute() !== 'home') {
-      window.history.pushState(null, '', '/')
-      setRoute('home')
-    }
-  }
 
   useEffect(() => {
     document.title = pageTitle
@@ -111,6 +102,10 @@ function App() {
     }
   }
 
+  const handlePageLoad = (event) => {
+    replaceNavigationLogo(event)
+  }
+
   return (
     <main className="legacy-shell">
       {route === 'admin' ? (
@@ -119,17 +114,15 @@ function App() {
           className="legacy-page"
           src={adminUrl}
           title={pageTitle}
-          onLoad={replaceNavigationLogo}
+          onLoad={handlePageLoad}
         />
-      ) : route === 'countdown' ? (
-        <Countdown onHome={goHome} />
       ) : (
         <iframe
           key={homeUrl}
           className="legacy-page"
           src={homeUrl}
           title={pageTitle}
-          onLoad={replaceNavigationLogo}
+          onLoad={handlePageLoad}
         />
       )}
     </main>

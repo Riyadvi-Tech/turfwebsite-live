@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TurfOn24 — Book Your Turf, Any Hour, Every Day</title>
+<title>TurfOn24</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap">
@@ -37,11 +37,11 @@
   nav.scrolled{background:rgba(6,9,10,0.72); backdrop-filter:blur(16px); border-bottom:1px solid var(--border);}
   .logo{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:20px; display:flex; align-items:center; gap:10px; letter-spacing:-0.02em;}
   .logo img{display:block; width:auto;}
-  nav .official-logo{height:64px; width:auto; display:block;}
+  nav .official-logo{height:96px; width:auto; display:block;}
   footer .official-logo{height:58px; width:auto; display:block;}
   footer .logo{display:flex; flex-direction:row; align-items:center; direction:ltr; transform:rotate(0deg) skew(0deg) scale(1,1) !important; rotate:none; writing-mode:horizontal-tb;}
   footer .logo .official-logo{display:block; width:auto; height:58px; transform:rotate(0deg) skew(0deg) scale(1,1) !important; rotate:none; writing-mode:horizontal-tb; object-fit:contain;}
-  @media(max-width:900px){ nav .official-logo{height:48px;} footer .official-logo{height:44px;} }
+  @media(max-width:900px){ nav .official-logo{height:64px;} footer .official-logo{height:44px;} }
   .logo-mark{width:32px;height:32px;border-radius:9px; background:linear-gradient(135deg,var(--emerald),var(--neon)); display:flex;align-items:center;justify-content:center; box-shadow:0 0 20px rgba(57,255,122,0.35); font-size:16px;}
   .nav-links{display:flex; gap:30px; list-style:none;}
   .nav-links a{color:var(--muted); text-decoration:none; font-size:13px; font-weight:500; position:relative; padding-bottom:4px; transition:color .3s ease;}
@@ -709,6 +709,9 @@
   .otp-inline{display:flex; gap:8px;}
   .otp-inline input{flex:1;}
   .otp-inline .btn{padding:10px 16px; font-size:12.5px; white-space:nowrap;}
+  .booking-shell .otp-inline{flex-direction:column; gap:10px; width:100%;}
+  .booking-shell .otp-inline input{width:100%; min-width:0;}
+  .booking-shell .otp-inline .btn{width:100%; justify-content:center;}
   .otp-status{display:flex; align-items:center; gap:6px; font-size:12px; color:var(--neon); margin-top:8px; font-family:'JetBrains Mono',monospace;}
   .bk-otp-row{display:flex; align-items:center; gap:12px; margin-top:10px;}
   .bk-resend-btn{background:none; border:none; padding:0; color:var(--neon); font-size:12px; font-family:'Inter',sans-serif; font-weight:600; letter-spacing:0.02em; cursor:pointer; transition:opacity .2s ease;}
@@ -990,7 +993,7 @@
     <li><a href="#why">Why Play Here</a></li>
     <li><a href="#experience">Experience</a></li>
     <li><a href="#gallery">Gallery</a></li>
-    <li><a href="#facilities">Facilities</a></li>
+    <li><a href="#comfort">Facilities</a></li>
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -1095,7 +1098,7 @@
     </div>
   </section>
 
-  <!-- FACILITIES -->
+  <!-- FACILITIES (temporarily hidden; alternate facilities showcase is the active route) -->
   <section id="facilities" style="display:none; padding-left:0; padding-right:0;">
     <div class="reveal" style="padding:0 8vw; margin-bottom:42px;">
       <div class="eyebrow">Facilities</div>
@@ -1346,7 +1349,7 @@
   <!-- NEW FACILITIES SHOWCASE -->
   <section id="comfort" class="fn-showcase">
     <div class="fn-header fn-reveal">
-      <div class="eyebrow" style="justify-content:center;">Player Comfort</div>
+      <div class="eyebrow" style="justify-content:center;">Player Facilities</div>
       <h2 class="fn-heading">Everything you need <span class="g">beyond the game</span></h2>
       <p class="fn-sub">From hydration to equipment, we've built the little extras that make every session smoother — so you can focus entirely on play.</p>
     </div>
@@ -2332,6 +2335,9 @@
   let bkCurrentStep = 1;
   let bkPaymentIdempotencyKey = null;
   let bkPaymentIdempotencyFingerprint = '';
+  let bkDraftReference = (window.crypto && window.crypto.randomUUID)
+    ? `BK-${window.crypto.randomUUID().replaceAll('-', '').toUpperCase()}`
+    : `BK-${Date.now()}-${Math.random().toString(36).slice(2).toUpperCase()}`;
 
   // ===== HOURLY BOOKING — MSG91 OTP (scoped to this step only) =====
   let bkOtpVerified = false;
@@ -2402,6 +2408,19 @@
         state: bkState
       })));
     } catch(e){}
+  }
+  function bkSaveDraft(){
+    const data = {
+      name: document.getElementById('bkName')?.value || '',
+      mobile: bkVerifiedMobile || document.getElementById('bkMobile')?.value || '',
+      date: bkState.date ? bkIsoDate(bkState.date) : '',
+      dateLabel: bkState.dateLabel || '',
+      duration: bkTotalHours(),
+      start: bkState.start || '',
+      end: bkState.end || '',
+      slots: bkSlots.map(slot => ({ start: slot.startLabel, end: slot.endLabel, hours: slot.hours })),
+    };
+    fetch('/api/bookings', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ action:'save-draft', draftReference:bkDraftReference, stage:bkCurrentStep, data }) }).catch(() => {});
   }
   function bkClearSession(){
     try { sessionStorage.removeItem(BK_SESSION_KEY); } catch(e){}
@@ -2697,10 +2716,11 @@
     });
     document.getElementById('bkStepsRow').classList.toggle('done-through', n > 1);
     if(n===3 && bkMultiEnabled) bkRenderMultiDurations();
-    if(n===4){ if(bkMultiEnabled) renderMultiSlotArea(); else renderAvailableTimeRanges(); }
+    if(n===4){ bkLoadAvailability().then(()=>{ if(bkMultiEnabled) renderMultiSlotArea(); else renderAvailableTimeRanges(); }); }
     if(n===5) bkFillSummary();
     if(n===6) bkFillPayment();
     bkPersist();
+    bkSaveDraft();
   }
   function bkContinueFromVerification(){
     const name = document.getElementById('bkName').value.trim();
@@ -2720,7 +2740,9 @@
 
   // time slots — 06:00 AM to 11:00 PM hourly; a few pre-booked/unavailable
   const bkTimes = ['12:00 AM','01:00 AM','02:00 AM','03:00 AM','04:00 AM','05:00 AM','06:00 AM','07:00 AM','08:00 AM','09:00 AM','10:00 AM','11:00 AM','12:00 PM','01:00 PM','02:00 PM','03:00 PM','04:00 PM','05:00 PM','06:00 PM','07:00 PM','08:00 PM','09:00 PM','10:00 PM','11:00 PM'];
-  const bkUnavailable = ['09:00 AM','06:00 PM','09:00 PM'];
+  const bkUnavailable = [];
+    let bkBookedSlotKeys = new Set();
+    let bkAvailabilityRequest = 0;
   const bkTimePills = document.getElementById('bkTimePills');
   document.getElementById('bkDurationPills').addEventListener('click', (event)=>{
     const pill = event.target.closest('.pill');
@@ -2753,6 +2775,35 @@
   function bkSlotAvailable(hour){ return !bkUnavailable.includes(bkTimes[hour]); }
   function bkTimeLabel(hour){ return bkTimes[((hour % bkTimes.length) + bkTimes.length) % bkTimes.length]; }
   function bkStartDateTime(hour){ return new Date(bkState.date.getFullYear(), bkState.date.getMonth(), bkState.date.getDate(), hour); }
+    function bkBookedKey(dateTime){
+      const dateKey = `${dateTime.getFullYear()}-${String(dateTime.getMonth() + 1).padStart(2, '0')}-${String(dateTime.getDate()).padStart(2, '0')}`;
+      return `${dateKey}T${String(dateTime.getHours()).padStart(2, '0')}:00`;
+    }
+    function bkRangeBooked(startDateTime, duration){
+      return Array.from({length: duration}, (_, offset)=>{
+        const hour = new Date(startDateTime.getTime() + offset * 60 * 60 * 1000);
+        return bkBookedSlotKeys.has(bkBookedKey(hour));
+      }).some(Boolean);
+    }
+    function bkNormalizeAvailabilityKey(value){
+      const match = /^(\d{4}-\d{2}-\d{2})T(\d{1,2}):(\d{2})/.exec(String(value || ''));
+      if(!match) return null;
+      return `${match[1]}T${String(Number(match[2])).padStart(2, '0')}:${match[3]}`;
+    }
+    async function bkLoadAvailability(){
+      if(!bkState.date) return;
+      const requestId = ++bkAvailabilityRequest;
+      try {
+        const response = await fetch(`/api/bookings?date=${encodeURIComponent(bkIsoDate(bkState.date))}`);
+        const data = await response.json().catch(()=>({}));
+        if(!response.ok) throw new Error(data.message || 'Unable to load slot availability.');
+        if(requestId !== bkAvailabilityRequest) return;
+        bkBookedSlotKeys = new Set((Array.isArray(data.occupiedSlotKeys) ? data.occupiedSlotKeys : []).map(bkNormalizeAvailabilityKey).filter(Boolean));
+      } catch(error) {
+        if(requestId === bkAvailabilityRequest) bkBookedSlotKeys = new Set();
+        console.error(error);
+      }
+    }
   function bkUnavailableIntervals(startDateTime, endDateTime){
     const intervals = [];
     for(let day = new Date(startDateTime); day < endDateTime; day.setDate(day.getDate() + 1)){
@@ -2773,6 +2824,7 @@
       const startDateTime = bkStartDateTime(startHour);
       const endDateTime = new Date(startDateTime.getTime() + duration * 60 * 60 * 1000);
       if (bkState.date.getTime() === today.getTime() && startDateTime <= new Date()) continue;
+      if (bkRangeBooked(startDateTime, duration)) continue;
       if(!bkUnavailableIntervals(startDateTime, endDateTime).length){
         const thisRange = { start: new Date(startDateTime), end: new Date(endDateTime) };
         if(!bkSlotsOverlap(thisRange)) ranges.push(thisRange);
@@ -3190,7 +3242,7 @@
     document.getElementById('bkPayAmt').textContent = 'Preparing…';
     document.getElementById('bkPayTotal').textContent = 'Preparing…';
     try {
-      const bookingRequest = {type:'hourly', name:document.getElementById('bkName').value.trim(), hours:bkTotalHours(), startTime:bkState.start, endTime:bkState.end, duration:bkTotalHours(), date:bkIsoDate(bkState.date), mobile:bkVerifiedMobile, otpAccessToken:bkOtpAccessToken, slots:bkSlots.map(s=>({start:s.startLabel, end:s.endLabel, hours:s.hours}))};
+      const bookingRequest = {type:'hourly', draftReference:bkDraftReference, name:document.getElementById('bkName').value.trim(), hours:bkTotalHours(), startTime:bkState.start, endTime:bkState.end, duration:bkTotalHours(), date:bkIsoDate(bkState.date), mobile:bkVerifiedMobile, otpAccessToken:bkOtpAccessToken, slots:bkSlots.map(s=>({start:s.startLabel, end:s.endLabel, hours:s.hours}))};
       const bookingFingerprint = JSON.stringify(bookingRequest);
       if(!bkPaymentIdempotencyKey || bkPaymentIdempotencyFingerprint !== bookingFingerprint){
         bkPaymentIdempotencyKey = (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID().replaceAll('-', '') : `bk-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -3305,6 +3357,9 @@
     bkOtpAccessToken = null;
     bkPaymentIdempotencyKey = null;
     bkPaymentIdempotencyFingerprint = '';
+    bkDraftReference = (window.crypto && window.crypto.randomUUID)
+      ? `BK-${window.crypto.randomUUID().replaceAll('-', '').toUpperCase()}`
+      : `BK-${Date.now()}-${Math.random().toString(36).slice(2).toUpperCase()}`;
     bkMsg91Busy = false;
     bkOtpResendCount = 0;
     bkClearOtpCooldown();

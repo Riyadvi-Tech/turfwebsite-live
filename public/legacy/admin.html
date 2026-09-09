@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="/logo-assets/LogoWater.png" />
-  <title>TurfOn24 Admin</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/logo-assets/LogoWater.png" />
+  <title>TurfOn24</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -130,7 +130,7 @@
   .nav-item.active{background:rgba(57,255,122,0.1); color:var(--neon);}
   .nav-item.active::before{content:""; position:absolute; left:-12px; top:8px; bottom:8px; width:3px; background:var(--neon); border-radius:0 3px 3px 0; box-shadow:0 0 8px var(--neon);}
   .nav-item svg{flex-shrink:0;}
-  .nav-notice{width:6px; height:6px; margin-left:auto; border-radius:50%; background:var(--neon); box-shadow:0 0 7px var(--neon); flex-shrink:0;}
+  .nav-notice{display:none; width:6px; height:6px; margin-left:auto; border-radius:50%; background:var(--neon); box-shadow:0 0 7px var(--neon); flex-shrink:0;}
   .nav-divider{height:1px; flex-shrink:0; background:var(--border); margin:12px 8px 12px;}
   .side-foot{padding:16px 20px; border-top:1px solid var(--border); display:flex; align-items:center; gap:10px; white-space:nowrap; overflow:hidden;}
   .side-foot .avatar{width:32px;height:32px;border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--emerald)); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;}
@@ -250,6 +250,19 @@
   .row-actions button{width:28px;height:28px;border-radius:7px; border:1px solid var(--border); background:transparent; color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s ease;}
   .row-actions button:hover{border-color:var(--neon); color:var(--neon);}
   .row-actions button.danger:hover{border-color:var(--red); color:var(--red);}
+  #page-bookings .table-wrap{overflow-x:auto; overflow-y:hidden;}
+  #page-bookings table{min-width:1320px;}
+  #page-bookings th:last-child, #page-bookings td:last-child{min-width:112px; padding-right:20px;}
+  #page-bookings .row-actions{min-width:100px; white-space:nowrap;}
+  #page-enquiries .table-wrap{overflow-x:auto; overflow-y:hidden;}
+  #page-enquiries table{min-width:1460px;}
+  #page-enquiries th:last-child, #page-enquiries td:last-child{min-width:104px; padding-right:20px;}
+  #page-enquiries td:nth-child(10){max-width:260px; white-space:normal;}
+  #page-enquiries .row-actions{min-width:90px; white-space:nowrap;}
+  #page-payments .table-wrap{overflow-x:auto; overflow-y:hidden;}
+  #page-payments table{min-width:1040px;}
+  #page-payments th:last-child, #page-payments td:last-child{min-width:98px; padding-right:20px;}
+  #page-payments .row-actions{min-width:40px; white-space:nowrap;}
   /* Reduced table footer text */
   .table-foot{display:flex; justify-content:space-between; align-items:center; padding:14px 18px; font-size:11.5px; color:var(--muted); border-top:1px solid var(--border);}
 
@@ -287,6 +300,8 @@
   .cal-cell.has-bookings{border-color:var(--neon); cursor:pointer;}
   .cal-cell.has-bookings:hover{background:rgba(57,255,122,0.06);}
   .cal-details{margin-top:4px;}
+  .cal-detail-table-wrap{overflow-x:auto; overflow-y:hidden;}
+  .cal-detail-table-wrap table{min-width:1180px;}
   .cal-details-head{display:flex; align-items:center; gap:14px; margin-bottom:16px; flex-wrap:wrap;}
   .cal-details-head h3{flex:1 1 auto; margin:0; font-size:18px;}
   .cal-back{display:inline-flex; align-items:center; gap:6px; background:transparent; border:1px solid var(--border); border-radius:9px; color:var(--white); padding:8px 14px; font-size:12px; font-family:'Inter',sans-serif; font-weight:600; cursor:pointer; transition:border-color .2s ease, color .2s ease; white-space:nowrap;}
@@ -492,9 +507,7 @@
 </style>
 </head>
 <body>
-
 <canvas id="gridCanvas"></canvas>
-
 <!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-visual">
@@ -585,11 +598,11 @@
           <div class="notification-panel" id="notificationPanel" role="dialog" aria-label="Notifications">
             <div class="notification-head"><h3>Notifications</h3><button type="button" onclick="markAllNotificationsRead()">Mark all read</button></div>
             <div class="notification-list">
-              <div class="notification-item unread" data-notification-type="booking" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span><span class="notification-copy"><strong>Hourly booking</strong><span>New booking from Rahul for 2 hours today at 7:00 PM.</span><span class="notification-time">2 min ago</span></span><span class="notification-dot"></span></div>
-              <div class="notification-item unread" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg></span><span class="notification-copy"><strong>Extended booking</strong><span>Tournament enquiry received for a weekend booking.</span><span class="notification-time">18 min ago</span></span><span class="notification-dot"></span></div>
-              <div class="notification-item unread" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg></span><span class="notification-copy"><strong>WhatsApp enquiry</strong><span>New availability question from Priya on WhatsApp.</span><span class="notification-time">32 min ago</span></span><span class="notification-dot"></span></div>
+              <div class="notification-item" data-notification-type="booking" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span><span class="notification-copy"><strong>Hourly booking</strong><span>New booking from Rahul for 2 hours today at 7:00 PM.</span><span class="notification-time">2 min ago</span></span><span class="notification-dot"></span></div>
+              <div class="notification-item" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg></span><span class="notification-copy"><strong>Extended booking</strong><span>Tournament enquiry received for a weekend booking.</span><span class="notification-time">18 min ago</span></span><span class="notification-dot"></span></div>
+              <div class="notification-item" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg></span><span class="notification-copy"><strong>WhatsApp enquiry</strong><span>New availability question from Priya on WhatsApp.</span><span class="notification-time">32 min ago</span></span><span class="notification-dot"></span></div>
               <div class="notification-item" data-notification-type="chat" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg></span><span class="notification-copy"><strong>AI chat</strong><span>A visitor asked about today's available time slots.</span><span class="notification-time">45 min ago</span></span><span class="notification-dot"></span></div>
-              <div class="notification-item unread" data-notification-type="booking" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span><span class="notification-copy"><strong>Payment verified</strong><span>Payment of ₹2,100 verified against booking #BK1040.</span><span class="notification-time">1 hr ago</span></span><span class="notification-dot"></span></div>
+              <div class="notification-item" data-notification-type="booking" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span><span class="notification-copy"><strong>Payment verified</strong><span>Payment of ₹2,100 verified against booking #BK1040.</span><span class="notification-time">1 hr ago</span></span><span class="notification-dot"></span></div>
               <div class="notification-item" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6m0-6-6 6"/></svg></span><span class="notification-copy"><strong>Booking cancelled</strong><span>Booking #BK1039 was cancelled by the customer.</span><span class="notification-time">3 hrs ago</span></span></div>
               <div class="notification-item" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg></span><span class="notification-copy"><strong>WhatsApp enquiry</strong><span>Kabir Nair asked about hosting a corporate tournament.</span><span class="notification-time">7 hrs ago</span></span></div>
               <div class="notification-item" onclick="markNotificationRead(this)"><span class="notification-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg></span><span class="notification-copy"><strong>AI chat</strong><span>Karan Mehta asked about hourly pricing options.</span><span class="notification-time">Yesterday</span></span></div>
@@ -676,14 +689,14 @@
     <div class="page" id="page-bookings">
       <div class="toolbar">
         <input id="bookingSearch" type="text" placeholder="Search by name, mobile, booking ID...">
-        <div class="filt-pill sel today-filter" aria-label="Showing today">Today</div><span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input id="bookingDate" class="date-filter" type="text" readonly aria-label="Choose booking date" title="Choose booking date"><input id="bookingDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
-        <div class="booking-status-filters"><div class="filt-pill" data-booking-status="all">All</div><div class="filt-pill" data-booking-status="pending">Pending</div><div class="filt-pill" data-booking-status="confirmed">Confirmed</div><div class="filt-pill" data-booking-status="cancelled">Cancelled</div></div>
+        <div class="filt-pill today-filter" aria-label="Showing today">Today</div><span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input id="bookingDate" class="date-filter" type="text" readonly aria-label="Choose booking date" title="Choose booking date"><input id="bookingDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
+        <div class="booking-status-filters"><div class="filt-pill sel" data-booking-status="all">All</div><div class="filt-pill" data-booking-status="pending">Pending</div><div class="filt-pill" data-booking-status="confirmed">Confirmed</div><div class="filt-pill" data-booking-status="completed">Completed</div><div class="filt-pill" data-booking-status="cancelled">Cancelled</div></div>
         <div class="spacer"></div>
         <button class="btn btn-ghost" id="bookingExport"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Booking ID</th><th>Customer</th><th>Mobile</th><th>Date</th><th>Time</th><th>Duration</th><th>Amount</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Booking ID</th><th>Customer</th><th>Mobile</th><th>Booking Date</th><th>Date</th><th>Slot</th><th>Time</th><th>Duration</th><th>Amount</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="bookingsBody"></tbody>
         </table>
         <div class="table-foot"><span>Showing all bookings</span></div>
@@ -704,13 +717,13 @@
       </div>
       <div class="toolbar">
         <input id="paymentSearch" type="text" placeholder="Search by name, mobile, booking ID...">
-        <div class="filt-pill sel" data-payment-status="all">All</div><div class="filt-pill" data-payment-status="payment_pending">Pending</div><div class="filt-pill" data-payment-status="paid">Paid / Verified</div><div class="filt-pill" data-payment-status="expired">Expired</div><div class="filt-pill" data-payment-status="failed">Failed</div>
+        <div class="filt-pill payment-today-filter" aria-label="Showing today">Today</div><div class="filt-pill sel" data-payment-status="all">All</div><div class="filt-pill" data-payment-status="payment_pending">Pending</div><div class="filt-pill" data-payment-status="paid">Paid / Verified</div><div class="filt-pill" data-payment-status="cancelled">Cancelled</div>
         <div class="spacer"></div>
         <button class="btn btn-ghost" id="paymentExport"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Download CSV</button>
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Booking ID</th><th>Customer</th><th>Mobile</th><th>Booking type</th><th>Booking date</th><th>Payment time</th><th>Amount received</th><th>Payment status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Booking ID</th><th>Customer</th><th>Mobile</th><th>Booking Date</th><th>Date</th><th>Payment time</th><th>Amount received</th><th>Payment status</th><th>Actions</th></tr></thead>
           <tbody id="paymentsBody"></tbody>
         </table>
         <div class="table-foot"><span id="paymentsFoot">Showing today&rsquo;s received payments</span></div>
@@ -721,13 +734,13 @@
     <div class="page" id="page-enquiries">
       <div class="toolbar">
         <input id="enquirySearch" type="text" placeholder="Search by name, mobile, booking ID...">
-        <div class="filt-pill sel today-filter" aria-label="Showing today">Today</div><span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input id="enquiryDate" class="date-filter" type="text" readonly aria-label="Choose enquiry date" title="Choose enquiry date"><input id="enquiryDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
-        <div class="filt-pill" data-enquiry-status="all">All</div><div class="filt-pill" data-enquiry-status="new">New</div><div class="filt-pill" data-enquiry-status="contacted">Contacted</div><div class="filt-pill" data-enquiry-status="closed">Closed</div>
+        <div class="filt-pill today-filter" aria-label="Showing today">Today</div><span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input id="enquiryDate" class="date-filter" type="text" readonly aria-label="Choose enquiry date" title="Choose enquiry date"><input id="enquiryDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
+        <div class="filt-pill" data-enquiry-status="all">All</div><div class="filt-pill" data-enquiry-status="new">New</div><div class="filt-pill" data-enquiry-status="contacted">Contacted</div>
         <button class="btn btn-ghost" id="enquiryExport" style="margin-left:auto;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Enquiry ID</th><th>Enquiry Date</th><th>Customer</th><th>Mobile</th><th>Start</th><th>End</th><th>Days</th><th>Preferred</th><th>Message</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Enquiry ID</th><th>Booking request date</th><th>Customer</th><th>Mobile</th><th>Booking Date</th><th>Booking start</th><th>Booking end</th><th>Days</th><th>Preferred</th><th>Message</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="enquiriesBody"></tbody>
         </table>
         <div class="table-foot"><span>Showing all enquiries</span></div>
@@ -746,7 +759,7 @@
       </div>
       <div class="table-wrap">
         <table>
-          <thead id="customerHistoryHead"><tr><th>Customer</th><th>Mobile</th><th>Booking date</th><th>Time</th><th>Duration</th><th>Amount</th></tr></thead>
+          <thead id="customerHistoryHead"><tr><th>Customer</th><th>Mobile</th><th>Booking date</th><th>Time</th><th>Duration</th><th>Amount</th><th>Status</th></tr></thead>
           <tbody id="customerHistoryBody"></tbody>
         </table>
         <div class="table-foot"><span id="customerHistoryCount">Showing hourly booking history</span></div>
@@ -778,13 +791,13 @@
     <div class="page" id="page-whatsapp">
       <div class="toolbar">
         <input type="text" id="whatsappSearch" placeholder="Search by name, mobile...">
-        <div class="filt-pill sel today-filter" aria-label="Showing today">Today</div><span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input class="date-filter" type="text" readonly id="whatsappDate" aria-label="Choose WhatsApp enquiry date" title="Choose WhatsApp enquiry date"><input id="whatsappDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
-        <div class="filt-pill" data-wa-status="all">All</div><div class="filt-pill" data-wa-status="new">New</div><div class="filt-pill" data-wa-status="pending">Contacted</div>
+        <div class="filt-pill today-filter" aria-label="Showing today">Today</div><span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input class="date-filter" type="text" readonly id="whatsappDate" aria-label="Choose WhatsApp enquiry date" title="Choose WhatsApp enquiry date"><input id="whatsappDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
+        <div class="filt-pill" data-wa-status="all">All</div><div class="filt-pill" data-wa-status="new">New</div><div class="filt-pill" data-wa-status="contacted">Contacted</div>
         <button class="btn btn-ghost" id="whatsappExport" style="margin-left:auto;" title="Download WhatsApp enquiries as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Download CSV</button>
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Customer</th><th>Mobile</th><th>Email</th><th>Message</th><th>Received</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Customer</th><th>Mobile</th><th>Email</th><th>Message</th><th>Enquiry date</th><th>Received</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="whatsappBody"></tbody>
         </table>
         <div class="table-foot"><span>Showing all WhatsApp enquiries</span></div>
@@ -795,12 +808,12 @@
     <div class="page" id="page-chatbot">
       <div class="toolbar">
         <input type="text" id="chatSearch" placeholder="Search by name, mobile...">
-        <div class="filt-pill sel today-filter" aria-label="Showing today">Today</div><span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input class="date-filter" type="text" readonly id="chatDate" aria-label="Choose chatbot date" title="Choose chatbot date"><input id="chatDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
-        <div class="filt-pill" data-chat-status="all">All</div><div class="filt-pill" data-chat-status="new">New</div><div class="filt-pill" data-chat-status="resolved">Resolved</div>
+        <div class="filt-pill today-filter" aria-label="Showing today">Today</div><span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input class="date-filter" type="text" readonly id="chatDate" aria-label="Choose chatbot date" title="Choose chatbot date"><input id="chatDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
+        <div class="filt-pill" data-chat-status="all">All</div><div class="filt-pill" data-chat-status="new">New</div><div class="filt-pill" data-chat-status="contacted">Contacted</div>
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Customer</th><th>Mobile</th><th>Email</th><th>Questions asked</th><th>Timestamp</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Customer</th><th>Mobile</th><th>Email</th><th>Questions asked</th><th>Enquiry date</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="chatbotBody"></tbody>
         </table>
         <div class="table-foot"><span>Showing all chatbot conversations</span></div>
@@ -1017,12 +1030,12 @@
   }
   restoreAdminSession().catch(() => {});
   verifyResetToken().catch(() => {});
-  // ---- date-filter display state (shown as dd-mm-yyyy) ----
+  // ---- date-filter display state (shown as dd/mm/yyyy) ----
   function formatDisplayDate(value){
-    if(!value) return 'dd-mm-yyyy';
+    if(!value) return 'dd/mm/yyyy';
     const parts = value.split('-');
     if(parts.length !== 3) return value;
-    return parts[2] + '-' + parts[1] + '-' + parts[0];
+    return parts[2] + '/' + parts[1] + '/' + parts[0];
   }
   function syncDateDisplay(){
     document.querySelectorAll('.date-wrap').forEach(wrap=>{
@@ -1198,17 +1211,28 @@
   }
   applyProfilePicture(PROFILE_PICTURE_SOURCE);
   loadAdminProfile();
+  function openAdminPage(page, cardMode = null){
+    const target = document.getElementById('page-' + page);
+    if(!target) return;
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.page === page));
+    document.querySelectorAll('.page').forEach(item => item.classList.toggle('active', item === target));
+    document.getElementById('pageTitle').textContent = pageTitles[page] || page;
+    if(page === 'bookings') markSectionNotificationsRead('booking');
+    if(page === 'chatbot') {
+      markSectionNotificationsRead('chat');
+      loadAdminChatbot();
+    }
+    if(cardMode) applyDashboardCardFilterPills(cardMode.metric, cardMode.page);
+    else restorePageFilters(page);
+    if(window.innerWidth <= 1000) closeMobileSidebar();
+  }
   document.querySelectorAll('.nav-item[data-page]').forEach(item=>{
-    item.addEventListener('click', ()=>{
-      document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-      item.classList.add('active');
+    item.addEventListener('click', event=>{
+      event.preventDefault();
       const p = item.dataset.page;
-      if(p === 'bookings') markSectionNotificationsRead('booking');
-      if(p === 'chatbot') markSectionNotificationsRead('chat');
-      document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('active'));
-      document.getElementById('page-'+p).classList.add('active');
-      document.getElementById('pageTitle').textContent = pageTitles[p];
-      if(window.innerWidth <= 1000) closeMobileSidebar();
+      const cardMode = dashboardCardFilterContext && dashboardCardFilterContext.page === p ? dashboardCardFilterContext : null;
+      dashboardCardFilterContext = null;
+      openAdminPage(p, cardMode);
     });
   });
   function toggleSidebar(){
@@ -1249,7 +1273,6 @@
   }
   function markSectionNotificationsRead(type){
     document.querySelectorAll(`.notification-item.unread[data-notification-type="${type}"]`).forEach(item=>item.classList.remove('unread'));
-    if(type === 'chat') markChatbotNoticeRead();
     syncSectionNotice(type);
     syncNotificationBadge();
   }
@@ -1269,33 +1292,12 @@
   }
   window.addEventListener('new-booking', ()=>notifyNew('booking'));
   window.addEventListener('new-chat-message', ()=>notifyNew('chat'));
-  function setChatbotNotice(hasNew){
-    const dot = document.querySelector('.nav-item[data-page="chatbot"] .nav-notice');
-    if(dot) dot.style.display = hasNew ? 'block' : 'none';
-  }
-  function markChatbotNoticeRead(){
-    const seen = JSON.parse(localStorage.getItem('turfon24-seen-chatbot-conversations') || '[]');
-    const ids = Array.isArray(liveChatbot) ? liveChatbot.map(conversation => conversation._id).filter(Boolean) : [];
-    localStorage.setItem('turfon24-seen-chatbot-conversations', JSON.stringify([...new Set([...seen, ...ids])].slice(-500)));
-    setChatbotNotice(false);
-  }
-  async function refreshChatbotNotice(){
-    try {
-      const response = await fetch('/api/admin/chatbot-conversations', {credentials:'include'});
-      if(!response.ok) return;
-      const data = await response.json().catch(()=>({}));
-      const seen = JSON.parse(localStorage.getItem('turfon24-seen-chatbot-conversations') || '[]');
-      const hasNew = Array.isArray(data.conversations) && data.conversations.some(conversation => normalizeStatus(conversation.status) === 'new' && !seen.includes(conversation._id));
-      setChatbotNotice(hasNew);
-    } catch(error) {}
-  }
   syncSectionNotice('booking');
   syncSectionNotice('chat');
-  refreshChatbotNotice();
-  setInterval(refreshChatbotNotice, 30000);
   function syncNotificationBadge(){
     const hasUnread = document.querySelector('.notification-item.unread');
-    document.querySelector('#notificationBtn .dot-badge').style.display = hasUnread ? 'block' : 'none';
+    const badge = document.querySelector('#notificationBtn .dot-badge');
+    if(badge) badge.style.display = hasUnread ? 'block' : 'none';
   }
   document.addEventListener('click', e=>{
     const wrap = document.getElementById('notificationWrap');
@@ -1328,17 +1330,9 @@
   });
 
   // ---- bookings table ----
-  const bookings = [
-    ['BK1042','Rahul Verma','98765 43210','Aug 27','07:00 AM','2 hrs','₹1,400','verified','confirmed','2026-08-27'],
-    ['BK1041','Sana Sheikh','91234 56780','Aug 27','06:00 PM','1 hr','₹800','pending','pending','2026-08-27'],
-    ['BK1040','Aditya Rao','99887 66554','Aug 26','08:00 PM','3 hrs','₹2,100','verified','confirmed','2026-08-26'],
-    ['BK1039','Priya Nair','90011 22334','Aug 26','07:00 PM','2 hrs','₹1,400','pending','cancelled','2026-08-26'],
-    ['BK1038','Karan Mehta','98123 45670','Aug 25','06:00 AM','1 hr','₹800','verified','confirmed','2026-08-25'],
-    ['BK1037','Neha Joshi','97865 43120','Aug 25','09:00 PM','2 hrs','₹1,400','pending','pending','2026-08-25'],
-    ['BK1036','Vikram Singh','96543 21098','Aug 24','07:00 PM','4 hrs','₹2,800','verified','confirmed','2026-08-24'],
-    ['BK1035','Ayesha Khan','95432 10987','Aug 24','06:00 PM','1 hr','₹800','verified','confirmed','2026-08-24'],
-  ];
-  (function(){
+  const bookings = [];
+  /* Sample booking generation removed; analytics use live API data. */
+  /* (function(){
     var pool=[
       ['Rohan Patel','87654 32109'],['Meera Iyer','76543 21098'],['Arjun Singh','65432 10987'],
       ['Zara Khan','54321 09876'],['Dev Sharma','43210 98765'],['Anya Reddy','32109 87654'],
@@ -1386,7 +1380,7 @@
         }
       });
     });
-  })();
+  })(); */
   const pstatusLbl = {verified:'Verified', pending:'Pending'};
   const paymentsReceived = bookings.filter(b => b[7] === 'verified').reduce((sum, b) => sum + Number(String(b[6]).replace(/[₹,]/g, '')), 0);
   // ---- stat cards ----
@@ -1569,10 +1563,7 @@
       const el = document.createElement('div');
       el.className = 'stat-card';
       el.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:flex-start;"><div class="ic">${statIcons[icon]}</div><span style="font-size:10.5px; font-weight:600; color:#39FF7A;">Live</span></div><div class="num" data-target="${value}" data-currency="${currency ? '1' : '0'}">${currency ? '₹0' : '0'}</div><div style="display:flex; justify-content:space-between; align-items:flex-end; gap:8px;"><div class="lbl">${label}</div><div style="flex-shrink:0;">${sparkline([0,0,0,0,0,0,value], true)}</div></div>`;
-      el.addEventListener('click', ()=>{
-        const nav = document.querySelector(`.nav-item[data-page="${page}"]`);
-        if(nav) nav.click();
-      });
+      el.addEventListener('click', ()=>navigateDashboardCard(metric, page));
       statGrid.appendChild(el);
     });
     statGrid.querySelectorAll('.stat-card .num').forEach(el=>{
@@ -1589,7 +1580,7 @@
 
     const activity = Array.isArray(data.recentActivity) ? data.recentActivity : [];
     document.getElementById('activityList').innerHTML = activity.length
-      ? activity.map(item=>`<div class="activity-row"><span class="adot"></span>${escapePaymentHtml(item.text)}<span class="atime">${escapePaymentHtml(item.createdAt ? new Date(item.createdAt).toLocaleString() : '—')}</span></div>`).join('')
+      ? activity.map(item=>`<div class="activity-row"><span class="adot"></span>${escapePaymentHtml(item.text)}<span class="atime">${escapePaymentHtml(formatDateDDMMYYYY(item.createdAt))}</span></div>`).join('')
       : '<div class="tbl-empty">No recent activity</div>';
     const latest = Array.isArray(data.recentBookings) ? data.recentBookings[0] : null;
     if(latest){
@@ -1597,6 +1588,143 @@
     } else {
       document.getElementById('venueStatusSub').textContent = 'No recent bookings';
     }
+  }
+
+  function restorePageFilters(page){
+    if(page === 'bookings'){
+      document.querySelectorAll('#page-bookings [data-booking-status]').forEach(item => { item.style.display = ''; item.classList.remove('sel'); });
+      const allButton = document.querySelector('#page-bookings [data-booking-status="all"]');
+      if(allButton) allButton.classList.add('sel');
+      return;
+    }
+    if(page === 'payments'){
+      document.querySelectorAll('#page-payments [data-payment-status]').forEach(item => { item.style.display = ''; item.classList.remove('sel'); });
+      const allButton = document.querySelector('#page-payments [data-payment-status="all"]');
+      if(allButton) allButton.classList.add('sel');
+      return;
+    }
+    if(page === 'enquiries'){
+      document.querySelectorAll('#page-enquiries [data-enquiry-status]').forEach(item => { item.style.display = ''; item.classList.remove('sel'); });
+      const allButton = document.querySelector('#page-enquiries [data-enquiry-status="all"]');
+      if(allButton) allButton.classList.add('sel');
+      return;
+    }
+    if(page === 'whatsapp'){
+      document.querySelectorAll('#page-whatsapp [data-wa-status]').forEach(item => { item.style.display = ''; item.classList.remove('sel'); });
+      const allButton = document.querySelector('#page-whatsapp [data-wa-status="all"]');
+      if(allButton) allButton.classList.add('sel');
+      return;
+    }
+    if(page === 'chatbot'){
+      document.querySelectorAll('#page-chatbot [data-chat-status]').forEach(item => { item.style.display = ''; item.classList.remove('sel'); });
+      const allButton = document.querySelector('#page-chatbot [data-chat-status="all"]');
+      if(allButton) allButton.classList.add('sel');
+    }
+  }
+
+  function applyDashboardCardFilterPills(metric, page){
+    if(page === 'bookings'){
+      const visible = ['all'];
+      const selectedStatus = {
+        pendingConf: 'pending',
+        completed: 'completed',
+        cancelled: 'cancelled',
+        today: 'all',
+        total: 'all',
+      }[metric] || 'all';
+      if(metric === 'pendingConf' || metric === 'completed' || metric === 'cancelled') visible.push(selectedStatus);
+      document.querySelectorAll('#page-bookings [data-booking-status]').forEach(item => {
+        const status = item.dataset.bookingStatus;
+        item.style.display = visible.includes(status) ? '' : 'none';
+        item.classList.toggle('sel', status === selectedStatus);
+      });
+      const todayButton = document.querySelector('#page-bookings .today-filter');
+      if(todayButton) todayButton.classList.toggle('sel', bookingDateMode === 'today');
+      return;
+    }
+    if(page === 'payments'){
+      const visible = ['all'];
+      const selectedStatus = {
+        paid: 'paid',
+        pendingPay: 'payment_pending',
+      }[metric] || 'all';
+      if(selectedStatus !== 'all') visible.push(selectedStatus);
+      document.querySelectorAll('#page-payments [data-payment-status]').forEach(item => {
+        const status = item.dataset.paymentStatus;
+        item.style.display = visible.includes(status) ? '' : 'none';
+        item.classList.toggle('sel', status === selectedStatus);
+      });
+      const todayButton = document.querySelector('#page-payments .payment-today-filter');
+      if(todayButton) todayButton.classList.toggle('sel', paymentDateMode === 'today');
+      return;
+    }
+    if(page === 'enquiries'){
+      document.querySelectorAll('#page-enquiries [data-enquiry-status]').forEach(item => {
+        item.style.display = item.dataset.enquiryStatus === 'all' ? '' : 'none';
+      });
+      const allButton = document.querySelector('#page-enquiries [data-enquiry-status="all"]');
+      if(allButton) allButton.classList.add('sel');
+      return;
+    }
+    if(page === 'whatsapp'){
+      document.querySelectorAll('#page-whatsapp [data-wa-status]').forEach(item => {
+        item.style.display = item.dataset.waStatus === 'all' ? '' : 'none';
+      });
+      const allButton = document.querySelector('#page-whatsapp [data-wa-status="all"]');
+      if(allButton) allButton.classList.add('sel');
+      return;
+    }
+    if(page === 'chatbot'){
+      document.querySelectorAll('#page-chatbot [data-chat-status]').forEach(item => {
+        item.style.display = item.dataset.chatStatus === 'all' ? '' : 'none';
+      });
+      const allButton = document.querySelector('#page-chatbot [data-chat-status="all"]');
+      if(allButton) allButton.classList.add('sel');
+    }
+  }
+
+  function navigateDashboardCard(metric, page){
+    dashboardCardFilterContext = {metric, page};
+    if(page === 'bookings'){
+      bookingStatus = metric === 'pendingConf' ? 'PENDING' : metric === 'completed' ? 'COMPLETED' : metric === 'cancelled' ? 'CANCELLED' : 'ALL';
+      bookingDateMode = metric === 'today' ? 'today' : 'all';
+      document.getElementById('bookingDate').value = '';
+      const nav = document.querySelector('.nav-item[data-page="bookings"]');
+      if(nav) nav.click();
+      loadAdminBookings();
+      return;
+    }
+    if(page === 'payments'){
+      paymentStatus = metric === 'paid' ? 'paid' : metric === 'pendingPay' ? 'payment_pending' : 'all';
+      paymentDateMode = 'all';
+      const nav = document.querySelector('.nav-item[data-page="payments"]');
+      if(nav) nav.click();
+      renderPayments();
+      return;
+    }
+    if(page === 'enquiries'){
+      enquiryStatus = 'all'; enquiryDateMode = 'all';
+      const nav = document.querySelector('.nav-item[data-page="enquiries"]');
+      if(nav) nav.click();
+      loadAdminEnquiries();
+      return;
+    }
+    if(page === 'whatsapp'){
+      waStatus = 'all'; waDateMode = 'all';
+      const nav = document.querySelector('.nav-item[data-page="whatsapp"]');
+      if(nav) nav.click();
+      loadAdminWhatsApp();
+      return;
+    }
+    if(page === 'chatbot'){
+      chatStatus = 'all'; chatDateMode = 'all';
+      const nav = document.querySelector('.nav-item[data-page="chatbot"]');
+      if(nav) nav.click();
+      loadAdminChatbot();
+      return;
+    }
+    const nav = document.querySelector(`.nav-item[data-page="${page}"]`);
+    if(nav) nav.click();
   }
 
   async function loadDashboardSummary(){
@@ -1632,7 +1760,7 @@
   document.getElementById('activityList').innerHTML = '<div class="tbl-empty">Loading dashboard...</div>';
 
   const bstatusLbl = {confirmed:'Confirmed', pending:'Pending', cancelled:'Cancelled'};
-  document.getElementById('bookingsBody').innerHTML = '<tr><td colspan="10" class="tbl-empty">Loading bookings...</td></tr>';
+  document.getElementById('bookingsBody').innerHTML = '<tr><td colspan="12" class="tbl-empty">Loading bookings...</td></tr>';
   function openBookingDetail(bookingId){ loadBookingDetail(bookingId); }
 
   // ---- enquiries table ----
@@ -1654,13 +1782,32 @@
     ['EQ190','Aakash Jain','90400 22331','Jun 14','Jun 15','2','Evening','Confirmed','2026-06-14','2026-06-15'],
   ];
   const enqBadge = {'New':'verified','Contacted':'pending','Quotation Sent':'pending','Confirmed':'confirmed','Closed':'cancelled'};
-  document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="10" class="tbl-empty">Loading enquiries...</td></tr>';
+document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class="tbl-empty">Loading enquiries...</td></tr>';
 
   // ---- WhatsApp enquiries table ----
   let waStatus = 'all';
-  let waDateMode = 'today';
+  let waDateMode = 'all';
   let liveWhatsApp = [];
   function escapeWhatsAppHtml(value){ return String(value ?? '—').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])); }
+  function canonicalEnquiryStatus(value){
+    const normalized = normalizeStatus(value);
+    return normalized === 'old' ? 'contacted' : normalized || 'new';
+  }
+  function displayEnquiryStatus(value){
+    const text = String(value || '—').replaceAll('_', ' ');
+    if(text === '—') return text;
+    const normalized = canonicalEnquiryStatus(text);
+    if(normalized === 'new') return 'New';
+    if(normalized === 'contacted') return 'Contacted';
+    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  }
+  function statusBadgeClass(status){
+    const normalized = canonicalEnquiryStatus(status);
+    if(normalized === 'new') return 'confirmed';
+    if(normalized === 'contacted') return 'pending';
+    if(normalized === 'closed' || normalized === 'cancelled') return 'cancelled';
+    return 'confirmed';
+  }
   function waRows(){
     const search = document.getElementById('whatsappSearch').value.trim().toLowerCase();
     const selectedDate = document.getElementById('whatsappDate').value;
@@ -1677,10 +1824,19 @@
   }
   function renderWhatsApp(message){
     const rows = waRows();
-    document.getElementById('whatsappBody').innerHTML = rows.length ? rows.map(enquiry=>`<tr><td>${escapeWhatsAppHtml(enquiry.name)}</td><td class="mono">${escapeWhatsAppHtml(enquiry.mobile)}</td><td>${escapeWhatsAppHtml(enquiry.email)}</td><td style="white-space:normal; max-width:240px;">${escapeWhatsAppHtml(enquiry.message)}</td><td>${escapeWhatsAppHtml(enquiry.createdAt ? new Date(enquiry.createdAt).toLocaleString() : '—')}</td><td><span class="badge ${normalizeStatus(enquiry.status) === 'new' ? 'pending' : 'confirmed'}">${escapeWhatsAppHtml(enquiry.status)}</span></td><td>—</td></tr>`).join('') : `<tr><td colspan="7" class="tbl-empty">${escapeWhatsAppHtml(message || 'No WhatsApp enquiries found')}</td></tr>`;
+    document.getElementById('whatsappBody').innerHTML = rows.length ? rows.map(enquiry=>`<tr><td>${escapeWhatsAppHtml(enquiry.name)}</td><td class="mono">${escapeWhatsAppHtml(enquiry.mobile)}</td><td>${escapeWhatsAppHtml(enquiry.email)}</td><td style="white-space:normal; max-width:240px;">${escapeWhatsAppHtml(enquiry.message)}</td><td>${escapeWhatsAppHtml(formatDateDDMMYYYY(enquiry.createdAt))}</td><td>${escapeWhatsAppHtml(formatDateDDMMYYYY(enquiry.createdAt))}</td><td><span class="badge ${statusBadgeClass(enquiry.status)}">${escapeWhatsAppHtml(displayEnquiryStatus(enquiry.status))}</span></td><td><div class="row-actions"><button onclick="viewWhatsAppDetails('${escapeWhatsAppHtml(enquiry._id)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button><button onclick="markWhatsAppContacted('${escapeWhatsAppHtml(enquiry._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 5 5L20 6"/></svg></button></div></td></tr>`).join('') : `<tr><td colspan="8" class="tbl-empty">${escapeWhatsAppHtml(message || 'No WhatsApp enquiries found')}</td></tr>`;
+  }
+  function viewWhatsAppDetails(id){
+    const enquiry = liveWhatsApp.find(item => item._id === id);
+    if(!enquiry) return;
+    document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Customer</span><span>${escapeWhatsAppHtml(enquiry.name)}</span></div><div class="detail-row"><span>Mobile</span><span class="mono">${escapeWhatsAppHtml(enquiry.mobile)}</span></div><div class="detail-row"><span>Email</span><span>${escapeWhatsAppHtml(enquiry.email)}</span></div><div class="detail-row"><span>Enquiry date</span><span>${escapeWhatsAppHtml(formatDateDDMMYYYY(enquiry.createdAt))}</span></div><div class="detail-row"><span>Message</span><span>${escapeWhatsAppHtml(enquiry.message)}</span></div><div class="detail-row"><span>Status</span><span>${escapeWhatsAppHtml(displayEnquiryStatus(enquiry.status))}</span></div>`;
+    openModal('detailModal');
+  }
+  async function markWhatsAppContacted(id){
+    try { const response = await fetch('/api/admin/whatsapp-enquiries?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:'contacted'})}); const data = await response.json().catch(()=>({})); if(!response.ok) throw new Error(data.message || 'Unable to update WhatsApp enquiry.'); showToast('WhatsApp enquiry marked as contacted'); await loadAdminWhatsApp(); } catch(error) { showToast(error.message); }
   }
   async function loadAdminWhatsApp(){
-    document.getElementById('whatsappBody').innerHTML = '<tr><td colspan="7" class="tbl-empty">Loading WhatsApp enquiries...</td></tr>';
+    document.getElementById('whatsappBody').innerHTML = '<tr><td colspan="8" class="tbl-empty">Loading WhatsApp enquiries...</td></tr>';
     try {
       const response = await fetch('/api/admin/whatsapp-enquiries', {credentials:'include'});
       const data = await response.json().catch(()=>({}));
@@ -1691,7 +1847,7 @@
   }
   let liveEnquiries = [];
   let enquiryStatus = 'all';
-  let enquiryDateMode = 'today';
+  let enquiryDateMode = 'all';
   let enquiryRequestId = 0;
   const enquiryStatusLabels = {new:'New', contacted:'Contacted', quotation_sent:'Quotation Sent', confirmed:'Confirmed', closed:'Closed'};
   function escapeEnquiryHtml(value){ return String(value ?? '—').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])); }
@@ -1706,7 +1862,7 @@
     const enquiryDate = enquiryDateMode === 'today' ? localTodayKey() : enquiryDateMode === 'custom' ? selectedDate : '';
     return liveEnquiries.filter(enquiry=>{
       const searchable = [enquiry._id, enquiry.mobile, enquiry.summary, enquiry.requirements].join(' ').toLowerCase();
-      const status = String(enquiry.status || '').toLowerCase();
+      const status = canonicalEnquiryStatus(enquiry.status);
       const createdAt = enquiry.createdAt ? new Date(enquiry.createdAt) : null;
       const createdDate = createdAt && !Number.isNaN(createdAt.getTime())
         ? createdAt.getFullYear() + '-' + String(createdAt.getMonth() + 1).padStart(2, '0') + '-' + String(createdAt.getDate()).padStart(2, '0')
@@ -1717,19 +1873,13 @@
   function renderEnquiries(message){
     const rows = enquiryRows();
     document.getElementById('enquiriesBody').innerHTML = rows.length ? rows.map(enquiry=>{
-      const status = String(enquiry.status || '').toLowerCase();
+      const status = canonicalEnquiryStatus(enquiry.status);
       const name = enquiry.name || String(enquiry.summary || '').split(' extended booking enquiry for ')[0] || '—';
-      const enquiryDate = enquiry.createdAt ? new Date(enquiry.createdAt).toLocaleString() : '—';
-      return `<tr><td class="mono">${escapeEnquiryHtml(enquiry._id)}</td><td>${escapeEnquiryHtml(enquiryDate)}</td><td>${escapeEnquiryHtml(name)}</td><td class="mono">${escapeEnquiryHtml(enquiry.mobile)}</td><td>${escapeEnquiryHtml(enquiry.startDate)}</td><td>${escapeEnquiryHtml(enquiry.endDate)}</td><td>${escapeEnquiryHtml(enquiryDays(enquiry.startDate, enquiry.endDate))}</td><td>${escapeEnquiryHtml(enquiry.preferredTime)}</td><td><span class="badge ${status === 'closed' ? 'cancelled' : status === 'confirmed' ? 'confirmed' : 'pending'}">${escapeEnquiryHtml(enquiryStatusLabels[status] || status)}</span></td><td><div class="row-actions"><button onclick="loadEnquiryDetail('${escapeEnquiryHtml(enquiry._id)}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button><button onclick="showToast('Calling ${escapeEnquiryHtml(enquiry.mobile)}...')" title="Call"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11 11 0 0 0 3.4.55 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11 11 0 0 0 .55 3.4 1 1 0 0 1-.25 1Z"/></svg></button></div></td></tr>`;
-    }).join('') : `<tr><td colspan="11" class="tbl-empty">${escapeEnquiryHtml(message || 'No enquiries found')}</td></tr>`;
-    if(rows.length){
-      document.querySelectorAll('#enquiriesBody tr').forEach((row, index)=>{
-        const messageCell = row.insertCell(8);
-        messageCell.textContent = rows[index].requirements || '—';
-        messageCell.style.whiteSpace = 'normal';
-        messageCell.style.maxWidth = '240px';
-      });
-    }
+      const enquiryDate = formatDateDDMMYYYY(enquiry.createdAt);
+      const createdDisplay = formatDateDDMMYYYY(enquiry.createdAt);
+      const requirements = escapeEnquiryHtml(enquiry.requirements || '—');
+      return `<tr><td class="mono">${escapeEnquiryHtml(enquiry._id)}</td><td>${escapeEnquiryHtml(enquiryDate)}</td><td>${escapeEnquiryHtml(name)}</td><td class="mono">${escapeEnquiryHtml(enquiry.mobile)}</td><td>${escapeEnquiryHtml(createdDisplay)}</td><td>${escapeEnquiryHtml(enquiry.startDate)}</td><td>${escapeEnquiryHtml(enquiry.endDate)}</td><td>${escapeEnquiryHtml(enquiryDays(enquiry.startDate, enquiry.endDate))}</td><td>${escapeEnquiryHtml(enquiry.preferredTime)}</td><td style="white-space:normal;max-width:240px;">${requirements}</td><td><span class="badge ${statusBadgeClass(status)}">${escapeEnquiryHtml(enquiryStatusLabels[status] || displayEnquiryStatus(status))}</span></td><td><div class="row-actions"><button onclick="loadEnquiryDetail('${escapeEnquiryHtml(enquiry._id)}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10 7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button><button onclick="markEnquiryContacted('${escapeEnquiryHtml(enquiry._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 5 5L20 6"/></svg></button></div></td></tr>`;
+    }).join('') : `<tr><td colspan="12" class="tbl-empty">${escapeEnquiryHtml(message || 'No enquiries found')}</td></tr>`;
   }
   async function loadAdminEnquiries(){
     const requestId = ++enquiryRequestId;
@@ -1741,7 +1891,7 @@
     const search = document.getElementById('enquirySearch').value.trim();
     const mobile = search.replace(/\D/g, '');
     if(mobile.length >= 3) params.set('mobile', mobile);
-    document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class="tbl-empty">Loading enquiries...</td></tr>';
+    document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class="tbl-empty">Loading enquiries...</td></tr>';
     try {
       const response = await fetch('/api/admin/extended-enquiries?' + params.toString(), {credentials:'include'});
       const data = await response.json().catch(()=>({}));
@@ -1762,9 +1912,19 @@
       const data = await response.json().catch(()=>({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load enquiry details.'));
       const enquiry = data.enquiry || {};
-      const status = String(enquiry.status || '').toLowerCase();
-      document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Enquiry ID</span><span class="mono">${escapeEnquiryHtml(enquiry._id)}</span></div><div class="detail-row"><span>Mobile</span><span class="mono">${escapeEnquiryHtml(enquiry.mobile)}</span></div><div class="detail-row"><span>Start date</span><span>${escapeEnquiryHtml(enquiry.startDate)}</span></div><div class="detail-row"><span>End date</span><span>${escapeEnquiryHtml(enquiry.endDate)}</span></div><div class="detail-row"><span>Preferred time</span><span>${escapeEnquiryHtml(enquiry.preferredTime)}</span></div><div class="detail-row"><span>Requirements</span><span>${escapeEnquiryHtml(enquiry.requirements)}</span></div><div class="detail-row"><span>Summary</span><span>${escapeEnquiryHtml(enquiry.summary)}</span></div><div class="detail-row"><span>Status</span><span class="badge ${status === 'closed' ? 'cancelled' : 'pending'}">${escapeEnquiryHtml(enquiryStatusLabels[status] || status)}</span></div><div class="detail-row"><span>Created</span><span>${escapeEnquiryHtml(enquiry.createdAt ? new Date(enquiry.createdAt).toLocaleString() : '—')}</span></div><div class="detail-row"><span>Updated</span><span>${escapeEnquiryHtml(enquiry.updatedAt ? new Date(enquiry.updatedAt).toLocaleString() : '—')}</span></div>`;
+      const status = canonicalEnquiryStatus(enquiry.status);
+      const isClosed = status === 'closed';
+      document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Enquiry ID</span><span class="mono">${escapeEnquiryHtml(enquiry._id)}</span></div><div class="detail-row"><span>Mobile</span><span class="mono">${escapeEnquiryHtml(enquiry.mobile)}</span></div><div class="detail-row"><span>Start date</span><span>${escapeEnquiryHtml(enquiry.startDate)}</span></div><div class="detail-row"><span>End date</span><span>${escapeEnquiryHtml(enquiry.endDate)}</span></div><div class="detail-row"><span>Preferred time</span><span>${escapeEnquiryHtml(enquiry.preferredTime)}</span></div><div class="detail-row"><span>Requirements</span><span>${escapeEnquiryHtml(enquiry.requirements)}</span></div><div class="detail-row"><span>Summary</span><span>${escapeEnquiryHtml(enquiry.summary)}</span></div><div class="detail-row"><span>Status</span><span class="badge ${statusBadgeClass(status)}">${escapeEnquiryHtml(enquiryStatusLabels[status] || displayEnquiryStatus(status))}</span></div><div class="detail-row"><span>Created</span><span>${escapeEnquiryHtml(formatDateDDMMYYYY(enquiry.createdAt))}</span></div><div class="detail-row"><span>Updated</span><span>${escapeEnquiryHtml(formatDateDDMMYYYY(enquiry.updatedAt))}</span></div>`;
       openModal('detailModal');
+    } catch(error) { showToast(error.message); }
+  }
+  async function markEnquiryContacted(id){
+    try {
+      const response = await fetch('/api/admin/extended-enquiries?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:'contacted'})});
+      const data = await response.json().catch(()=>({}));
+      if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to update enquiry status.'));
+      showToast('Enquiry marked as contacted');
+      await loadAdminEnquiries();
     } catch(error) { showToast(error.message); }
   }
   function syncEnquiryFilters(){
@@ -1815,14 +1975,14 @@
   syncWhatsAppFilters();
   document.getElementById('whatsappExport').addEventListener('click', ()=>{    const rows = waRows();
     if(!rows.length){ showToast('No data available to export'); return; }
-    exportCsv(`turfon24-whatsapp-enquiries-${new Date().toISOString().slice(0,10)}.csv`, [{key:'name',label:'Name'},{key:'phone',label:'Phone'},{key:'email',label:'Email'},{key:'message',label:'Message'},{key:'received',label:'Received'},{key:'status',label:'Status'}], rows.map(w=>({name:w.name,phone:w.mobile,email:w.email,message:w.message,received:w.createdAt,status:w.status})));
+    exportCsv(`turfon24-whatsapp-enquiries-${new Date().toISOString().slice(0,10)}.csv`, [{key:'name',label:'Name'},{key:'phone',label:'Phone'},{key:'email',label:'Email'},{key:'message',label:'Message'},{key:'enquiryDate',label:'Enquiry Date'},{key:'received',label:'Received'},{key:'status',label:'Status'}], rows.map(w=>({name:w.name,phone:w.mobile,email:w.email,message:w.message,enquiryDate:formatDateDDMMYYYY(w.createdAt),received:w.createdAt,status:w.status})));
   });
   loadAdminWhatsApp();
 
   // ---- Chatbot conversations table ----
   let liveChatbot = [];
   let chatStatus = 'all';
-  let chatDateMode = 'today';
+  let chatDateMode = 'all';
   function chatMessage(conversation){
     return conversation.lastMessage || conversation.messages?.[conversation.messages.length - 1]?.message || '—';
   }
@@ -1832,10 +1992,9 @@
     const conversationDate = chatDateMode === 'today' ? localTodayKey() : chatDateMode === 'custom' ? selectedDate : '';
     return liveChatbot.filter(conversation=>{
       const message = chatMessage(conversation);
-      const matchesStatus = chatStatus === 'all' || normalizeStatus(conversation.status) === chatStatus;
+      const matchesStatus = chatStatus === 'all' || canonicalEnquiryStatus(conversation.status) === chatStatus;
       const matchesSearch = !search || [conversation.name, conversation.mobile, conversation.email, message].join(' ').toLowerCase().includes(search);
-      const timestamp = conversation.updatedAt || conversation.createdAt;
-      const createdAt = timestamp ? new Date(timestamp) : null;
+      const createdAt = conversation.createdAt ? new Date(conversation.createdAt) : null;
       const date = createdAt && !Number.isNaN(createdAt.getTime())
         ? createdAt.getFullYear() + '-' + String(createdAt.getMonth() + 1).padStart(2, '0') + '-' + String(createdAt.getDate()).padStart(2, '0')
         : '';
@@ -1847,19 +2006,27 @@
     document.getElementById('chatbotBody').innerHTML = rows.length ? rows.map(c=>{
       const message = chatMessage(c);
       return `
-    <tr data-date="${escapeBookingHtml(isoDay(c.updatedAt || c.createdAt))}"><td>${escapeBookingHtml(c.name)}</td><td class="mono">${escapeBookingHtml(c.mobile)}</td><td>${escapeBookingHtml(c.email)}</td><td style="white-space:normal; max-width:200px;">${escapeBookingHtml(message)}</td><td>${escapeBookingHtml(c.updatedAt ? new Date(c.updatedAt).toLocaleString() : '—')}</td>
-    <td><span class="badge ${normalizeStatus(c.status) === 'new' ? 'pending' : 'confirmed'}">${escapeBookingHtml(c.status)}</span></td><td>—</td></tr>`;
-    }).join('') : `<tr><td colspan="7" class="tbl-empty">${chatStatus === 'all' ? 'No chatbot conversations found' : 'No ' + (chatStatus === 'new' ? 'New' : 'Resolved') + ' conversations found'}</td></tr>`;
+    <tr data-date="${escapeBookingHtml(isoDay(c.createdAt))}"><td>${escapeBookingHtml(c.name)}</td><td class="mono">${escapeBookingHtml(c.mobile)}</td><td>${escapeBookingHtml(c.email)}</td><td style="white-space:normal; max-width:200px;">${escapeBookingHtml(message)}</td><td>${escapeBookingHtml(formatDateDDMMYYYY(c.createdAt))}</td><td>${escapeBookingHtml(formatDateDDMMYYYY(c.updatedAt))}</td>
+    <td><span class="badge ${statusBadgeClass(c.status)}">${escapeBookingHtml(displayEnquiryStatus(c.status))}</span></td><td><div class="row-actions"><button onclick="viewChatbotDetails('${escapeBookingHtml(c._id)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button><button onclick="markChatbotContacted('${escapeBookingHtml(c._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 5 5L20 6"/></svg></button></div></td></tr>`;
+    }).join('') : `<tr><td colspan="8" class="tbl-empty">${chatStatus === 'all' ? 'No chatbot conversations found' : 'No ' + (chatStatus === 'new' ? 'New' : chatStatus === 'contacted' ? 'Contacted' : 'Resolved') + ' conversations found'}</td></tr>`;
+  }
+  function viewChatbotDetails(id){
+    const conversation = liveChatbot.find(item => String(item._id) === String(id));
+    if(!conversation){ showToast('Chatbot conversation not found'); return; }
+    document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Customer</span><span>${escapeBookingHtml(conversation.name)}</span></div><div class="detail-row"><span>Mobile</span><span class="mono">${escapeBookingHtml(conversation.mobile)}</span></div><div class="detail-row"><span>Email</span><span>${escapeBookingHtml(conversation.email)}</span></div><div class="detail-row"><span>Enquiry date</span><span>${escapeBookingHtml(formatDateDDMMYYYY(conversation.createdAt))}</span></div><div class="detail-row"><span>Last message</span><span>${escapeBookingHtml(chatMessage(conversation))}</span></div><div class="detail-row"><span>Status</span><span>${escapeBookingHtml(displayEnquiryStatus(conversation.status))}</span></div>`;
+    openModal('detailModal');
+  }
+  async function markChatbotContacted(id){
+    try { const response = await fetch('/api/admin/chatbot-conversations?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:'contacted'})}); const data = await response.json().catch(()=>({})); if(!response.ok) throw new Error(data.message || 'Unable to update chatbot conversation.'); showToast('Chatbot conversation marked as contacted'); await loadAdminChatbot(); } catch(error) { showToast(error.message); }
   }
   async function loadAdminChatbot(){
-    document.getElementById('chatbotBody').innerHTML = '<tr><td colspan="7" class="tbl-empty">Loading chatbot conversations...</td></tr>';
+    document.getElementById('chatbotBody').innerHTML = '<tr><td colspan="8" class="tbl-empty">Loading chatbot conversations...</td></tr>';
     try {
       const response = await fetch('/api/admin/chatbot-conversations', {credentials:'include'});
       const data = await response.json().catch(()=>({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load chatbot conversations.'));
       liveChatbot = Array.isArray(data.conversations) ? data.conversations : [];
       renderChatbot();
-      if(document.getElementById('page-chatbot').classList.contains('active')) markChatbotNoticeRead();
     } catch(error) { liveChatbot = []; renderChatbot(error.message); showToast(error.message); }
   }
   document.querySelectorAll('[data-chat-status]').forEach(button=>button.addEventListener('click', ()=>{
@@ -1901,18 +2068,56 @@
     link.href = url; link.download = filename; link.click();
     setTimeout(()=>URL.revokeObjectURL(url), 0);
   }
+  let dashboardCardFilterContext = null;
   let bookingStatus = 'ALL';
-  let bookingDateMode = 'today';
+  let bookingDateMode = 'all';
   let liveBookings = [];
   let bookingRequestId = 0;
   let payFilter = 'all';
-  const bookingStatusLabels = {CONFIRMED:'Confirmed', CANCELLED:'Cancelled', COMPLETED:'Completed', NO_SHOW:'No-show'};
-  const paymentStatusLabels = {PAID:'Paid', PAYMENT_PENDING:'Pending', EXPIRED:'Expired', FAILED:'Failed'};
+  const bookingStatusLabels = {PENDING:'Pending', CONFIRMED:'Confirmed', CANCELLED:'Cancelled', COMPLETED:'Completed', NO_SHOW:'No-show'};
+  const paymentStatusLabels = {PAID:'Paid', PAYMENT_PENDING:'Pending', EXPIRED:'Expired', FAILED:'Failed', CANCELLED:'Cancelled'};
   function escapeBookingHtml(value){ return String(value ?? '—').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])); }
+  function formatDateDDMMYYYY(value){
+    if(!value) return '—';
+    const date = value instanceof Date ? value : new Date(value);
+    if(Number.isNaN(date.getTime())) return '—';
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    return `${dd}/${mm}/${yyyy}`;
+  }
   function bookingDateLabel(value){
     if(!value) return '—';
     const parts = String(value).split('-');
     return parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}` : value;
+  }
+  function bookingEndTime(booking){
+    const slots = Array.isArray(booking.slots) && booking.slots.length ? booking.slots : [];
+    const end = slots.length ? slots[slots.length - 1].end : String(booking.time || '').split(',').pop().split(' - ').pop().trim();
+    const endText = String(end || '').trim();
+    const twelveHour = /^(\d{1,2}):(\d{2})\s*(AM|PM)(?:\s*\(next day\))?$/i.exec(endText);
+    const twentyFourHour = /^(\d{1,2}):(\d{2})(?:\s*\(next day\))?$/.exec(endText);
+    const match = twelveHour || twentyFourHour;
+    if(!match || !booking.date) return null;
+    let hour = Number(match[1]);
+    if(twelveHour){
+      hour %= 12;
+      if(match[3].toUpperCase() === 'PM') hour += 12;
+    }
+    const result = new Date(`${booking.date}T${String(hour).padStart(2, '0')}:${match[2]}:00`);
+    if(/\(next day\)/i.test(endText)) result.setDate(result.getDate() + 1);
+    return result;
+  }
+  function effectiveBookingStatus(booking){
+    const status = String(booking.bookingStatus || '').toUpperCase();
+    if(status === 'CANCELLED' || status === 'NO_SHOW' || status === 'COMPLETED') return status;
+    const end = bookingEndTime(booking);
+    return end && end <= new Date() && String(booking.paymentStatus || '').toUpperCase() === 'PAID' ? 'COMPLETED' : status;
+  }
+  function effectiveCalendarPaymentStatus(booking){
+    const bookingStatus = String(booking?.bookingStatus || '').toUpperCase();
+    const paymentStatus = String(booking?.paymentStatus || '').toUpperCase();
+    return bookingStatus === 'CANCELLED' || paymentStatus === 'CANCELLED' ? 'CANCELLED' : paymentStatus;
   }
   function bookingRows(){
     const search = document.getElementById('bookingSearch').value.trim().toLowerCase();
@@ -1920,29 +2125,36 @@
     const bookingCreatedDate = bookingDateMode === 'today' ? localTodayKey() : bookingDateMode === 'custom' ? selectedDate : '';
     return liveBookings.filter(booking=>{
       const searchable = [booking._id, booking.paymentReference, booking.mobile].join(' ').toLowerCase();
-      const status = String(booking.bookingStatus || '').toUpperCase();
+      const status = effectiveBookingStatus(booking);
       const createdAt = booking.createdAt ? new Date(booking.createdAt) : null;
       const createdDate = createdAt && !Number.isNaN(createdAt.getTime())
         ? createdAt.getFullYear() + '-' + String(createdAt.getMonth() + 1).padStart(2, '0') + '-' + String(createdAt.getDate()).padStart(2, '0')
         : '';
-      return (!search || searchable.includes(search)) && (bookingStatus === 'ALL' || (bookingStatus === 'PENDING' ? false : status === bookingStatus)) && (!bookingCreatedDate || createdDate === bookingCreatedDate);
+      return (!search || searchable.includes(search)) && (bookingStatus === 'ALL' || status === bookingStatus) && (!bookingCreatedDate || createdDate === bookingCreatedDate);
     });
   }
   function bookingRowHtml(booking){
     const id = escapeBookingHtml(booking._id);
-    const status = String(booking.bookingStatus || '').toUpperCase();
-    const payment = String(booking.paymentStatus || '').toUpperCase();
+    const status = effectiveBookingStatus(booking);
+    let payment = String(booking.paymentStatus || '').toUpperCase();
+    if (status === 'CANCELLED') payment = 'CANCELLED';
     const customer = escapeBookingHtml(booking.name || booking.customerName || '—');
     const mobile = escapeBookingHtml(booking.mobile);
+    const bookingCreatedDate = formatDateDDMMYYYY(booking.createdAt);
     const date = escapeBookingHtml(bookingDateLabel(booking.date));
-    const time = escapeBookingHtml(booking.time);
+    const slotRows = Array.isArray(booking.slots) && booking.slots.length
+      ? booking.slots
+      : [{start: booking.time || '—', end: '', hours: booking.duration || 0}];
+    const slot = slotRows.map((item, index) => `<div>Slot ${index + 1}</div>`).join('');
+    const time = slotRows.map(item => escapeBookingHtml(item.end ? `${item.start} - ${item.end}` : item.start)).join('<br>');
+    const slotDurations = slotRows.map(item => `${item.hours || 0} hr${Number(item.hours) === 1 ? '' : 's'}`).join('<br>');
     const duration = escapeBookingHtml(`${booking.duration || 0} hr${Number(booking.duration) === 1 ? '' : 's'}`);
     const amount = `₹${Number(booking.amount || 0).toLocaleString('en-IN')}`;
-    return `<tr><td class="mono">${id}</td><td>${customer}</td><td class="mono">${mobile}</td><td>${date}</td><td>${time}</td><td>${duration}</td><td class="mono">${amount}</td><td><span class="badge ${payment === 'PAID' ? 'verified' : 'pending'}">${paymentStatusLabels[payment] || escapeBookingHtml(payment)}</span></td><td><span class="badge ${status.toLowerCase()}">${bookingStatusLabels[status] || escapeBookingHtml(status)}</span></td><td><div class="row-actions"><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button><button onclick="updateBookingStatus('${id}','CONFIRMED')" title="Confirm"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button><button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div></td></tr>`;
+    return `<tr><td class="mono">${id}</td><td>${customer}</td><td class="mono">${mobile}</td><td>${escapeBookingHtml(bookingCreatedDate)}</td><td>${date}</td><td>${slot}</td><td>${time}</td><td>${slotDurations || duration}</td><td class="mono">${amount}</td><td><span class="badge ${payment === 'PAID' ? 'verified' : payment === 'CANCELLED' ? 'cancelled' : 'pending'}">${paymentStatusLabels[payment] || escapeBookingHtml(payment)}</span></td><td><span class="badge ${status.toLowerCase()}">${bookingStatusLabels[status] || escapeBookingHtml(status)}</span></td><td><div class="row-actions"><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button><button onclick="updateBookingStatus('${id}','CONFIRMED')" title="Confirm"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button><button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div></td></tr>`;
   }
   function renderBookings(message){
     const rows = bookingRows();
-    document.getElementById('bookingsBody').innerHTML = rows.length ? rows.map(bookingRowHtml).join('') : `<tr><td colspan="10" class="tbl-empty">${escapeBookingHtml(message || 'No bookings found')}</td></tr>`;
+    document.getElementById('bookingsBody').innerHTML = rows.length ? rows.map(bookingRowHtml).join('') : `<tr><td colspan="12" class="tbl-empty">${escapeBookingHtml(message || 'No bookings found')}</td></tr>`;
   }
   async function loadAdminBookings(){
     const requestId = ++bookingRequestId;
@@ -1950,11 +2162,11 @@
     const selectedDate = document.getElementById('bookingDate').value;
     if(bookingDateMode === 'custom' && selectedDate) params.set('createdDate', selectedDate);
     if(bookingDateMode === 'today') params.set('createdDate', localTodayKey());
-    if(['CONFIRMED','CANCELLED','COMPLETED','NO_SHOW'].includes(bookingStatus)) params.set('bookingStatus', bookingStatus);
+    if(['PENDING','CONFIRMED','CANCELLED','NO_SHOW'].includes(bookingStatus)) params.set('bookingStatus', bookingStatus);
     const rawSearch = document.getElementById('bookingSearch').value.trim();
     const mobileSearch = rawSearch.replace(/\D/g, '');
     if(mobileSearch.length >= 3) params.set('mobile', mobileSearch);
-    document.getElementById('bookingsBody').innerHTML = '<tr><td colspan="10" class="tbl-empty">Loading bookings...</td></tr>';
+    document.getElementById('bookingsBody').innerHTML = '<tr><td colspan="12" class="tbl-empty">Loading bookings...</td></tr>';
     try {
       const response = await fetch('/api/admin/bookings?' + params.toString(), {credentials:'include'});
       const data = await response.json().catch(()=>({}));
@@ -1979,7 +2191,9 @@
       const customer = data.customer || {};
       const status = String(booking.bookingStatus || '').toUpperCase();
       const paymentStatus = String(booking.paymentStatus || '').toUpperCase();
-      document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Booking ID</span><span class="mono">${escapeBookingHtml(booking._id)}</span></div><div class="detail-row"><span>Customer</span><span>${escapeBookingHtml(booking.name || booking.customerName || '—')}</span></div><div class="detail-row"><span>Mobile</span><span class="mono">${escapeBookingHtml(booking.mobile)}</span></div><div class="detail-row"><span>Date</span><span>${escapeBookingHtml(bookingDateLabel(booking.date))}</span></div><div class="detail-row"><span>Time slot</span><span>${escapeBookingHtml(booking.time)}</span></div><div class="detail-row"><span>Duration</span><span>${escapeBookingHtml(booking.duration)} hrs</span></div><div class="detail-row"><span>Amount</span><span class="mono">₹${Number(booking.amount || 0).toLocaleString('en-IN')}</span></div><div class="detail-row"><span>Payment status</span><span class="badge verified">${escapeBookingHtml(paymentStatusLabels[paymentStatus] || paymentStatus)}</span></div><div class="detail-row"><span>Payment reference</span><span class="mono">${escapeBookingHtml(booking.paymentReference)}</span></div><div class="detail-row"><span>Booking status</span><span class="badge ${status.toLowerCase()}">${escapeBookingHtml(bookingStatusLabels[status] || status)}</span></div><div class="detail-row"><span>Total bookings</span><span>${escapeBookingHtml(customer.totalBookings ?? '—')}</span></div><div class="detail-row"><span>Total spent</span><span>₹${Number(customer.totalSpent || 0).toLocaleString('en-IN')}</span></div><div class="detail-row"><span>Payment method</span><span>${escapeBookingHtml(payment.method || '—')}</span></div>`;
+      const detailSlots = Array.isArray(booking.slots) && booking.slots.length ? booking.slots : [{start: booking.time || '—', end: '', hours: booking.duration || 0}];
+      const detailSlotHtml = detailSlots.map((slot, index) => `<div>Slot ${index + 1}: ${escapeBookingHtml(slot.end ? `${slot.start} - ${slot.end}` : slot.start)} (${escapeBookingHtml(slot.hours || 0)} hr${Number(slot.hours) === 1 ? '' : 's'})</div>`).join('');
+      document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Booking ID</span><span class="mono">${escapeBookingHtml(booking._id)}</span></div><div class="detail-row"><span>Customer</span><span>${escapeBookingHtml(booking.name || booking.customerName || '—')}</span></div><div class="detail-row"><span>Mobile</span><span class="mono">${escapeBookingHtml(booking.mobile)}</span></div><div class="detail-row"><span>Date</span><span>${escapeBookingHtml(bookingDateLabel(booking.date))}</span></div><div class="detail-row"><span>Slots</span><span>${detailSlotHtml}</span></div><div class="detail-row"><span>Time slot</span><span>${escapeBookingHtml(booking.time)}</span></div><div class="detail-row"><span>Duration</span><span>${escapeBookingHtml(booking.duration)} hrs</span></div><div class="detail-row"><span>Amount</span><span class="mono">₹${Number(booking.amount || 0).toLocaleString('en-IN')}</span></div><div class="detail-row"><span>Payment status</span><span class="badge verified">${escapeBookingHtml(paymentStatusLabels[paymentStatus] || paymentStatus)}</span></div><div class="detail-row"><span>Payment reference</span><span class="mono">${escapeBookingHtml(booking.paymentReference)}</span></div><div class="detail-row"><span>Booking status</span><span class="badge ${status.toLowerCase()}">${escapeBookingHtml(bookingStatusLabels[status] || status)}</span></div><div class="detail-row"><span>Total bookings</span><span>${escapeBookingHtml(customer.totalBookings ?? '—')}</span></div><div class="detail-row"><span>Total spent</span><span>₹${Number(customer.totalSpent || 0).toLocaleString('en-IN')}</span></div><div class="detail-row"><span>Payment method</span><span>${escapeBookingHtml(payment.method || '—')}</span></div>`;
       openModal('detailModal');
     } catch(error) { showToast(error.message); }
   }
@@ -2009,21 +2223,30 @@
   document.getElementById('bookingDate').addEventListener('change', ()=>{ bookingDateMode = 'custom'; syncBookingFilters(); loadAdminBookings(); });
   document.querySelector('#page-bookings .today-filter').addEventListener('click', ()=>{ bookingStatus = 'ALL'; bookingDateMode = 'today'; document.getElementById('bookingDate').value = ''; document.querySelectorAll('#page-bookings [data-booking-status]').forEach(item=>item.classList.remove('sel')); syncBookingFilters(); loadAdminBookings(); });
   syncBookingFilters();
-  document.getElementById('bookingExport').addEventListener('click', ()=>exportCsv(`bookings-${new Date().toISOString().slice(0,10)}.csv`, [{key:'id',label:'Booking ID'},{key:'mobile',label:'Mobile'},{key:'date',label:'Date'},{key:'time',label:'Time'},{key:'duration',label:'Duration'},{key:'amount',label:'Amount'},{key:'payment',label:'Payment Status'},{key:'status',label:'Booking Status'}], bookingRows().map(booking=>({id:booking._id,mobile:booking.mobile,date:booking.date,time:booking.time,duration:booking.duration,amount:booking.amount,payment:booking.paymentStatus,status:booking.bookingStatus}))));
+  document.getElementById('bookingExport').addEventListener('click', ()=>exportCsv(`bookings-${new Date().toISOString().slice(0,10)}.csv`, [{key:'id',label:'Booking ID'},{key:'mobile',label:'Mobile'},{key:'date',label:'Date'},{key:'slot',label:'Slot'},{key:'time',label:'Time'},{key:'duration',label:'Duration'},{key:'amount',label:'Amount'},{key:'payment',label:'Payment Status'},{key:'status',label:'Booking Status'}], bookingRows().map(booking=>({id:booking._id,mobile:booking.mobile,date:booking.date,slot:(booking.slots || []).map((item,index)=>`Slot ${index + 1}`).join(' | '),time:(booking.slots || []).map(item=>item.end ? `${item.start} - ${item.end}` : item.start).join(' | ') || booking.time,duration:(booking.slots || []).map(item=>`${item.hours || 0} hr${Number(item.hours) === 1 ? '' : 's'}`).join(' | ') || booking.duration,amount:booking.amount,payment:booking.paymentStatus,status:booking.bookingStatus}))));
 
   loadAdminBookings();
 
   // ---- Payment sessions (server-verified records) ----
   let paymentStatus = 'all';
+  let paymentDateMode = 'all';
   let payments = [];
   let paymentRequestId = 0;
-  function paymentStatusLabel(status){ return {PAYMENT_PENDING:'Pending', PAID:'Paid / Verified', EXPIRED:'Expired', FAILED:'Failed'}[status] || status; }
-  function paymentBadgeClass(status){ return status === 'PAID' ? 'verified' : status === 'PAYMENT_PENDING' ? 'pending' : status === 'FAILED' ? 'cancelled' : 'confirmed'; }
+  function paymentStatusLabel(status){ return {PAYMENT_PENDING:'Pending', PAID:'Paid / Verified', EXPIRED:'Expired', FAILED:'Failed', CANCELLED:'Cancelled'}[status] || status; }
+  function paymentBadgeClass(status){ return status === 'PAID' ? 'verified' : status === 'PAYMENT_PENDING' ? 'pending' : status === 'FAILED' ? 'cancelled' : status === 'CANCELLED' ? 'cancelled' : 'confirmed'; }
   function paymentValue(data, keys){
     for(const key of keys){ if(data && data[key] !== undefined && data[key] !== null && data[key] !== '') return data[key]; }
     return '—';
   }
   function escapePaymentHtml(value){ return String(value ?? '—').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])); }
+  function paymentIsToday(payment){
+    const dateValue = payment?.paidAt || payment?.createdAt;
+    if(!dateValue) return false;
+    const parsed = new Date(dateValue);
+    if(Number.isNaN(parsed.getTime())) return false;
+    const key = parsed.getFullYear() + '-' + String(parsed.getMonth() + 1).padStart(2, '0') + '-' + String(parsed.getDate()).padStart(2, '0');
+    return key === localTodayKey();
+  }
   async function renderPayments(){
     const requestId = ++paymentRequestId;
     const search = (document.getElementById('paymentSearch').value || '').trim();
@@ -2036,18 +2259,20 @@
       if(!response.ok) throw new Error(data.message || 'Unable to load payment records.');
       if(requestId !== paymentRequestId) return;
       payments = Array.isArray(data.sessions) ? data.sessions : [];
-      const rows = payments;
+      const rows = paymentDateMode === 'today' ? payments.filter(paymentIsToday) : payments;
       document.getElementById('paymentsBody').innerHTML = rows.length ? rows.map(p=>{
         const booking = p.bookingData || {};
         const name = paymentValue(booking, ['name','customerName']);
         const mobile = paymentValue(booking, ['mobile','phone']);
+        const createdDate = formatDateDDMMYYYY(p.createdAt);
         const date = paymentValue(booking, ['date','dateLabel']);
         const time = paymentValue(booking, ['startTime','time']);
         const status = paymentStatusLabel(p.status);
-        const action = p.status === 'PAYMENT_PENDING' ? `<button onclick="markPaymentPaid('${escapePaymentHtml(p.reference)}')" title="Mark paid"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button>` : '';
-        return `<tr><td class="mono">${escapePaymentHtml(p.reference)}</td><td>${escapePaymentHtml(name)}</td><td class="mono">${escapePaymentHtml(mobile)}</td><td>${escapePaymentHtml(p.bookingType)}</td><td>${escapePaymentHtml(date)}</td><td>${escapePaymentHtml(time)}</td><td class="mono">₹${Number(p.amount).toLocaleString('en-IN')}</td><td><span class="badge ${paymentBadgeClass(p.status)}">${status}</span></td><td><div class="row-actions">${action}</div></td></tr>`;
+        const action = `<button onclick="viewPaymentDetails('${escapePaymentHtml(p.reference)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>` + (p.status === 'PAYMENT_PENDING' && p.source !== 'booking' ? `<button onclick="markPaymentPaid('${escapePaymentHtml(p.reference)}')" title="Mark paid"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button>` : '');
+        return `<tr><td class="mono">${escapePaymentHtml(p.bookingId || p.reference)}</td><td>${escapePaymentHtml(name)}</td><td class="mono">${escapePaymentHtml(mobile)}</td><td>${escapePaymentHtml(createdDate)}</td><td>${escapePaymentHtml(date)}</td><td>${escapePaymentHtml(time)}</td><td class="mono">₹${Number(p.amount).toLocaleString('en-IN')}</td><td><span class="badge ${paymentBadgeClass(p.status)}">${status}</span></td><td><div class="row-actions">${action}</div></td></tr>`;
       }).join('') : '<tr><td colspan="9" class="tbl-empty">No payment sessions found</td></tr>';
-      const totalAmount = rows.reduce((sum,p)=>sum + Number(p.amount || 0), 0);
+      const visiblePayments = paymentDateMode === 'today' ? payments.filter(paymentIsToday) : payments;
+      const totalAmount = visiblePayments.reduce((sum,p)=>sum + (String(p.status || '').toUpperCase() === 'PAID' ? Number(p.amount || 0) : 0), 0);
       document.getElementById('paymentsTotalCount').textContent = String(rows.length);
       document.getElementById('paymentsTotalAmount').textContent = '₹' + totalAmount.toLocaleString('en-IN');
       document.getElementById('paymentsCountLabel').textContent = 'Payment sessions';
@@ -2057,6 +2282,14 @@
       document.getElementById('paymentsBody').innerHTML = `<tr><td colspan="9" class="tbl-empty">${escapePaymentHtml(error.message)}</td></tr>`;
       showToast(error.message);
     }
+  }
+  function viewPaymentDetails(reference){
+    const payment = payments.find(item => item.reference === reference);
+    if(!payment) return;
+    const booking = payment.bookingData || {};
+    const status = paymentStatusLabel(payment.status);
+    document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Booking ID</span><span class="mono">${escapePaymentHtml(payment.bookingId || payment.reference)}</span></div><div class="detail-row"><span>Customer</span><span>${escapePaymentHtml(paymentValue(booking, ['name','customerName']))}</span></div><div class="detail-row"><span>Mobile</span><span class="mono">${escapePaymentHtml(paymentValue(booking, ['mobile','phone']))}</span></div><div class="detail-row"><span>Booking date</span><span>${escapePaymentHtml(paymentValue(booking, ['date','dateLabel']))}</span></div><div class="detail-row"><span>Payment time</span><span>${escapePaymentHtml(paymentValue(booking, ['startTime','time']))}</span></div><div class="detail-row"><span>Amount</span><span class="mono">₹${Number(payment.amount || 0).toLocaleString('en-IN')}</span></div><div class="detail-row"><span>Payment status</span><span class="badge ${paymentBadgeClass(payment.status)}">${escapePaymentHtml(status)}</span></div><div class="detail-row"><span>Payment reference</span><span class="mono">${escapePaymentHtml(payment.reference)}</span></div>`;
+    openModal('detailModal');
   }
   async function markPaymentPaid(reference){
     try {
@@ -2069,14 +2302,26 @@
   }
   document.querySelectorAll('[data-payment-status]').forEach(button=>button.addEventListener('click', ()=>{
     paymentStatus = button.dataset.paymentStatus;
+    paymentDateMode = 'all';
+    document.querySelector('.payment-today-filter').classList.remove('sel');
     document.querySelectorAll('[data-payment-status]').forEach(item=>item.classList.toggle('sel', item === button));
     renderPayments();
   }));
+  document.querySelector('.payment-today-filter').addEventListener('click', ()=>{
+    paymentDateMode = 'today';
+    document.querySelectorAll('[data-payment-status]').forEach(item=>item.classList.remove('sel'));
+    document.querySelector('.payment-today-filter').classList.add('sel');
+    renderPayments();
+  });
+  document.querySelector('[data-payment-status="all"]').addEventListener('click', ()=>{
+    paymentDateMode = 'all';
+    document.querySelector('.payment-today-filter').classList.remove('sel');
+  });
   document.getElementById('paymentSearch').addEventListener('input', renderPayments);
   document.getElementById('paymentExport').addEventListener('click', ()=>{
     const rows = payments;
     if(!rows.length){ showToast('No data available to export'); return; }
-    exportCsv(`payment-sessions-${new Date().toISOString().slice(0,10)}.csv`, [{key:'reference',label:'Payment Reference'},{key:'amount',label:'Amount'},{key:'bookingType',label:'Booking Type'},{key:'status',label:'Payment Status'}], rows);
+    exportCsv(`payment-sessions-${new Date().toISOString().slice(0,10)}.csv`, [{key:'reference',label:'Payment Reference'},{key:'amount',label:'Amount'},{key:'status',label:'Payment Status'}], rows);
   });
   renderPayments();
 
@@ -2141,11 +2386,14 @@
   const historyHead = document.getElementById('customerHistoryHead');
   const historyBody = document.getElementById('customerHistoryBody');
   const historyDate = document.getElementById('customerHistoryDate');
+  function hourlyBookingStatus(date){
+    return date < new Date().toISOString().slice(0, 10) ? 'Completed' : 'Not completed';
+  }
   function customerRows(){
     return liveCustomers.flatMap(customer => {
       const history = activeHistoryType === 'hourly' ? customer.hourlyHistory : customer.extendedHistory;
       return history.map(item => activeHistoryType === 'hourly'
-        ? { customer: item.name || customer.name || 'Name not provided', mobile: customer.mobile || '—', date: item.date, time: item.time, duration: `${item.duration} hr${Number(item.duration) === 1 ? '' : 's'}`, amount: `₹${Number(item.amount || 0).toLocaleString('en-IN')}`, message: 'No message provided' }
+        ? { customer: item.name || customer.name || 'Name not provided', mobile: customer.mobile || '—', date: item.date, slots: item.slots || [], slot: (item.slots || []).map((slot, index) => `Slot ${index + 1}`).join(' | ') || 'Slot 1', time: item.time, duration: `${item.duration} hr${Number(item.duration) === 1 ? '' : 's'}`, amount: `₹${Number(item.amount || 0).toLocaleString('en-IN')}`, status: hourlyBookingStatus(item.date) }
         : { customer: item.name || customer.name || 'Name not provided', mobile: customer.mobile || '—', start: item.startDate, end: item.endDate, duration: enquiryDays(item.startDate, item.endDate) + ' days', preferredTime: item.preferredTime || '—', status: item.status || '—', message: item.message || 'No message provided' });
     });
   }
@@ -2153,18 +2401,18 @@
     const rows = customerRows();
     const selectedDate = historyDate.value;
     historyHead.innerHTML = activeHistoryType === 'hourly'
-      ? '<tr><th>Customer</th><th>Mobile</th><th>Booking date</th><th>Time</th><th>Duration</th><th>Amount</th><th>Message</th></tr>'
+      ? '<tr><th>Customer</th><th>Mobile</th><th>Booking date</th><th>Slot</th><th>Time</th><th>Duration</th><th>Amount</th><th>Status</th></tr>'
       : '<tr><th>Customer</th><th>Mobile</th><th>Start date</th><th>End date</th><th>Duration</th><th>Preferred time</th><th>Status</th><th>Message</th></tr>';
     const filteredRows = rows.filter(row => !selectedDate || (activeHistoryType === 'hourly' ? row.date === selectedDate : selectedDate >= row.start && selectedDate <= row.end));
     historyBody.innerHTML = filteredRows.length ? filteredRows.map(row=>activeHistoryType === 'hourly'
-      ? `<tr><td>${escapeBookingHtml(row.customer)}</td><td class="mono">${escapeBookingHtml(row.mobile)}</td><td>${escapeBookingHtml(row.date)}</td><td>${escapeBookingHtml(row.time)}</td><td>${escapeBookingHtml(row.duration)}</td><td class="mono">${escapeBookingHtml(row.amount)}</td><td>${escapeBookingHtml(row.message)}</td></tr>`
+      ? `<tr><td>${escapeBookingHtml(row.customer)}</td><td class="mono">${escapeBookingHtml(row.mobile)}</td><td>${escapeBookingHtml(row.date)}</td><td>${(row.slots.length ? row.slots : [{start: row.time || '—', end: '', hours: row.duration.replace(/\D/g, '') || 0}]).map((slot, index) => `<div>Slot ${index + 1}</div>`).join('')}</td><td>${(row.slots.length ? row.slots : [{start: row.time || '—', end: ''}]).map(slot => escapeBookingHtml(slot.end ? `${slot.start} - ${slot.end}` : slot.start)).join('<br>')}</td><td>${(row.slots.length ? row.slots : [{hours: row.duration.replace(/\D/g, '') || 0}]).map(slot => `${slot.hours || 0} hr${Number(slot.hours) === 1 ? '' : 's'}`).join('<br>')}</td><td class="mono">${escapeBookingHtml(row.amount)}</td><td>${escapeBookingHtml(row.status)}</td></tr>`
       : `<tr><td>${escapeBookingHtml(row.customer)}</td><td class="mono">${escapeBookingHtml(row.mobile)}</td><td>${escapeBookingHtml(row.start)}</td><td>${escapeBookingHtml(row.end)}</td><td>${escapeBookingHtml(row.duration)}</td><td>${escapeBookingHtml(row.preferredTime)}</td><td>${escapeBookingHtml(row.status)}</td><td>${escapeBookingHtml(row.message)}</td></tr>`).join('') : `<tr><td colspan="8" class="tbl-empty">${escapeBookingHtml(message || 'No customer history found')}</td></tr>`;
     document.getElementById('customerHistoryCount').textContent = `Showing ${filteredRows.length} ${activeHistoryType} booking history${selectedDate ? ` for ${selectedDate}` : ''}`;
     return filteredRows;
   }
   async function loadCustomers(){
     const requestId = ++customerRequestId;
-    historyBody.innerHTML = '<tr><td colspan="6" class="tbl-empty">Loading customers...</td></tr>';
+    historyBody.innerHTML = '<tr><td colspan="7" class="tbl-empty">Loading customers...</td></tr>';
     try {
       const response = await fetch('/api/admin/customers?limit=100&page=1&sort=updatedAt&direction=desc', {credentials:'include'});
       const data = await response.json().catch(()=>({}));
@@ -2191,7 +2439,7 @@
   document.getElementById('customerHistoryExport').addEventListener('click', ()=>{
     const filteredRows = renderCustomerHistory();
     const columns = activeHistoryType === 'hourly'
-      ? [{key:'customer',label:'Customer'},{key:'mobile',label:'Mobile'},{key:'date',label:'Booking Date'},{key:'time',label:'Time'},{key:'duration',label:'Duration'},{key:'amount',label:'Amount'},{key:'message',label:'Message'}]
+      ? [{key:'customer',label:'Customer'},{key:'mobile',label:'Mobile'},{key:'date',label:'Booking Date'},{key:'slot',label:'Slot'},{key:'time',label:'Time'},{key:'duration',label:'Duration'},{key:'amount',label:'Amount'},{key:'status',label:'Status'}]
       : [{key:'customer',label:'Customer'},{key:'mobile',label:'Mobile'},{key:'start',label:'Start Date'},{key:'end',label:'End Date'},{key:'duration',label:'Duration'},{key:'preferredTime',label:'Preferred Time'},{key:'status',label:'Status'},{key:'message',label:'Message'}];
     const rows = filteredRows;
     exportCsv(`customer-${activeHistoryType}-history-${new Date().toISOString().slice(0,10)}.csv`, columns, rows);
@@ -2201,7 +2449,6 @@
 
   // ---- daily analytics modal (stat card graphs) ----
   const analyticsMetrics = {
-    turf:       { title:'Turf Available Analytics', label:'Slots available', subtitle:'Turf availability derived from daily booking load', rows:()=>bookings, date:r=>r[9], availability:true },
     total:      { title:'Total Bookings Analytics', label:'Bookings', subtitle:'Bookings created per day', rows:()=>bookings, date:r=>r[9] },
     paid:       { title:'Payment Received Analytics', label:'Payment Received', subtitle:'Payments received per day', rows:()=>bookings.filter(b=>normalizeStatus(b[7])==='verified'), date:r=>r[9], value:r=>Number(String(r[6]).replace(/[₹,]/g,'')), currency:true },
     today:      { title:"Today's Bookings Analytics", label:'Bookings', subtitle:'Bookings grouped per day for the selected range', rows:()=>bookings, date:r=>r[9] },
@@ -2454,6 +2701,33 @@
     const days = analyticsState.range === '30' ? 30 : 7;
     return { start: addDaysIso(end, -(days - 1)), end };
   }
+  function paymentAnalyticsDate(payment, metricKey){
+    if(metricKey === 'pendingPay') return isoDay(payment.createdAt);
+    const bookingDate = payment.bookingData && (payment.bookingData.date || payment.bookingData.dateLabel);
+    if(/^\d{4}-\d{2}-\d{2}$/.test(String(bookingDate || '').slice(0, 10))) return String(bookingDate).slice(0, 10);
+    return isoDay(payment.paidAt || payment.createdAt);
+  }
+  function paymentAnalyticsPoints(start, end, metricKey){
+    const map = {};
+    let cursor = start;
+    while(cursor <= end){ map[cursor] = 0; cursor = addDaysIso(cursor, 1); }
+    return fetch('/api/admin/payment-sessions?status=all', {credentials:'include'})
+      .then(response => response.json().catch(() => ({})).then(data => ({response, data})))
+      .then(({response, data}) => {
+        if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load payment records.'));
+        const wantedStatus = metricKey === 'pendingPay' ? 'PAYMENT_PENDING' : 'PAID';
+        (Array.isArray(data.sessions) ? data.sessions : []).forEach(payment => {
+          if(String(payment.status || '').toUpperCase() !== wantedStatus) return;
+          const date = paymentAnalyticsDate(payment, metricKey);
+          if(date < start || date > end) return;
+          map[date] += metricKey === 'paid' ? (Number(payment.amount) || 0) : 1;
+        });
+        const points = [];
+        cursor = start;
+        while(cursor <= end){ points.push({date:cursor, value:map[cursor] || 0}); cursor = addDaysIso(cursor, 1); }
+        return points;
+      });
+  }
   function renderAnalytics(){
     const metric = analyticsState.metric;
     if(!metric) return;
@@ -2461,9 +2735,23 @@
     const start = bounds.start, end = bounds.end;
     document.getElementById('analyticsChart').innerHTML = '<div class="pie-empty">Loading report data...</div>';
     document.getElementById('analyticsSummary').innerHTML = '';
-    fetch('/api/admin/reports?startDate=' + encodeURIComponent(start) + '&endDate=' + encodeURIComponent(end), {credentials:'include'})
+    const reportPromise = (analyticsState.metricKey === 'paid' || analyticsState.metricKey === 'pendingPay')
+      ? paymentAnalyticsPoints(start, end, analyticsState.metricKey).then(points => ({paymentPoints:points}))
+      : fetch('/api/admin/reports?startDate=' + encodeURIComponent(start) + '&endDate=' + encodeURIComponent(end), {credentials:'include'})
       .then(response => response.json().catch(() => ({})).then(data => ({response, data})))
-      .then(({response, data}) => {
+    reportPromise.then(({response, data, paymentPoints}) => {
+        if(paymentPoints) {
+          const key = analyticsState.metricKey;
+          analyticsState.points = paymentPoints;
+          renderAnalyticsChart(paymentPoints, key === 'paid', metric.label);
+          renderAnalyticsDonut(paymentPoints, key === 'paid', metric.label);
+          renderAnalyticsSummary(paymentPoints, key === 'paid');
+          const total = paymentPoints.reduce((sum, point) => sum + point.value, 0);
+          document.getElementById('analyticsNote').textContent = 'Daily values · ' + paymentPoints.length + ' days · ' + formatAnalyticsDate(start) + ' to ' + formatAnalyticsDate(end) + (total === 0 ? ' · No activity in this range' : '');
+          document.getElementById('analyticsDetail').classList.remove('show');
+          document.getElementById('analyticsViewPage').textContent = 'View daily details';
+          return;
+        }
         if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load report data.'));
         const daily = Array.isArray(data.daily) ? data.daily : [];
         const key = analyticsState.metricKey;
@@ -2525,7 +2813,7 @@
     renderAnalytics();
   }
   const ANALYTICS_LABELS = {
-    turf:'Turf Available', total:'Total Bookings', paid:'Payment Received', today:'Today\'s Bookings',
+    total:'Total Bookings', paid:'Payment Received', today:'Today\'s Bookings',
     pendingConf:'Pending Confirmations', pendingPay:'Pending Payment Verification', enq:'Extended Booking Enquiries',
     completed:'Completed Bookings', cancelled:'Cancelled Bookings', customers:'Total Customers', wa:'WhatsApp Enquiries', chat:'Chatbot Conversations'
   };
@@ -2576,7 +2864,7 @@
     const metric = analyticsMetrics[metricKey];
     if(!metric) return;
     const rows = metric.rows();
-    analyticsState = { metric, metricKey, range:'today', anchor: new Date().toISOString().slice(0,10), points: null };
+    analyticsState = { metric, metricKey, range:'today', anchor: localTodayKey(), points: null };
     setActiveMetricSelect(metricKey);
     setAnalyticsRange('today');
   }
@@ -2668,24 +2956,31 @@
   }
   function openCalendarDate(dateKey){
     var list = (bookingsByDate[dateKey] || []).slice().sort(function(a, b){ return timeToMin(a.time) - timeToMin(b.time); });
-    var label = new Date(dateKey + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    var label = formatDateDDMMYYYY(new Date(dateKey + 'T00:00:00'));
     var countLabel = list.length + (list.length === 1 ? ' Booking' : ' Bookings');
     document.getElementById('calDetailDate').textContent = label;
     document.getElementById('calDetailCount').textContent = list.length ? countLabel : 'No bookings';
     if(list.length){
       document.getElementById('calDetailBody').innerHTML =
         '<div class="table-wrap cal-detail-table-wrap"><table>' +
-        '<thead><tr><th>Booking ID</th><th>Customer</th><th>Mobile</th><th>Date</th><th>Time</th><th>Duration</th><th>Amount</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>' +
+        '<thead><tr><th>Customer</th><th>Mobile</th><th>Date</th><th>Slot</th><th>Time</th><th>Duration</th><th>Amount</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>' +
         '<tbody>' + list.map(function(b){
+          var slotRows = Array.isArray(b.slots) && b.slots.length ? b.slots : [{start: b.time || '—', end: '', hours: b.duration || 0}];
+          var slotHtml = slotRows.map(function(slot, index){ return '<div>Slot ' + (index + 1) + '</div>'; }).join('');
+          var timeHtml = slotRows.map(function(slot){ return escapeBookingHtml(slot.end ? slot.start + ' - ' + slot.end : slot.start); }).join('<br>');
+          var durationHtml = slotRows.map(function(slot){ return (slot.hours || 0) + ' hr' + (Number(slot.hours) === 1 ? '' : 's'); }).join('<br>');
+          var paymentStatus = effectiveCalendarPaymentStatus(b);
+          var paymentClass = paymentStatus === 'PAID' ? 'verified' : paymentStatus === 'CANCELLED' ? 'cancelled' : 'pending';
+          var paymentText = paymentStatusLabels[paymentStatus] || escapeBookingHtml(paymentStatus);
           return '<tr>' +
-            '<td class="mono">' + escapeBookingHtml(b._id) + '</td>' +
-            '<td>—</td>' +
+            '<td>' + escapeBookingHtml(b.name || b.customerName || '—') + '</td>' +
             '<td class="mono">' + escapeBookingHtml(b.mobile) + '</td>' +
             '<td>' + escapeBookingHtml(b.date) + '</td>' +
-            '<td>' + escapeBookingHtml(b.time) + '</td>' +
-            '<td>' + escapeBookingHtml(b.duration + ' hr' + (Number(b.duration) === 1 ? '' : 's')) + '</td>' +
+            '<td>' + slotHtml + '</td>' +
+            '<td>' + timeHtml + '</td>' +
+            '<td>' + durationHtml + '</td>' +
             '<td class="mono">₹' + Number(b.amount || 0).toLocaleString('en-IN') + '</td>' +
-            '<td><span class="badge ' + (b.paymentStatus === 'PAID' ? 'verified' : 'pending') + '">' + escapeBookingHtml(b.paymentStatus) + '</span></td>' +
+            '<td><span class="badge ' + paymentClass + '">' + escapeBookingHtml(paymentText) + '</span></td>' +
             '<td><span class="badge ' + String(b.bookingStatus || '').toLowerCase() + '">' + escapeBookingHtml(b.bookingStatus) + '</span></td>' +
             '<td><div class="row-actions"><button onclick="openBookingDetail(\'' + escapeBookingHtml(b._id) + '\')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td>' +
           '</tr>';
@@ -2750,14 +3045,16 @@
 
   // ---- login visual particles ----
   const lvBox = document.getElementById('lvParticles');
-  for(let i=0;i<14;i++){
-    const p = document.createElement('div');
-    p.className='lv-particle';
-    p.style.left = (10+Math.random()*80)+'%';
-    p.style.bottom = (Math.random()*30)+'%';
-    p.style.animationDuration = (7+Math.random()*7)+'s';
-    p.style.animationDelay = (Math.random()*7)+'s';
-    lvBox.appendChild(p);
+  if(lvBox){
+    for(let i=0;i<14;i++){
+      const p = document.createElement('div');
+      p.className='lv-particle';
+      p.style.left = (10+Math.random()*80)+'%';
+      p.style.bottom = (Math.random()*30)+'%';
+      p.style.animationDuration = (7+Math.random()*7)+'s';
+      p.style.animationDelay = (Math.random()*7)+'s';
+      lvBox.appendChild(p);
+    }
   }
 
   // ---- magnetic buttons (used sparingly, e.g. login) ----
@@ -2772,18 +3069,20 @@
 
   // ---- background grid ----
   const canvas = document.getElementById('gridCanvas');
-  const ctx = canvas.getContext('2d');
-  let w,h;
-  function resize(){ w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; }
-  window.addEventListener('resize', resize); resize();
-  function draw(){
-    ctx.clearRect(0,0,w,h);
-    const spacing=48;
-    for(let x=0;x<w;x+=spacing){ for(let y=0;y<h;y+=spacing){
-      ctx.fillStyle='rgba(57,255,122,0.05)'; ctx.beginPath(); ctx.arc(x,y,1,0,Math.PI*2); ctx.fill();
-    }}
+  if(canvas){
+    const ctx = canvas.getContext('2d');
+    let w,h;
+    function resize(){ w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      const spacing=48;
+      for(let x=0;x<w;x+=spacing){ for(let y=0;y<h;y+=spacing){
+        ctx.fillStyle='rgba(57,255,122,0.05)'; ctx.beginPath(); ctx.arc(x,y,1,0,Math.PI*2); ctx.fill();
+      }}
+    }
+    draw();
   }
-  draw();
 </script>
 
 </body>

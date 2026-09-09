@@ -1,11 +1,12 @@
 import crypto from 'node:crypto'
 import { ObjectId } from 'mongodb'
 import { getDb } from '../_lib/mongodb.js'
+import { parseAdminSessionToken } from '../_lib/cookies.js'
 
 const ENQUIRY_STATUSES = new Set(['NEW', 'CONTACTED', 'QUOTATION_SENT', 'CONFIRMED', 'CLOSED'])
 
 function sessionToken(req) {
-  return req.headers.cookie?.match(/(?:^|; )turfon24_admin_session=([^;]+)/)?.[1]
+  return parseAdminSessionToken(req)
 }
 
 async function requireAdmin(req, db) {
@@ -79,7 +80,12 @@ const projection = {
 }
 
 function publicEnquiry(enquiry) {
-  return { ...enquiry, _id: String(enquiry._id) }
+  const normalized = String(enquiry.status || '').trim().toLowerCase()
+  return {
+    ...enquiry,
+    status: normalized === 'old' ? 'contacted' : normalized || 'new',
+    _id: String(enquiry._id),
+  }
 }
 
 function fail(res, status, message) {

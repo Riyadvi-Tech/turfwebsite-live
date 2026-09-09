@@ -48,8 +48,13 @@ const indexes = {
     { key: { date: 1 }, options: { name: 'date' } },
     { key: { date: 1, time: 1 }, options: { name: 'date_time' } },
     { key: { paymentReference: 1 }, options: { name: 'payment_reference' } },
+    { key: { draftReference: 1 }, options: { unique: true, sparse: true, name: 'draft_reference_unique' } },
     { key: { bookingStatus: 1 }, options: { name: 'booking_status' } },
     { key: { createdAt: 1 }, options: { name: 'created_at' } },
+  ],
+  booking_drafts: [
+    { key: { draftReference: 1 }, options: { unique: true, name: 'draft_reference_unique' } },
+    { key: { updatedAt: 1 }, options: { name: 'updated_at' } },
   ],
   customers: [
     { key: { mobile: 1 }, options: { unique: true, name: 'mobile_unique' } },

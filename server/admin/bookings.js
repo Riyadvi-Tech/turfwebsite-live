@@ -1,12 +1,13 @@
 import crypto from 'node:crypto'
 import { ObjectId } from 'mongodb'
 import { getDb } from '../_lib/mongodb.js'
+import { parseAdminSessionToken } from '../_lib/cookies.js'
 
-const BOOKING_STATUSES = new Set(['CONFIRMED', 'CANCELLED', 'COMPLETED', 'NO_SHOW'])
+const BOOKING_STATUSES = new Set(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED', 'NO_SHOW'])
 const PAYMENT_STATUSES = new Set(['PAID', 'PAYMENT_PENDING', 'EXPIRED', 'FAILED'])
 
 function sessionToken(req) {
-  return req.headers.cookie?.match(/(?:^|; )turfon24_admin_session=([^;]+)/)?.[1]
+  return parseAdminSessionToken(req)
 }
 
 async function requireAdmin(req, db) {
@@ -57,6 +58,10 @@ function parseDate(value) {
   return date
 }
 
+function localDateStart(value) {
+  return new Date(`${value}T00:00:00.000+05:30`)
+}
+
 function parsePagination(query) {
   const page = Number(query.page || 1)
   const limit = Number(query.limit || 25)
@@ -78,6 +83,7 @@ function bookingProjection() {
     paymentStatus: 1,
     bookingStatus: 1,
     slots: 1,
+    draftReference: 1,
     createdAt: 1,
     updatedAt: 1,
   }
@@ -111,7 +117,7 @@ export default async function handler(req, res) {
           { _id: id },
           { projection: bookingProjection() },
         )
-        if (!booking) return errorResponse(res, 404, 'Booking not found.')
+          if (!booking) return errorResponse(res, 404, 'Booking not found.')
 
         const [payment, customer] = await Promise.all([
           db.collection('payments').findOne(
@@ -124,19 +130,45 @@ export default async function handler(req, res) {
           ),
         ])
 
-        return res.status(200).json({ booking: publicBooking({ ...booking, name: booking.name || customer?.name }), payment: payment || null, customer: customer || null })
+        const normalizedBooking = booking.bookingStatus === 'CANCELLED' ? { ...booking, paymentStatus: 'CANCELLED' } : booking
+        return res.status(200).json({ booking: publicBooking({ ...normalizedBooking, name: normalizedBooking.name || customer?.name }), payment: payment || null, customer: customer || null })
       }
 
       const requestedStatus = parseStatus(req.body?.bookingStatus ?? req.body?.status, BOOKING_STATUSES, 'booking status')
       if (!requestedStatus) return errorResponse(res, 400, 'Booking status is required.')
 
+      const currentBooking = await db.collection('bookings').findOne({ _id: id }, { projection: { paymentStatus: 1, paymentReference: 1 } })
+      if (!currentBooking) return errorResponse(res, 404, 'Booking not found.')
+      if (requestedStatus === 'CONFIRMED' && currentBooking.paymentStatus !== 'PAID') {
+        return errorResponse(res, 409, 'A booking can be confirmed only after payment is paid.')
+      }
+
       const now = new Date()
+      const nextBookingValues = { bookingStatus: requestedStatus, updatedAt: now }
+      if (requestedStatus === 'CANCELLED') {
+        nextBookingValues.paymentStatus = 'CANCELLED'
+      }
+
       const result = await db.collection('bookings').findOneAndUpdate(
         { _id: id },
-        { $set: { bookingStatus: requestedStatus, updatedAt: now } },
+        { $set: nextBookingValues },
         { returnDocument: 'after', projection: bookingProjection() },
       )
       if (!result) return errorResponse(res, 404, 'Booking not found.')
+
+      if (requestedStatus === 'CANCELLED' && currentBooking.paymentReference) {
+        await Promise.all([
+          db.collection('payment_sessions').updateMany(
+            { reference: currentBooking.paymentReference },
+            { $set: { status: 'CANCELLED', updatedAt: now } },
+          ),
+          db.collection('payments').updateMany(
+            { paymentReference: currentBooking.paymentReference },
+            { $set: { status: 'CANCELLED', updatedAt: now } },
+          ),
+        ])
+      }
+
       return res.status(200).json({ booking: publicBooking(result) })
     }
 
@@ -149,7 +181,7 @@ export default async function handler(req, res) {
     const endDate = parseDate(req.query?.endDate)
     if ((startDate && !endDate) || (!startDate && endDate)) throw new Error('Both start and end dates are required.')
     if (startDate && endDate && endDate < startDate) throw new Error('Invalid date range.')
-    if (startDate && endDate && (new Date(`${endDate}T00:00:00Z`) - new Date(`${startDate}T00:00:00Z`)) > 62 * 86400000) {
+    if (startDate && endDate && (localDateStart(endDate) - localDateStart(startDate)) > 62 * 86400000) {
       throw new Error('Date range is too large.')
     }
     const bookingStatus = parseStatus(req.query?.bookingStatus, BOOKING_STATUSES, 'booking status')
@@ -164,12 +196,12 @@ export default async function handler(req, res) {
     if (paymentStatus) filter.paymentStatus = paymentStatus
     if (mobile) filter.mobile = mobile
     if (createdDate) {
-      const nextDate = new Date(`${createdDate}T00:00:00.000Z`)
+      const nextDate = localDateStart(createdDate)
       nextDate.setUTCDate(nextDate.getUTCDate() + 1)
       const nextDateKey = nextDate.toISOString().slice(0, 10)
       filter.$or = [
-        { createdAt: { $gte: new Date(`${createdDate}T00:00:00.000Z`), $lt: nextDate } },
-        { createdAt: { $gte: `${createdDate}T00:00:00.000Z`, $lt: `${nextDateKey}T00:00:00.000Z` } },
+        { createdAt: { $gte: localDateStart(createdDate), $lt: nextDate } },
+        { createdAt: { $gte: `${createdDate}T00:00:00.000+05:30`, $lt: `${nextDateKey}T00:00:00.000+05:30` } },
       ]
     }
 
@@ -191,7 +223,10 @@ export default async function handler(req, res) {
       : new Map()
 
     return res.status(200).json({
-      bookings: bookings.map((booking) => publicBooking({ ...booking, name: booking.name || customerNames.get(booking.mobile) })),
+      bookings: bookings.map((booking) => {
+        const normalizedBooking = booking.bookingStatus === 'CANCELLED' ? { ...booking, paymentStatus: 'CANCELLED' } : booking
+        return publicBooking({ ...normalizedBooking, name: normalizedBooking.name || customerNames.get(normalizedBooking.mobile) })
+      }),
       page,
       limit,
       total,

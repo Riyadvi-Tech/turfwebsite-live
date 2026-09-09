@@ -1,9 +1,10 @@
 import crypto from 'node:crypto'
 import { getDb } from '../_lib/mongodb.js'
+import { parseAdminSessionToken } from '../_lib/cookies.js'
 import { MaterializationError, materializeHourlyPayment } from '../_lib/booking-materialization.js'
 
 function sessionToken(req) {
-  return req.headers.cookie?.match(/(?:^|; )turfon24_admin_session=([^;]+)/)?.[1]
+  return parseAdminSessionToken(req)
 }
 
 async function requireAdmin(req, db) {
@@ -23,6 +24,15 @@ async function requireAdmin(req, db) {
   })
 
   return Boolean(admin)
+}
+
+function normalizeStatus(value) {
+  return String(value || '').trim().toUpperCase()
+}
+
+function cancelledByBooking(booking) {
+  if (!booking || typeof booking !== 'object') return false
+  return normalizeStatus(booking.bookingStatus) === 'CANCELLED' || normalizeStatus(booking.paymentStatus) === 'CANCELLED'
 }
 
 function safeBookingData(data) {
@@ -84,11 +94,12 @@ export default async function handler(req, res) {
         'PAID',
         'EXPIRED',
         'FAILED',
+        'CANCELLED',
       ])
 
       const filter = {}
 
-      if (allowedStatuses.has(status)) {
+      if (allowedStatuses.has(status) && status !== 'CANCELLED') {
         filter.status = status
       }
 
@@ -122,18 +133,103 @@ export default async function handler(req, res) {
         .sort({ createdAt: -1 })
         .toArray()
 
-      return res.status(200).json({
-        sessions: sessions.map((session) => ({
+      const bookingFilter = {}
+      if (allowedStatuses.has(status)) {
+        if (status === 'CANCELLED') {
+          bookingFilter.bookingStatus = 'CANCELLED'
+        } else {
+          bookingFilter.paymentStatus = status
+        }
+      }
+      if (search) {
+        const safeSearch = search.slice(0, 100).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        bookingFilter.$or = [
+          { paymentReference: { $regex: safeSearch, $options: 'i' } },
+          { mobile: { $regex: safeSearch, $options: 'i' } },
+          { name: { $regex: safeSearch, $options: 'i' } },
+        ]
+      }
+      const bookings = await db.collection('bookings')
+        .find(bookingFilter, { projection: { _id: 1, name: 1, customerName: 1, mobile: 1, date: 1, time: 1, duration: 1, amount: 1, paymentReference: 1, paymentStatus: 1, bookingStatus: 1, slots: 1, createdAt: 1, updatedAt: 1 } })
+        .sort({ createdAt: -1, _id: -1 })
+        .limit(100)
+        .toArray()
+
+      const sessionReferences = new Set(sessions.map((session) => session.reference))
+      const bookingByReference = new Map(bookings.filter((booking) => booking.paymentReference).map((booking) => [booking.paymentReference, booking]))
+
+      const filteredSessions = sessions.filter((session) => {
+        const booking = bookingByReference.get(session.reference)
+        return !booking || booking.bookingStatus !== 'CANCELLED' || booking.paymentStatus !== 'CANCELLED'
+          ? true
+          : true
+      })
+
+      const bookingSessions = bookings
+        .filter((booking) => !booking.paymentReference || !sessionReferences.has(booking.paymentReference))
+        .map((booking) => {
+          const statusFromBooking = cancelledByBooking(booking)
+            ? 'CANCELLED'
+            : normalizeStatus(booking.paymentStatus) || (normalizeStatus(booking.bookingStatus) === 'CONFIRMED' ? 'PAID' : 'PAYMENT_PENDING')
+          return {
+            reference: booking.paymentReference || String(booking._id),
+            bookingId: String(booking._id),
+            source: 'booking',
+            bookingType: 'hourly',
+            amount: Number(booking.amount || 0),
+            currency: 'INR',
+            status: statusFromBooking,
+            bookingData: safeBookingData({
+              type: 'hourly',
+              name: booking.name || booking.customerName,
+              mobile: booking.mobile,
+              date: booking.date,
+              time: booking.time,
+              duration: booking.duration,
+              slots: booking.slots,
+            }),
+            createdAt: booking.createdAt,
+            expiresAt: null,
+            paidAt: normalizeStatus(booking.paymentStatus) === 'PAID' ? booking.updatedAt : null,
+          }
+        })
+
+      const mergedSessions = [...filteredSessions.map((session) => {
+        const booking = bookingByReference.get(session.reference)
+        const normalizedStatus = cancelledByBooking(booking)
+          ? 'CANCELLED'
+          : session.status
+        return {
           reference: session.reference,
+          bookingId: booking?._id ? String(booking._id) : session.reference,
+          source: 'payment_session',
           bookingType: session.bookingType,
           amount: session.amount,
           currency: session.currency,
-          status: session.status,
+          status: normalizedStatus,
           bookingData: safeBookingData(session.bookingData),
           createdAt: session.createdAt,
           expiresAt: session.expiresAt,
           paidAt: session.paidAt || null,
-        })),
+        }
+      }), ...bookingSessions]
+
+      const normalizedMergedSessions = mergedSessions.map((row) => ({
+        ...row,
+        status: normalizeStatus(row.status) === 'CANCELLED' ? 'CANCELLED' : row.status,
+      }))
+
+      const finalSessions = normalizedMergedSessions.filter((row) => {
+        if (status === 'CANCELLED') return row.status === 'CANCELLED'
+        if (status === 'PAID') return row.status === 'PAID'
+        if (status === 'PAYMENT_PENDING') return row.status === 'PAYMENT_PENDING'
+        if (status === 'EXPIRED') return row.status === 'EXPIRED'
+        if (status === 'FAILED') return row.status === 'FAILED'
+        return true
+      })
+
+      return res.status(200).json({
+        sessions: finalSessions,
       })
     }
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TurfOn24 Admin</title>
+<title>TurfOn24</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -1255,15 +1255,15 @@
   const chatConvos = [
     ['Karan Mehta','98123 45670','karan.m@example.com','Pricing, Booking steps','10 min ago','new','2026-08-27'],
     ['Neha Joshi','97865 43120','neha.j@example.com','Operating hours, OTP','3 hrs ago','new','2026-08-26'],
-    ['Vikram Singh','96543 21098','vikram.s@example.com','Multi-day booking, Location','Yesterday','resolved','2026-08-25'],
-    ['Ayesha Khan','95432 10987','ayesha.k@example.com','Payment methods','2 days ago','resolved','2026-08-24'],
+    ['Vikram Singh','96543 21098','vikram.s@example.com','Multi-day booking, Location','Yesterday','contacted','2026-08-25'],
+    ['Ayesha Khan','95432 10987','ayesha.k@example.com','Payment methods','2 days ago','contacted','2026-08-24'],
   ];
   document.getElementById('chatbotBody').innerHTML = chatConvos.map(c=>`
     <tr data-date="${c[6]}"><td>${c[0]}</td><td class="mono">${c[1]}</td><td>${c[2]}</td><td style="white-space:normal; max-width:200px;">${c[3]}</td><td>${c[4]}</td>
-    <td><span class="badge ${c[5]==='new'?'pending':'confirmed'}">${c[5]==='new'?'New':'Resolved'}</span></td>
+    <td><span class="badge ${c[5]==='new'?'confirmed':'pending'}">${c[5]==='new'?'New':'Contacted'}</span></td>
     <td><div class="row-actions">
       <button onclick="showToast('Opening conversation...')" title="Continue"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v13H8l-4 4Z"/></svg></button>
-      <button onclick="showToast('Marked as resolved')" title="Mark resolved"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button>
+      <button onclick="showToast('Marked as contacted')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button>
       <button onclick="showToast('Conversation exported')" title="Export"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></button>
     </div></td></tr>`).join('');
 

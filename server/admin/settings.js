@@ -1,10 +1,11 @@
 import crypto from 'node:crypto'
 import { getDb } from '../_lib/mongodb.js'
+import { parseAdminSessionToken } from '../_lib/cookies.js'
 
 const SETTINGS_FIELDS = ['businessName', 'hourlyRate', 'phone', 'whatsapp', 'email', 'upiId', 'address']
 
 function sessionToken(req) {
-  return req.headers.cookie?.match(/(?:^|; )turfon24_admin_session=([^;]+)/)?.[1]
+  return parseAdminSessionToken(req)
 }
 
 async function requireAdmin(req, db) {

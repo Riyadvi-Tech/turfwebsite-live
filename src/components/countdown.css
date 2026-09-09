@@ -1,66 +1,144 @@
 .countdown-page {
   position: relative;
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  min-height: 100dvh;
-  width: 100%;
-  box-sizing: border-box;
-  overflow-x: hidden;
-  overflow-y: auto;
-  background: #030607;
-  color: #f2f4f2;
-  font-family: 'Inter', system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  isolation: isolate;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #000;
 }
 
-/* --- Background layers (fixed so they cover the viewport while the page scrolls) --- */
-.countdown__bg,
-.countdown__scrim,
-.countdown__mist,
-.countdown__glow {
-  position: fixed;
+.countdown-page::before {
+  content: '';
+  position: absolute;
+  inset: -5%;
+  background: url('/logo-assets/count-down.jpeg') center / cover;
+  filter: blur(40px) brightness(0.35) saturate(1.1);
+  transform: scale(1.15);
+}
+
+.countdown-hero-button {
+  position: absolute;
+  top: calc(18px + env(safe-area-inset-top, 0px));
+  right: calc(20px + env(safe-area-inset-right, 0px));
+  z-index: 3;
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  background: rgba(0, 8, 5, 0.72);
+  color: #fff;
+  font: 600 13px/1 sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  transition: border-color 180ms ease, background 180ms ease, transform 120ms ease;
+}
+
+.countdown-hero-button:hover {
+  border-color: #39ff7a;
+  background: rgba(0, 20, 12, 0.88);
+}
+
+.countdown-hero-button:focus-visible {
+  outline: 2px solid #39ff7a;
+  outline-offset: 3px;
+}
+
+.countdown-hero-button:active { transform: scale(0.96); }
+
+.countdown-frame {
+  position: relative;
+  z-index: 1;
+  width: 100vw;
+  height: 100dvh;
+  box-shadow: 0 0 80px rgba(0, 0, 0, 0.6);
+}
+
+.countdown-poster {
+  position: absolute;
   inset: 0;
-  pointer-events: none;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
 }
 
-.countdown__bg {
-  z-index: 0;
-  background-image: url('/logo-assets/Count.png');
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-}
-
-.countdown__scrim {
-  z-index: 1;
-  /* Subtle darkening only — keeps the pitch/goal/floodlights/mist visible */
-  background: linear-gradient(180deg, rgba(3, 6, 7, 0.50) 0%, rgba(3, 6, 7, 0.12) 42%, rgba(3, 6, 7, 0.10) 58%, rgba(3, 6, 7, 0.58) 100%);
-}
-
-/* Subtle animated mist/fog drift */
-.countdown__mist {
-  z-index: 1;
-  opacity: 0.5;
+.countdown-patch {
+  position: absolute;
+  top: 41.2%;
+  width: 9.8%;
+  height: 8.8%;
+  border-radius: 10%;
+  border: 1px solid rgba(57, 255, 122, 0.24);
   background:
-    radial-gradient(55% 42% at 28% 62%, rgba(225, 240, 235, 0.10), transparent 70%),
-    radial-gradient(50% 40% at 74% 38%, rgba(215, 235, 228, 0.09), transparent 70%),
-    radial-gradient(60% 45% at 50% 78%, rgba(225, 242, 236, 0.08), transparent 72%);
-  filter: blur(6px);
-  animation: countdown-mist 36s ease-in-out infinite alternate;
+    radial-gradient(ellipse at 50% 8%, rgba(92, 255, 148, 0.28), transparent 48%),
+    linear-gradient(180deg, rgba(18, 67, 39, 0.99), rgba(5, 31, 18, 0.99));
+  box-shadow: inset 0 1px 5px rgba(154, 255, 187, 0.18), inset 0 -8px 12px rgba(0, 0, 0, 0.18), 0 0 10px rgba(57, 255, 122, 0.12);
+  clip-path: polygon(8% 0, 92% 0, 100% 14%, 100% 86%, 92% 100%, 8% 100%, 0 86%, 0 14%);
 }
 
-/* Subtle floodlight/glow pulse near the top */
-.countdown__glow {
-  top: -20%;
+.countdown-patch--days { left: 29.1%; }
+.countdown-patch--hours { left: 39.3%; }
+.countdown-patch--minutes { left: 49.4%; }
+.countdown-patch--seconds { left: 59.6%; }
+.countdown-number--days { left: 28.7%; }
+.countdown-number--hours { left: 38.9%; }
+.countdown-number--minutes { left: 49%; }
+.countdown-number--seconds { left: 59.2%; }
+
+.countdown-number {
+  position: absolute;
+  top: 41.2%;
+  display: flex;
+  width: 10.6%;
+  height: 9.2%;
+  align-items: center;
+  justify-content: center;
+  color: #f4fff9;
+  font: 800 3.6vw / 1 sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.9), 0 0 18px rgba(150, 255, 190, 0.85), 0 0 34px rgba(90, 255, 160, 0.6);
+}
+
+.countdown-done {
+  position: absolute;
+  top: 43%;
   left: 50%;
-  right: auto;
-  width: 90%;
-  height: 50%;
-  z-index: 1;
-  background: radial-gradient(ellipse at 50% 100%, rgba(57, 255, 122, 0.14), transparent 70%);
-  animation: countdown-glow 7s ease-in-out infinite;
+  display: none;
+  padding: 1em 1.6em;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(120, 255, 180, 0.5);
+  border-radius: 12px;
+  background: rgba(2, 10, 6, 0.55);
+  color: #7dffb0;
+  font: 900 2.4vw sans-serif;
+  text-align: center;
+  text-shadow: 0 0 20px rgba(80, 255, 150, 0.8);
+  white-space: nowrap;
+}
+
+.countdown-done--visible { display: block; }
+
+.countdown-contact {
+  position: absolute;
+  top: 88.5%;
+  display: block;
+  height: 7%;
+}
+
+.countdown-contact--whatsapp { left: 15.5%; width: 19%; }
+.countdown-contact--call { left: 39.5%; width: 15%; }
+
+@media (max-width: 720px) {
+  .countdown-number { font-size: 6.2vw; }
+  .countdown-done { font-size: 4vw; }
 }
 
 /* --- Top bar: logo (left) + Home button --- */

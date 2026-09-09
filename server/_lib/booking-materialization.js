@@ -110,13 +110,25 @@ export async function materializeHourlyPayment(db, reference, { transitionToPaid
       )
 
       if (existingBooking) {
-        assertBookingCompatibility(existingBooking, normalized)
+        const pendingBooking = existingBooking.paymentStatus === 'PAYMENT_PENDING' && existingBooking.bookingStatus === 'PENDING'
+        if (!pendingBooking) assertBookingCompatibility(existingBooking, normalized)
         assertPaymentCompatibility(existingPayment, normalized.amount, paymentSession.currency, existingBooking._id)
 
         if (transitionToPaid && paymentSession.status === 'PAYMENT_PENDING') {
-          await db.collection('payment_sessions').updateOne(
+          const stateChange = await db.collection('payment_sessions').updateOne(
             { _id: paymentSession._id, status: 'PAYMENT_PENDING' },
             { $set: { status: 'PAID', paidAt: now, updatedAt: now } },
+            { session },
+          )
+          if (stateChange.matchedCount !== 1) {
+            throw new MaterializationError('INVALID_STATE', 'Payment session is no longer pending.')
+          }
+        }
+
+        if (pendingBooking) {
+          await bookings.updateOne(
+            { _id: existingBooking._id, paymentStatus: 'PAYMENT_PENDING', bookingStatus: 'PENDING' },
+            { $set: { paymentStatus: 'PAID', bookingStatus: 'CONFIRMED', updatedAt: now } },
             { session },
           )
         }
@@ -134,7 +146,20 @@ export async function materializeHourlyPayment(db, reference, { transitionToPaid
             updatedAt: now,
           }, { session })
         }
+        if (pendingBooking) {
+          await db.collection('customers').updateOne(
+            { mobile: normalized.mobile },
+            {
+              $set: { mobile: normalized.mobile, name: normalized.name, updatedAt: now },
+              $setOnInsert: { createdAt: now, totalBookings: 0, totalSpent: 0 },
+              $inc: { totalBookings: 1, totalSpent: normalized.amount },
+            },
+            { upsert: true, session },
+          )
+        }
         result = responseFor(existingBooking, false)
+        result.booking = { ...existingBooking, paymentStatus: 'PAID', bookingStatus: 'CONFIRMED', updatedAt: now }
+        result.bookingStatus = 'CONFIRMED'
         return
       }
 

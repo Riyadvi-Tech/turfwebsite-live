@@ -1,11 +1,13 @@
 import crypto from 'node:crypto'
 import { getDb } from '../_lib/mongodb.js'
+import { parseAdminSessionToken } from '../_lib/cookies.js'
 
-const BOOKING_STATUSES = ['CONFIRMED', 'CANCELLED', 'COMPLETED', 'NO_SHOW']
+const BOOKING_STATUSES = ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED', 'NO_SHOW']
 const PAYMENT_STATUSES = ['PAID', 'PAYMENT_PENDING', 'EXPIRED', 'FAILED']
+const REPORT_TIMEZONE = '+05:30'
 
 function sessionToken(req) {
-  return req.headers.cookie?.match(/(?:^|; )turfon24_admin_session=([^;]+)/)?.[1]
+  return parseAdminSessionToken(req)
 }
 
 async function requireAdmin(req, db) {
@@ -31,6 +33,10 @@ function addDay(value) {
   const date = new Date(`${value}T00:00:00Z`)
   date.setUTCDate(date.getUTCDate() + 1)
   return date.toISOString().slice(0, 10)
+}
+
+function localStart(value) {
+  return new Date(`${value}T00:00:00${REPORT_TIMEZONE}`)
 }
 
 function dateSeries(start, end) {
@@ -59,37 +65,80 @@ export default async function handler(req, res) {
     const payments = db.collection('payments')
     const paymentSessions = db.collection('payment_sessions')
     const bookingFilter = { date: { $gte: startDate, $lte: endDate } }
-    const paymentDateFilter = { createdAt: { $gte: new Date(`${startDate}T00:00:00Z`), $lt: new Date(`${nextDate}T00:00:00Z`) } }
+    const paymentDateFilter = { createdAt: { $gte: localStart(startDate), $lt: localStart(nextDate) } }
+    const createdBookingFilter = { createdAt: { $gte: localStart(startDate), $lt: localStart(nextDate) } }
     const hourlyBookingStages = [
       { $lookup: { from: 'payment_sessions', localField: 'paymentReference', foreignField: 'reference', as: 'paymentSession' } },
       { $match: { $or: [{ 'paymentSession.bookingType': 'hourly' }, { paymentSession: { $size: 0 } }] } },
     ]
-    const verifiedRevenueStages = [
-      { $match: { ...bookingFilter, paymentStatus: 'PAID', bookingStatus: { $ne: 'CANCELLED' } } },
-      ...hourlyBookingStages,
-      { $lookup: { from: 'payments', let: { reference: '$paymentReference', bookingId: '$_id', amount: '$amount' }, pipeline: [{ $match: { status: 'PAID' } }, { $match: { $expr: { $and: [{ $eq: ['$paymentReference', '$$reference'] }, { $eq: ['$bookingId', '$$bookingId'] }, { $eq: ['$amount', '$$amount'] }] } } }], as: 'verifiedPayment' } },
-      { $match: { $expr: { $gt: [{ $size: '$verifiedPayment' }, 0] } } },
+    const paidRecordDate = { $ifNull: ['$paidAt', '$updatedAt'] }
+    const paidRecordStages = [
+      { $match: { status: 'PAID' } },
+      { $project: { reference: 1, amount: 1, paidAt: 1, updatedAt: 1 } },
+      {
+        $unionWith: {
+          coll: 'bookings',
+          pipeline: [
+            { $match: { paymentStatus: 'PAID' } },
+            { $lookup: { from: 'payment_sessions', localField: 'paymentReference', foreignField: 'reference', as: 'paymentSession' } },
+            { $match: { $expr: { $eq: [{ $size: '$paymentSession' }, 0] } } },
+            { $project: { reference: '$paymentReference', amount: 1, paidAt: '$updatedAt', updatedAt: 1 } },
+          ],
+        },
+      },
+      {
+        $match: {
+          $expr: {
+            $and: [
+              { $gte: [paidRecordDate, localStart(startDate)] },
+              { $lt: [paidRecordDate, localStart(nextDate)] },
+            ],
+          },
+        },
+      },
+    ]
+    const pendingRecordStages = [
+      { $match: { status: 'PAYMENT_PENDING', expiresAt: { $gt: new Date() } } },
+      { $project: { reference: 1, amount: 1, createdAt: 1 } },
+      {
+        $unionWith: {
+          coll: 'bookings',
+          pipeline: [
+            { $match: { paymentStatus: 'PAYMENT_PENDING', bookingStatus: 'PENDING' } },
+            { $lookup: { from: 'payment_sessions', localField: 'paymentReference', foreignField: 'reference', as: 'paymentSession' } },
+            { $match: { $expr: { $eq: [{ $size: '$paymentSession' }, 0] } } },
+            { $project: { reference: '$paymentReference', amount: 1, createdAt: 1 } },
+          ],
+        },
+      },
+      { $match: { createdAt: { $gte: localStart(startDate), $lt: localStart(nextDate) } } },
     ]
 
     const createdAtDailyStages = () => [
-      { $match: { createdAt: { $gte: new Date(`${startDate}T00:00:00Z`), $lt: new Date(`${nextDate}T00:00:00Z`) } } },
-      { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt', timezone: 'UTC' } }, count: { $sum: 1 } } },
+      { $match: { createdAt: { $gte: localStart(startDate), $lt: localStart(nextDate) } } },
+      { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt', timezone: REPORT_TIMEZONE } }, count: { $sum: 1 } } },
     ]
     const [statusRows, dailyRows, dailyStatusRows, paidRows, dailyRevenueRows, paymentStatusRows, pendingRows, durationRows, dailyEnquiryRows, dailyWhatsappRows, dailyChatRows, dailyPendingRows, dailyCustomerRows] = await Promise.all([
       bookings.aggregate([{ $match: bookingFilter }, ...hourlyBookingStages, { $group: { _id: '$bookingStatus', count: { $sum: 1 } } }]).toArray(),
       bookings.aggregate([{ $match: bookingFilter }, ...hourlyBookingStages, { $group: { _id: '$date', count: { $sum: 1 }, duration: { $sum: '$duration' } } }]).toArray(),
-      bookings.aggregate([{ $match: bookingFilter }, ...hourlyBookingStages, { $group: { _id: { date: '$date', status: '$bookingStatus' }, count: { $sum: 1 } } }]).toArray(),
-      bookings.aggregate([...verifiedRevenueStages, { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } }]).toArray(),
-      bookings.aggregate([...verifiedRevenueStages, { $group: { _id: '$date', revenue: { $sum: '$amount' } } }]).toArray(),
+      bookings.aggregate([{ $match: createdBookingFilter }, ...hourlyBookingStages, { $group: { _id: { date: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt', timezone: REPORT_TIMEZONE } }, status: '$bookingStatus' }, count: { $sum: 1 } } }]).toArray(),
+      paymentSessions.aggregate([...paidRecordStages, { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } }]).toArray(),
+      paymentSessions.aggregate([
+        ...paidRecordStages,
+        { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: paidRecordDate, timezone: REPORT_TIMEZONE } }, revenue: { $sum: '$amount' } } },
+      ]).toArray(),
       payments.aggregate([{ $match: { ...paymentDateFilter, status: { $in: PAYMENT_STATUSES } } }, { $group: { _id: '$status', count: { $sum: 1 } } }]).toArray(),
-      paymentSessions.aggregate([{ $match: { bookingType: 'hourly', status: 'PAYMENT_PENDING', expiresAt: { $gt: new Date() }, ...paymentDateFilter } }, { $group: { _id: null, count: { $sum: 1 }, amount: { $sum: '$amount' } } }]).toArray(),
+      paymentSessions.aggregate([
+        ...pendingRecordStages,
+        { $group: { _id: null, count: { $sum: 1 }, amount: { $sum: '$amount' } } },
+      ]).toArray(),
       bookings.aggregate([{ $match: bookingFilter }, ...hourlyBookingStages, { $group: { _id: null, totalHours: { $sum: '$duration' } } }]).toArray(),
       enquiries.aggregate(createdAtDailyStages()).toArray(),
       whatsappEnquiries.aggregate(createdAtDailyStages()).toArray(),
       chatbotConversations.aggregate(createdAtDailyStages()).toArray(),
       paymentSessions.aggregate([
-        { $match: { bookingType: 'hourly', status: 'PAYMENT_PENDING', expiresAt: { $gt: new Date() }, ...paymentDateFilter } },
-        { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt', timezone: 'UTC' } }, count: { $sum: 1 } } },
+        ...pendingRecordStages,
+        { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt', timezone: REPORT_TIMEZONE } }, count: { $sum: 1 } } },
       ]).toArray(),
       bookings.aggregate([
         { $match: bookingFilter },
@@ -106,12 +155,21 @@ export default async function handler(req, res) {
     dailyRows.forEach((row) => { if (dailyMap[row._id]) dailyMap[row._id] = { ...dailyMap[row._id], bookings: row.count, duration: row.duration } })
     dailyRevenueRows.forEach((row) => { if (dailyMap[row._id]) dailyMap[row._id].revenue = row.revenue })
     dailyStatusRows.forEach((row) => { if (dailyMap[row._id.date]) { if (!dailyMap[row._id.date].statuses) dailyMap[row._id.date].statuses = { CONFIRMED: 0, CANCELLED: 0, COMPLETED: 0, NO_SHOW: 0 }; if (Object.hasOwn(dailyMap[row._id.date].statuses, row._id.status)) dailyMap[row._id.date].statuses[row._id.status] = row.count } })
+    const completedByDate = {}
+    dailyStatusRows.forEach((row) => {
+      const status = row._id.status
+      if (status === 'COMPLETED') completedByDate[row._id.date] = (completedByDate[row._id.date] || 0) + row.count
+    })
+    Object.entries(completedByDate).forEach(([date, count]) => {
+      if (dailyMap[date]) dailyMap[date].statuses.COMPLETED = count
+    })
     dailyEnquiryRows.forEach((row) => { if (dailyMap[row._id]) dailyMap[row._id].enquiries = row.count })
     dailyWhatsappRows.forEach((row) => { if (dailyMap[row._id]) dailyMap[row._id].whatsapp = row.count })
     dailyChatRows.forEach((row) => { if (dailyMap[row._id]) dailyMap[row._id].chat = row.count })
     dailyPendingRows.forEach((row) => { if (dailyMap[row._id]) dailyMap[row._id].paymentPending = row.count })
     dailyCustomerRows.forEach((row) => { if (dailyMap[row._id]) dailyMap[row._id].customers = row.customers.filter(Boolean).length })
     const daily = Object.values(dailyMap)
+    const completedBookingCount = Object.values(completedByDate).reduce((total, count) => total + count, 0)
     const paidRevenue = Number(paidRows[0]?.total || 0)
     const paidBookingCount = Number(paidRows[0]?.count || 0)
 
@@ -121,7 +179,7 @@ export default async function handler(req, res) {
         bookings: Object.values(statusCounts).reduce((sum, count) => sum + count, 0),
         confirmed: statusCounts.CONFIRMED,
         cancelled: statusCounts.CANCELLED,
-        completed: statusCounts.COMPLETED,
+        completed: completedBookingCount,
         noShow: statusCounts.NO_SHOW,
         paidRevenue,
         paidBookingCount,

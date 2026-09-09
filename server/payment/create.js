@@ -168,6 +168,7 @@ export default async function handler(req, res) {
   }
 
   const type = req.body?.type
+  const draftReference = String(req.body?.draftReference || '').trim()
   const idempotencyKey = String(req.body?.idempotencyKey || '').trim()
   if (!['hourly', 'extended'].includes(type)) return res.status(400).json({ message: 'Invalid payment type.' })
   if (!/^[A-Za-z0-9_-]{16,128}$/.test(idempotencyKey)) return res.status(400).json({ message: 'Invalid payment request.' })
@@ -241,12 +242,57 @@ export default async function handler(req, res) {
       expiresAt,
       idempotencyKey,
       bookingData,
+      ...(type === 'hourly' && draftReference ? { draftReference } : {}),
       ...(type === 'hourly' ? { otpAuthorization } : {}),
       createdAt: new Date(),
       updatedAt: new Date(),
       merchantName,
     }
     await db.collection('payment_sessions').insertOne(session)
+    if (type === 'hourly') {
+      const slotKeys = [...new Set(bookingData.slots.flatMap((slot) => slot.slotKeys))]
+      await db.collection('bookings').createIndex(
+        { paymentReference: 1 },
+        { unique: true, name: 'payment_reference_unique' },
+      )
+      await db.collection('bookings').createIndex(
+        { date: 1, slotKeys: 1 },
+        { unique: true, sparse: true, name: 'date_slot_keys_unique' },
+      )
+      const pendingBooking = {
+        name: bookingData.name,
+        mobile: bookingData.mobile,
+        date: bookingData.date,
+        time: bookingData.time,
+        duration: bookingData.duration,
+        amount: bookingData.amount,
+        paymentReference: reference,
+        paymentStatus: 'PAYMENT_PENDING',
+        bookingStatus: 'PENDING',
+        slots: bookingData.slots,
+        slotKeys,
+        createdAt: session.createdAt,
+        updatedAt: session.updatedAt,
+      }
+      const draft = draftReference
+        ? await db.collection('booking_drafts').findOne({ draftReference })
+        : null
+      const mergedBooking = draft?.bookingData ? { ...pendingBooking, ...draft.bookingData, paymentReference: reference, paymentStatus: 'PAYMENT_PENDING', bookingStatus: 'PENDING' } : pendingBooking
+      if (draftReference) {
+        const existingDraftBooking = await db.collection('bookings').findOne({ draftReference })
+        if (existingDraftBooking) {
+          await db.collection('bookings').updateOne(
+            { _id: existingDraftBooking._id, paymentStatus: 'PAYMENT_PENDING' },
+            { $set: { ...mergedBooking, updatedAt: session.updatedAt } },
+          )
+        } else {
+          await db.collection('bookings').insertOne({ ...mergedBooking, draftReference })
+        }
+      } else {
+        await db.collection('bookings').insertOne(mergedBooking)
+      }
+      if (draftReference) await db.collection('booking_drafts').updateOne({ draftReference }, { $set: { status: 'PAYMENT_PENDING', paymentReference: reference, updatedAt: session.updatedAt } })
+    }
     return res.status(201).json(sessionResponse(session))
   } catch (error) {
     if (error.code === 11000) {
