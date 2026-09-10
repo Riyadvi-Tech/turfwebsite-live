@@ -2,12 +2,14 @@ import nodemailer from 'nodemailer'
 
 export function getMailer() {
   const required = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASSWORD', 'MAIL_FROM']
-  const missing = required.filter((name) => !process.env[name])
+  const missing = required.filter((name) => !String(process.env[name] || '').trim())
   if (missing.length) throw new Error(`SMTP configuration is incomplete: ${missing.join(', ')}`)
-  if (!Number.isInteger(Number(process.env.SMTP_PORT)) || Number(process.env.SMTP_PORT) < 1 || Number(process.env.SMTP_PORT) > 65535) {
+  const port = Number(process.env.SMTP_PORT)
+  if (!Number.isInteger(port) || port < 1 || port > 65535) {
     throw new Error('SMTP_PORT is invalid')
   }
-  return nodemailer.createTransport({ host: process.env.SMTP_HOST, port: Number(process.env.SMTP_PORT), secure: process.env.SMTP_SECURE === 'true', auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASSWORD } })
+  const secure = process.env.SMTP_SECURE ? process.env.SMTP_SECURE === 'true' : port === 465
+  return nodemailer.createTransport({ host: process.env.SMTP_HOST.trim(), port, secure, auth: { user: process.env.SMTP_USER.trim(), pass: process.env.SMTP_PASSWORD } })
 }
 
 function getRequestOrigin(req) {
