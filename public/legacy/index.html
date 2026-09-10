@@ -133,6 +133,8 @@
   .hotspot-wrap .ph img{filter:saturate(1.12) contrast(1.06) brightness(0.6);}
   .pin{position:absolute; width:16px; height:16px; border-radius:50%; background:var(--neon); box-shadow:0 0 0 4px rgba(57,255,122,0.2); z-index:2;}
   .pin::after{content:""; position:absolute; inset:-8px; border-radius:50%; border:1px solid var(--neon); animation:radarPing 2s ease-out infinite;}
+  .pin:hover::after,.pin.active::after{animation:none; opacity:0;}
+  .hotspot-wrap:has(.pin:hover) .pin::after,.hotspot-wrap:has(.pin.active) .pin::after{animation:none; opacity:0;}
   @keyframes radarPing{0%{transform:scale(0.5); opacity:1;} 100%{transform:scale(2.6); opacity:0;}}
   .pin-tip{position:absolute; bottom:28px; left:50%; transform:translateX(-50%) translateY(6px); width:210px; background:var(--charcoal); border:1px solid var(--border); border-radius:12px; padding:14px 16px; opacity:0; pointer-events:none; transition:opacity .25s ease, transform .25s ease; z-index:3;}
   .pin:hover,.pin.active{z-index:10;}
@@ -266,14 +268,15 @@
   .fn-showcase-img[data-pos="top"]{object-position:center 20%;}
   .fn-showcase-img[data-pos="bottom"]{object-position:center 65%;}
   .fn-card.active{border-color:rgba(57,255,122,0.55); box-shadow:0 18px 42px rgba(0,0,0,0.4), 0 0 28px rgba(57,255,122,0.18);}
-  .fn-featured-copy{position:absolute; bottom:0; left:0; z-index:3; padding:30px 34px 34px;}
+  .fn-featured-copy{position:absolute; bottom:14px; left:0; z-index:3; padding:30px 34px 34px;}
   .fn-featured-copy h3{font-size:25px; font-weight:600; letter-spacing:-0.02em; margin:0 0 10px; color:var(--white);}
-  .fn-featured-copy p{color:rgba(255,255,255,.9); font-size:14.5px; line-height:1.6; max-width:440px; margin:0;}
+  .fn-featured-copy p{position:relative; top:0; color:rgba(255,255,255,.9); font-size:14.5px; line-height:1.6; max-width:440px; margin:0;}
   .fn-feature-nav{position:absolute; top:50%; right:24px; z-index:5; display:flex; flex-direction:column; gap:10px; transform:translateY(-50%);}
   .fn-feature-nav button{width:8px; height:36px; padding:0; border:0; border-radius:999px; background:rgba(242,244,242,.34); cursor:pointer; transition:background .25s ease, box-shadow .25s ease, transform .25s ease;}
   .fn-feature-nav button:hover{background:rgba(242,244,242,.7); transform:scaleX(1.15);}
   .fn-feature-nav button.active{background:var(--neon); box-shadow:0 0 12px rgba(57,255,122,.65);}
-  .fn-feat-chip{display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--neon); border:1px solid rgba(57,255,122,0.3); background:rgba(57,255,122,0.06); border-radius:100px; padding:6px 14px; margin-bottom:16px;}
+  .fn-feat-chip{position:relative; top:120px; display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--neon); border:1px solid rgba(57,255,122,0.3); background:rgba(57,255,122,0.06); border-radius:100px; padding:6px 14px; margin-bottom:16px;}
+  .fn-feat-chip.fn-feat-chip-third{top:140px;}
   .fn-rail{display:flex; flex-direction:column; gap:20px; align-content:start;}
   .fn-thumbs{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:14px; align-content:start;}
   .fn-thumb{position:relative; display:block; width:100%; margin:0; padding:0; border:0; background:none; cursor:pointer; border-radius:14px; overflow:hidden; box-shadow:0 0 0 1px rgba(57,255,122,0.14); transition:box-shadow .3s ease, transform .3s ease; aspect-ratio:5/4; -webkit-tap-highlight-color:transparent; text-align:left;}
@@ -321,6 +324,9 @@
     .fn-strip{width:100%; margin-left:0;}
     .fn-featured{aspect-ratio:16/12; min-height:0; height:auto;}
     .fn-featured-copy{padding:20px 16px 22px;}
+    .fn-feat-chip{top:125px;}
+    .fn-feat-chip.fn-feat-chip-first{top:106px;}
+    .fn-feat-chip.fn-feat-chip-third{top:125px;}
     .fn-featured-copy h3{font-size:18px;}
     .fn-thumbs{grid-template-columns:1fr 1fr; gap:10px;}
     .fn-feature-nav{right:14px; gap:7px;}
@@ -989,7 +995,6 @@
 <body>
 
 <canvas id="gridCanvas"></canvas>
-<div id="liveIndicator"><div class="orbit"><div class="orbit-dot"></div></div><div class="core"></div></div>
 <nav id="nav">
   <div class="logo"><img src="/logo-assets/Tagline.png" alt="TurfOn24" class="official-logo"></div>
   <ul class="nav-links">
@@ -1364,7 +1369,7 @@
         <div class="fn-featured-media">
           <img class="fn-showcase-img" id="fnShowcaseImg" data-pos="left" alt="Dedicated Rest Room" role="img">
           <div class="fn-featured-copy">
-            <div class="fn-feat-chip">Courtside comfort</div>
+            <div class="fn-feat-chip" id="fnFeatChip">Courtside comfort</div>
             <h3 id="fnFeatTitle">Dedicated Rest Room</h3>
             <p id="fnFeatDesc">Clean. Fresh. Ready.</p>
           </div>
@@ -1428,15 +1433,16 @@
   <script>
     (function(){
       var facilities = [
-        { title: 'Dedicated Rest Room', desc: 'Dedicated restroom facilities for boys and girls.', img: '/logo-assets/1.png', pos:'left', rent:[], icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18a3 3 0 0 1 3-3h6M12 15v6H6a3 3 0 0 1-3-3"/><path d="M6 8a3 3 0 0 1 3 3h6"/><path d="M21 18a3 3 0 0 1-3 3h-6"/></svg>' },
-        { title: 'Locker Facility', desc: 'Secure locker space for your belongings while you play.', img: '/logo-assets/2.png', pos:'center', rent:[], icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M12 10h6M12 14h6"/></svg>' },
-        { title: 'Key Items for Rental', desc: 'Essential sports equipment available for rent whenever you need it.', img: '/logo-assets/3.png', pos:'center', rent:['Bat','Cricket Ball','Football'], icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8a7 7 0 0 1 14 0c0 2-1 4-2 5a7 7 0 0 1-10 0c-1-1-2-3-2-5Z"/><path d="M4 20h16M8 8l3 3M16 8l-3 3"/></svg>' },
-        { title: 'Refreshments', desc: 'Refreshment items and beverages available on demand.', img: '/logo-assets/4.png', pos:'center', rent:[], icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M6 9a6 6 0 0 1 12 0v8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M6 13h12"/></svg>' },
-        { title: 'Relaxation / Waiting Area', desc: 'A comfortable space to relax before or after your game.', img: '/logo-assets/5.png', pos:'center', rent:[], icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10l8-6 8 6v10"/><path d="M9 20v-6h6v6"/></svg>' },
-        { title: 'Purified RO Water', desc: 'Clean and purified RO drinking water available for players.', img: '/logo-assets/6.png', pos:'center', rent:[], icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 0 9 9 9 9 0 0 0 6-2.3L21 20l-.6-2.7A9 9 0 1 0 3 12Z"/><path d="M3 12h6a3 3 0 0 0 6 0h6"/></svg>' }
+        { title: 'Dedicated Rest Room', label: 'Courtside comfort', desc: 'Dedicated restroom facilities for boys and girls.', img: '/logo-assets/1.png', pos:'left', rent:[], icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18a3 3 0 0 1 3-3h6M12 15v6H6a3 3 0 0 1-3-3"/><path d="M6 8a3 3 0 0 1 3 3h6"/><path d="M21 18a3 3 0 0 1-3 3h-6"/></svg>' },
+        { title: 'Locker Facility', label: 'Secure storage', desc: 'Secure locker space for your belongings while you play.', img: '/logo-assets/2.png', pos:'center', rent:[], icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M12 10h6M12 14h6"/></svg>' },
+        { title: 'Key Items for Rental', label: 'Game essentials', desc: 'Essential sports equipment available for rent whenever you need it.', img: '/logo-assets/3.png', pos:'center', rent:['Bat','Cricket Ball','Football'], icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8a7 7 0 0 1 14 0c0 2-1 4-2 5a7 7 0 0 1-10 0c-1-1-2-3-2-5Z"/><path d="M4 20h16M8 8l3 3M16 8l-3 3"/></svg>' },
+        { title: 'Refreshments', label: 'Matchday refreshments', desc: 'Refreshment items and beverages available on demand.', img: '/logo-assets/4.png', pos:'center', rent:[], icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M6 9a6 6 0 0 1 12 0v8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M6 13h12"/></svg>' },
+        { title: 'Relaxation / Waiting Area', label: 'Player comfort', desc: 'A comfortable space to relax before or after your game.', img: '/logo-assets/5.png', pos:'center', rent:[], icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10l8-6 8 6v10"/><path d="M9 20v-6h6v6"/></svg>' },
+        { title: 'Purified RO Water', label: 'Stay hydrated', desc: 'Clean and purified RO drinking water available for players.', img: '/logo-assets/6.png', pos:'center', rent:[], icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 0 9 9 9 9 0 0 0 6-2.3L21 20l-.6-2.7A9 9 0 1 0 3 12Z"/><path d="M3 12h6a3 3 0 0 0 6 0h6"/></svg>' }
       ];
 
       var imgEl = document.getElementById('fnShowcaseImg');
+      var chipEl = document.getElementById('fnFeatChip');
       var titleEl = document.getElementById('fnFeatTitle');
       var descEl = document.getElementById('fnFeatDesc');
       var thumbsBox = document.getElementById('fnThumbs');
@@ -1487,6 +1493,11 @@
           }, 160);
         }
         titleEl.textContent = f.title;
+        if (chipEl) {
+          chipEl.textContent = f.label || '';
+          chipEl.classList.toggle('fn-feat-chip-first', index === 0);
+          chipEl.classList.toggle('fn-feat-chip-third', index === 2);
+        }
         descEl.textContent = f.desc;
         renderThumbs(index);
       }
@@ -1814,6 +1825,10 @@
   const SITE_SETTINGS_KEY = 'turfon24-site-settings';
   const DEFAULT_SITE_SETTINGS = {phone:'+91 89399 89366', whatsapp:'+91 89399 89366', email:'ask@turfon24.com', address:'cuddalore', hourlyRate:'800', upi:'turfon24@okaxis'};
   let siteSettings = {...DEFAULT_SITE_SETTINGS};
+  function whatsappNumber(value){
+    const digits = String(value || '').replace(/\D/g,'');
+    return digits.length === 10 ? `91${digits}` : digits;
+  }
   function applyWebsiteSettings(settings){
     siteSettings = {...siteSettings, ...settings};
     settings = siteSettings;
@@ -1823,7 +1838,7 @@
     const emailLink = cards[2]?.querySelector('a');
     const addressLink = cards[3]?.querySelector('a');
     if(phoneLink){ phoneLink.textContent=settings.phone; phoneLink.href=`tel:${settings.phone.replace(/\D/g,'')}`; }
-    if(whatsappLink){ whatsappLink.href=`https://wa.me/${settings.whatsapp.replace(/\D/g,'')}`; }
+    if(whatsappLink){ whatsappLink.href=`https://wa.me/${whatsappNumber(settings.whatsapp)}`; }
     if(emailLink){ emailLink.textContent=settings.email; emailLink.href=`mailto:${settings.email}`; }
     if(addressLink){ addressLink.textContent=settings.address; addressLink.href='https://maps.app.goo.gl/VLJPhLtD6h64UD63A?g_st=aw'; }
     document.querySelectorAll('[data-site-address]').forEach(el=>{ el.textContent=settings.address; });
@@ -1832,8 +1847,8 @@
     document.querySelectorAll('[data-site-rate-text]').forEach(el=>{ el.textContent=`₹${settings.hourlyRate}`; });
     document.querySelectorAll('[data-site-whatsapp]').forEach(el=>{ el.textContent=settings.whatsapp; });
     document.querySelectorAll('[data-site-upi]').forEach(el=>{ el.textContent=settings.upi; });
-    document.querySelectorAll('a[aria-label="WhatsApp"]').forEach(el=>{ el.href=`https://wa.me/${settings.whatsapp.replace(/\D/g,'')}`; });
-    if(typeof WA_NUMBER !== 'undefined') WA_NUMBER = settings.whatsapp.replace(/\D/g,'');
+    document.querySelectorAll('a[aria-label="WhatsApp"]').forEach(el=>{ el.href=`https://wa.me/${whatsappNumber(settings.whatsapp)}`; });
+    if(typeof WA_NUMBER !== 'undefined') WA_NUMBER = whatsappNumber(settings.whatsapp);
   }
   async function readWebsiteSettings(){
     let localSettings = {};
@@ -3468,7 +3483,6 @@
   }
 
   window.addEventListener('scroll', ()=>{
-    document.getElementById('liveIndicator').classList.toggle('show', window.scrollY > window.innerHeight*0.6);
     const footer = document.querySelector('footer');
     const footerVisible = footer && footer.getBoundingClientRect().top < window.innerHeight;
     document.getElementById('backToTop').classList.toggle('show', window.scrollY > window.innerHeight*0.6 && !footerVisible);
