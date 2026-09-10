@@ -6,6 +6,8 @@
     { "source": "/admin/reset-password", "destination": "/admin.html" },
     { "source": "/countdown", "destination": "/index.html" },
     { "source": "/countdown/", "destination": "/index.html" },
+    { "source": "/loader", "destination": "/index.html" },
+    { "source": "/loader/", "destination": "/index.html" },
     { "source": "/home", "destination": "/index.html" },
     { "source": "/home/", "destination": "/index.html" }
   ]
