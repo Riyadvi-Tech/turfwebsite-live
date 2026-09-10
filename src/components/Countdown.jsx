@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import './countdown.css'
 
 const TARGET = new Date('2026-09-13T00:00:00').getTime()
+const DATE_TEXT = '13 SEPTEMBER 2026'
 
 function getCountdown(target) {
   const diff = target - Date.now()
@@ -19,8 +20,39 @@ function getCountdown(target) {
   }
 }
 
-export default function Countdown({ onHome }) {
+export default function Countdown() {
   const [parts, setParts] = useState(() => getCountdown(TARGET))
+  const [dateText, setDateText] = useState('')
+
+  useEffect(() => {
+    let position = 0
+    let deleting = false
+    let hold = 0
+    const timer = window.setInterval(() => {
+      if (hold > 0) {
+        hold -= 1
+        return
+      }
+
+      if (deleting) {
+        position -= 1
+        setDateText(DATE_TEXT.slice(0, position))
+        if (position === 0) {
+          deleting = false
+          hold = 3
+        }
+      } else {
+        position += 1
+        setDateText(DATE_TEXT.slice(0, position))
+        if (position === DATE_TEXT.length) {
+          deleting = true
+          hold = 10
+        }
+      }
+    }, 110)
+
+    return () => window.clearInterval(timer)
+  }, [])
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -33,27 +65,32 @@ export default function Countdown({ onHome }) {
 
   return (
     <main className="countdown-page">
-      {onHome && (
-        <button type="button" className="countdown-hero-button" onClick={onHome}>
-          <span aria-hidden="true">&larr;</span>
-          Go to Hero
-        </button>
-      )}
+      <a className="countdown__home" href="/">
+        <span className="countdown__home-arrow" aria-hidden="true">&larr;</span>
+        Home
+      </a>
       <div className="countdown-frame">
-        <img className="countdown-poster" src="/logo-assets/count-down.jpeg" alt="TurfOn24 grand opening countdown" />
-        <div className="countdown-patch countdown-patch--days" aria-hidden="true" />
-        <div className="countdown-patch countdown-patch--hours" aria-hidden="true" />
-        <div className="countdown-patch countdown-patch--minutes" aria-hidden="true" />
-        <div className="countdown-patch countdown-patch--seconds" aria-hidden="true" />
-        <div className="countdown-number countdown-number--days" role="timer" aria-label={`${parts.days} days remaining`}>{parts.days}</div>
-        <div className="countdown-number countdown-number--hours" aria-hidden="true">{parts.hours}</div>
-        <div className="countdown-number countdown-number--minutes" aria-hidden="true">{parts.minutes}</div>
-        <div className="countdown-number countdown-number--seconds" aria-hidden="true">{parts.seconds}</div>
-        <div className={`countdown-done${parts.done ? ' countdown-done--visible' : ''}`} role="status">
-          WE&rsquo;RE OPEN &mdash; COME PLAY!
+        <img className="countdown-poster" src="/logo-assets/BGC.png" alt="TurfOn24 grand opening countdown" />
+        <div className="countdown__topbar">
+          <img className="countdown__tagline-img" src="/logo-assets/Tagline.png" alt="TurfOn24" />
         </div>
-        <a className="countdown-contact countdown-contact--whatsapp" href="https://wa.me/918939989366" target="_blank" rel="noopener" aria-label="Message us on WhatsApp" />
-        <a className="countdown-contact countdown-contact--call" href="tel:+918939989366" aria-label="Call 89399 89366" />
+        <section className="countdown__content">
+          <div className="countdown__inner">
+            <p className="countdown__eyebrow"><span aria-hidden="true">&bull;</span> Opening Soon <span aria-hidden="true">&bull;</span></p>
+            <h1 className="countdown__title">We&rsquo;re<br />Opening Soon</h1>
+            <p className="countdown__tagline">Your turf. Your time. Your game.</p>
+            <p className="countdown__grand-label">Grand Opening</p>
+            <p className="countdown__date" aria-label={DATE_TEXT}>{dateText || '\u00A0'}</p>
+            <div className="countdown-image-timer" role="timer" aria-label={`${parts.days} days, ${parts.hours} hours, ${parts.minutes} minutes, ${parts.seconds} seconds remaining`}>
+              {[['days', parts.days], ['hours', parts.hours], ['minutes', parts.minutes], ['seconds', parts.seconds]].map(([label, value]) => (
+                <div className="countdown-image-panel" key={label}>
+                  <span className="countdown-image-number">{value}</span>
+                  <span className="countdown-image-label">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
       </div>
     </main>
   )

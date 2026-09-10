@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import QRCode from 'qrcode'
 import taglineLogo from './assets/Tagline.png'
+import Countdown from './components/Countdown.jsx'
+import PixelArcLoader from './components/ui/pixel-arc-loader.tsx'
 import './App.css'
 
 window.renderPaymentQr = (image, status, uri) => QRCode.toDataURL(uri, { width: 320, margin: 2, errorCorrectionLevel: 'M' }).then((dataUrl) => {
@@ -13,6 +15,8 @@ function App() {
   const getRoute = () => {
     const path = window.location.pathname
     if (path.startsWith('/admin')) return 'admin'
+    if (path.startsWith('/loader')) return 'loader'
+    if (path.startsWith('/countdown')) return 'countdown'
     return 'home'
   }
   const [route, setRoute] = useState(getRoute)
@@ -122,8 +126,12 @@ function App() {
   }
 
   return (
-    <main className="legacy-shell">
-      {route === 'admin' ? (
+    <main className={route === 'loader' || route === 'countdown' ? '' : 'legacy-shell'}>
+      {route === 'loader' ? (
+        <PixelArcLoader />
+      ) : route === 'countdown' ? (
+        <Countdown />
+      ) : route === 'admin' ? (
         <iframe
           key={adminUrl}
           className="legacy-page"

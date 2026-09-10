@@ -1295,7 +1295,6 @@
   ];
   const bstatusLbl = {confirmed:'Confirmed', pending:'Pending', cancelled:'Cancelled'};
   const pstatusLbl = {verified:'Verified', pending:'Pending'};
-  renderStats();
   document.getElementById('bookingsBody').innerHTML = bookings.map(b=>`
     <tr data-date="${b[9]}">
       <td class="mono">${b[0]}</td><td>${b[1]}</td><td class="mono">${b[2]}</td><td>${b[3]}</td><td>${b[4]}</td><td>${b[5]}</td><td class="mono">${b[6]}</td>
