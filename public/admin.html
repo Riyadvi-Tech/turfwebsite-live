@@ -319,6 +319,9 @@
     .login-form-side::before{content:""; position:absolute; inset:0; z-index:0; pointer-events:none; opacity:0.28; background-image:radial-gradient(circle, rgba(57,255,122,0.7) 0 1.5px, transparent 2px),radial-gradient(circle, rgba(57,255,122,0.35) 0 1px, transparent 1.5px); background-size:82px 96px,137px 151px; background-position:0 0,34px 48px; animation:loginDotsMove 12s linear infinite;}
     .login-form-side > *{position:relative; z-index:1;}
     .login-card{position:relative; z-index:2;}
+    .login-brand-wrap{display:none;}
+    .login-brand-wrap img{max-width:214px;height:auto;display:block;filter:drop-shadow(0 0 12px rgba(57,255,122,0.2));}
+    .login-card .login-brand-wrap{display:flex;justify-content:center;margin:-10px auto 12px;}
     .table-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
     table{min-width:640px;}
     .toolbar{gap:8px;}
@@ -362,6 +365,9 @@
   </div>
   <div class="login-form-side">
     <div class="login-card">
+      <div class="login-brand-wrap">
+        <img src="/logo-assets/Tagline.png" alt="TurfOn24" />
+      </div>
       <div class="login-title">Welcome back</div>
       <div class="login-sub" style="text-align:left; margin-bottom:32px;">Log in to manage TurfOn24</div>
       <div class="fl-field">
