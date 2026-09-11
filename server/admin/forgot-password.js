@@ -69,7 +69,8 @@ export default async function handler(req, res) {
     let mailFailed = false
     let mailCode = null
     const recipient = (process.env.RESET_DEST_EMAIL || '').trim() || admin.email
-    const sender = String(process.env.SMTP_FROM || process.env.MAIL_FROM || '').trim()
+    const appHost = String(process.env.APP_URL || 'https://turfon24.com').replace(/^https?:\/\//i, '').replace(/\/$/, '')
+    const sender = String(process.env.SMTP_FROM || process.env.MAIL_FROM || `no-reply@${appHost.split('/')[0] || 'turfon24.com'}`).trim()
     try {
       console.info('[FORGOT_PASSWORD] email send started')
       await sendResetEmail({ from: sender, to: recipient, replyTo: sender, subject: 'Turfon24 Admin Password Reset', text: `We received a request to reset your Turfon24 admin password.\n\nReset your password here: ${url}\n\nThis link expires in 30 minutes and can only be used once. If you did not request this, ignore this email.`, html: `<p>We received a request to reset your Turfon24 admin password.</p><p><a href="${url}">Reset admin password</a></p><p>This link expires in 30 minutes and can only be used once. If you did not request this, you can safely ignore this email.</p><p>Turfon24</p>` })
