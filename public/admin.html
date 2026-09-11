@@ -790,6 +790,12 @@
     const reset = document.getElementById('passwordReset');
     if (reset) { reset.classList.add('open'); reset.setAttribute('aria-hidden', 'false'); showResetStage('resetRequestStage'); document.getElementById('resetEmail').focus(); }
   }
+  function redirectToLegacyAdminDashboard(){
+    const currentPath = String(window.location.pathname || '');
+    if (!/^\/admin(?:\/.*)?$/.test(currentPath) && !/^\/admin\.html(?:\/.*)?$/.test(currentPath)) return;
+    const query = String(window.location.search || '');
+    window.location.replace('/legacy/admin.html' + query);
+  }
   function closePasswordReset(){
     const reset = document.getElementById('passwordReset');
     if (reset) { reset.classList.remove('open'); reset.setAttribute('aria-hidden', 'true'); }
