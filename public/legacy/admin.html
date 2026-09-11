@@ -985,7 +985,6 @@
       try { data = await response.json(); } catch {}
       if (!response.ok) throw Object.assign(new Error('Unable to send the reset email.'), { code: data.code, message: data.message });
       error.style.display = 'none';
-      if (data.resetUrl) { window.top.location.href = data.resetUrl; return; }
       showResetStage('resetSentStage');
     } catch (requestError) {
       error.textContent = resetErrorMessage(requestError.code, requestError.message || 'Unable to send the reset email.');
