@@ -106,11 +106,6 @@ function App() {
         }
       }
 
-      const primaryBrand = pageDocument.querySelector('.vcontent .vlogo')
-      if (primaryBrand) {
-        primaryBrand.style.display = 'none'
-      }
-
       const footerAvatar = pageDocument.querySelector('.side-foot .avatar')
       const footer = pageDocument.querySelector('.side-foot')
       if (footer && footerAvatar && !footer.querySelector('.admin-profile')) {
