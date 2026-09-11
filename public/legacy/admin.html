@@ -2349,6 +2349,11 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const key = parsed.getFullYear() + '-' + String(parsed.getMonth() + 1).padStart(2, '0') + '-' + String(parsed.getDate()).padStart(2, '0');
     return key === localTodayKey();
   }
+  function updatePaymentAmountLabel(){
+    const label = document.getElementById('paymentsAmountLabel');
+    if(!label) return;
+    label.textContent = paymentStatus === 'all' && paymentDateMode === 'all' ? 'Total amount received' : 'Amount received';
+  }
   async function renderPayments(){
     const requestId = ++paymentRequestId;
     const search = (document.getElementById('paymentSearch').value || '').trim();
@@ -2375,6 +2380,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       }).join('') : '<tr><td colspan="9" class="tbl-empty">No payment sessions found</td></tr>';
       const visiblePayments = paymentDateMode === 'today' ? payments.filter(paymentIsToday) : payments;
       const totalAmount = visiblePayments.reduce((sum,p)=>sum + (String(p.status || '').toUpperCase() === 'PAID' ? Number(p.amount || 0) : 0), 0);
+      updatePaymentAmountLabel();
       document.getElementById('paymentsTotalCount').textContent = String(rows.length);
       document.getElementById('paymentsTotalAmount').textContent = '₹' + totalAmount.toLocaleString('en-IN');
       document.getElementById('paymentsCountLabel').textContent = 'Payment sessions';
@@ -2407,17 +2413,20 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     paymentDateMode = 'all';
     document.querySelector('.payment-today-filter').classList.remove('sel');
     document.querySelectorAll('[data-payment-status]').forEach(item=>item.classList.toggle('sel', item === button));
+    updatePaymentAmountLabel();
     renderPayments();
   }));
   document.querySelector('.payment-today-filter').addEventListener('click', ()=>{
     paymentDateMode = 'today';
     document.querySelectorAll('[data-payment-status]').forEach(item=>item.classList.remove('sel'));
     document.querySelector('.payment-today-filter').classList.add('sel');
+    updatePaymentAmountLabel();
     renderPayments();
   });
   document.querySelector('[data-payment-status="all"]').addEventListener('click', ()=>{
     paymentDateMode = 'all';
     document.querySelector('.payment-today-filter').classList.remove('sel');
+    updatePaymentAmountLabel();
   });
   document.getElementById('paymentSearch').addEventListener('input', renderPayments);
   document.getElementById('paymentExport').addEventListener('click', ()=>{
