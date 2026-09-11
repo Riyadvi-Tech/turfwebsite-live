@@ -2275,6 +2275,31 @@
 
   let paymentSession = null;
   let paymentPollingTimer = null;
+
+  if (!window.renderPaymentQr) {
+    window.renderPaymentQr = async (image, status, uri) => {
+      try {
+        if (window.QRCode && typeof window.QRCode.toDataURL === 'function') {
+          const dataUrl = await window.QRCode.toDataURL(uri, { width: 320, margin: 2, errorCorrectionLevel: 'M' });
+          image.src = dataUrl;
+          image.style.display = 'block';
+          if (status) status.style.display = 'none';
+          return;
+        }
+      } catch (error) {
+        console.warn('QR rendering failed via embedded generator:', error);
+      }
+
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(uri)}`;
+      const response = await fetch(qrUrl);
+      if (!response.ok) throw new Error('Unable to generate QR code.');
+      const blob = await response.blob();
+      image.src = URL.createObjectURL(blob);
+      image.style.display = 'block';
+      if (status) status.style.display = 'none';
+    };
+  }
+
   async function createPaymentSession(type, details){
     const response = await fetch('/api/payment/create', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type, ...details}) });
     if(!response.ok) throw new Error((await response.json().catch(()=>({}))).message || 'Payment setup failed');
@@ -2289,10 +2314,15 @@
     return {reference, amount, upiId, merchantName:'Turfon24', upiUri:`upi://pay?${params.toString()}`, status:'PAYMENT_PENDING'};
   }
   async function requestPaymentSession(type, details){
-    try { return await createPaymentSession(type, details); }
-    catch (error) {
-      if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') return createLocalPaymentSession(type, details);
-      throw error;
+    try {
+      const session = await createPaymentSession(type, details);
+      if (!session || typeof session.amount === 'undefined') {
+        throw new Error('Payment session missing amount info.');
+      }
+      return session;
+    } catch (error) {
+      console.warn('Primary payment session failed, using local fallback:', error);
+      return createLocalPaymentSession(type, details);
     }
   }
   async function showPayment(session, imageId, statusId, appId){
