@@ -21,7 +21,7 @@ function App() {
   }
   const [route, setRoute] = useState(getRoute)
   const pageTitle = 'TurfOn24'
-  const adminUrl = `${import.meta.env.BASE_URL}admin.html`
+  const adminUrl = `${import.meta.env.BASE_URL}legacy/admin.html`
   const homeUrl = `${import.meta.env.BASE_URL}legacy/index.html`
 
   useEffect(() => {
