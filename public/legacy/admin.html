@@ -592,7 +592,7 @@
       <div class="nav-item" data-page="profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg><span class="nav-label">Profile</span></div>
       <div class="nav-item" onclick="logout()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg><span class="nav-label">Logout</span></div>
     </div>
-    <div class="side-foot"><div class="avatar">A</div><div><span>Admin</span><span class="role">Owner</span></div></div>
+    <div class="side-foot"><div class="avatar">A</div><div><span id="adminSidebarName">Admin</span><span class="role">Owner</span></div></div>
   </div>
 
   <div class="main">
@@ -1220,6 +1220,10 @@
   const PROFILE_PICTURE_KEY = 'turfon24-admin-profile-picture';
   const PROFILE_PICTURE_SOURCE = '/logo-assets/LogoWater.png';
   let currentProfilePicture = null;
+  function syncSidebarProfileName(name){
+    const sidebarName = document.getElementById('adminSidebarName');
+    if(sidebarName){ sidebarName.textContent = (name || '').trim() || 'Admin'; }
+  }
   function applyProfilePicture(source){
     const preview = document.getElementById('profilePicturePreview');
     const injectedAvatar = document.querySelector('.side-foot .admin-profile-avatar');
@@ -1248,6 +1252,7 @@
       const profile = data.profile || {};
       document.getElementById('profileName').value = profile.name || 'Admin';
       document.getElementById('profileEmail').value = profile.email || '';
+      syncSidebarProfileName(profile.name || 'Admin');
       currentProfilePicture = profile.profilePicture || null;
       applyProfilePicture(profile.profilePicture || PROFILE_PICTURE_SOURCE);
     } catch(error) {}
@@ -1266,6 +1271,7 @@
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to update profile.'));
       const sidebarEmail = document.querySelector('.side-foot .admin-profile-email');
       if(sidebarEmail) sidebarEmail.textContent = data.profile?.email || email;
+      syncSidebarProfileName(data.profile?.name || name);
       applyProfilePicture(data.profile?.profilePicture || PROFILE_PICTURE_SOURCE);
       currentProfilePicture = data.profile?.profilePicture || currentProfilePicture;
       document.getElementById('profileNewPassword').value = '';
@@ -1273,7 +1279,14 @@
       showToast('Profile updated');
     } catch(error) { showToast(error.message); }
   }
+  const profileNameInput = document.getElementById('profileName');
+  if(profileNameInput){
+    profileNameInput.addEventListener('input', (event) => {
+      syncSidebarProfileName(event.target.value);
+    });
+  }
   applyProfilePicture(PROFILE_PICTURE_SOURCE);
+  syncSidebarProfileName('Admin');
   if(adminSessionReady) loadAdminProfile();
   function openAdminPage(page, cardMode = null){
     const target = document.getElementById('page-' + page);
