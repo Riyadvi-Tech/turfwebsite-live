@@ -38,6 +38,7 @@
   @keyframes lvFloat{from{transform:translateY(0); opacity:0;} 15%{opacity:0.7;} 85%{opacity:0.4;} to{transform:translateY(-260px); opacity:0;}}
   .vcontent{position:relative; z-index:2; max-width:460px;}
   .vcontent .vlogo{display:flex; align-items:center; gap:10px; margin-bottom:44px;}
+  .vcontent .vlogo img{max-width:260px; height:auto; display:block; filter:drop-shadow(0 0 12px rgba(57,255,122,0.2));}
   .vcontent .vlogo .mark{width:34px;height:34px;border-radius:9px; background:linear-gradient(135deg,var(--emerald),var(--neon)); display:flex; align-items:center; justify-content:center; box-shadow:0 0 20px rgba(57,255,122,0.35);}
   .vcontent .vlogo span{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:18px;}
   /* Reduced login heading for compact layout */
@@ -525,7 +526,7 @@
     <div class="ghost24">24</div>
     <div id="lvParticles"></div>
     <div class="vcontent">
-      <div class="vlogo"><img src="/logo-assets/Tagline.png" alt="TurfOn24" style="max-width:220px;height:auto;display:block;filter:drop-shadow(0 0 12px rgba(57,255,122,0.2));"></div>
+      <div class="vlogo"><img src="/logo-assets/Tagline.png" alt="TurfOn24" style="max-width:280px;height:auto;display:block;filter:drop-shadow(0 0 12px rgba(57,255,122,0.2));"></div>
       <h2>Turf booking,<br>managed <span class="g">around the clock.</span></h2>
       <p>Every booking, payment, and enquiry — from every hour of the day — in one place.</p>
       <div class="vchips">
@@ -576,7 +577,7 @@
 <div id="app">
   <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeMobileSidebar()"></div>
   <div class="sidebar" id="sidebar">
-    <div class="side-head"><img src="/logo-assets/Tagline.png" alt="TurfOn24" style="max-width:170px;height:auto;display:block;filter:drop-shadow(0 0 10px rgba(57,255,122,0.18));"></div>
+    <div class="side-head"><img src="/logo-assets/Tagline.png" alt="TurfOn24" style="max-width:220px;height:auto;display:block;filter:drop-shadow(0 0 10px rgba(57,255,122,0.18));"></div>
     <div class="side-nav" id="sideNav">
       <div class="nav-item active" data-page="dashboard"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg><span class="nav-label">Dashboard</span></div>
       <div class="nav-item" data-page="analytics"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><span class="nav-label">Analytics</span></div>
