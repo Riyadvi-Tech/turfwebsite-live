@@ -32,7 +32,7 @@ function App() {
 
   useEffect(() => {
     document.title = pageTitle
-    const faviconHref = `${import.meta.env.BASE_URL}logo-assets/${route === 'admin' ? 'LogoWater.png?v=tab-2' : 'LogoWater.png?v=tab-2'}`
+    const faviconHref = `${import.meta.env.BASE_URL}logo-assets/favicon-32.png?v=fav-2`
     let favicon = document.querySelector('link[data-turfon24-favicon]')
     if (!favicon) {
       favicon = document.createElement('link')
