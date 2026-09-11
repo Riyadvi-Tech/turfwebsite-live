@@ -1,5 +1,5 @@
 import { getDb } from '../_lib/mongodb.js'
-import { getMailer } from '../_lib/mail.js'
+import { getMailer, getMailConfig } from '../_lib/mail.js'
 
 function presence(...names) {
   const out = {}
@@ -8,7 +8,8 @@ function presence(...names) {
 }
 
 export default async function handler(_req, res) {
-  const env = presence('MONGODB_URI', 'MONGODB_DB', 'APP_URL', 'MAIL_FROM', 'SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASSWORD', 'SMTP_SECURE', 'RESET_DEST_EMAIL')
+  const mailConfig = getMailConfig()
+  const env = presence('MONGODB_URI', 'MONGODB_DB', 'APP_URL', 'SMTP_FROM', 'MAIL_FROM', 'SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'SMTP_PASSWORD', 'SMTP_SECURE', 'RESET_DEST_EMAIL')
 
   const database = { configured: env.MONGODB_URI, databaseNameConfigured: env.MONGODB_DB, reachable: false, collections: {}, error: null }
   if (env.MONGODB_URI) {
@@ -24,9 +25,10 @@ export default async function handler(_req, res) {
   }
 
   const mailer = {
-    configured: Boolean(env.SMTP_HOST && env.SMTP_PORT && env.SMTP_USER && env.SMTP_PASSWORD && env.MAIL_FROM),
-    port: process.env.SMTP_PORT || null,
-    secure: process.env.SMTP_SECURE === 'true',
+    configured: mailConfig.missing.length === 0,
+    host: mailConfig.host || null,
+    port: mailConfig.portValue || null,
+    secure: ['true', '1', 'yes'].includes(String(process.env.SMTP_SECURE || '').trim().toLowerCase()),
     destEmail: process.env.RESET_DEST_EMAIL || null,
     verified: false,
     error: null
@@ -51,7 +53,11 @@ export default async function handler(_req, res) {
     }
   }
 
-  const missing = Object.entries(env).filter(([, v]) => !v).map(([k]) => k)
+  const nonMailMissing = Object.entries(env)
+    .filter(([key]) => !['SMTP_FROM', 'MAIL_FROM', 'SMTP_PASS', 'SMTP_PASSWORD', 'SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_SECURE'].includes(key))
+    .filter(([, value]) => !value)
+    .map(([key]) => key)
+  const missing = [...nonMailMissing, ...mailConfig.missing]
   const ready = Boolean(
     env.MONGODB_URI && database.reachable && database.collections.admin_users && database.collections.password_reset_tokens &&
     mailer.configured && mailer.verified && appUrl.valid

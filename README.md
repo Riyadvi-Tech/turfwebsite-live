@@ -6,7 +6,9 @@ The reset flow uses the Vercel serverless API function, MongoDB Atlas, bcrypt, a
 
 Configure these server-only Vercel environment variables:
 
-`MONGODB_URI`, `MONGODB_DB`, `APP_URL`, `MAIL_FROM`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, and optionally `SMTP_SECURE=true`.
+`MONGODB_URI`, `MONGODB_DB`, `APP_URL`, `SMTP_FROM`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, and optionally `SMTP_SECURE=true`.
+
+For the YashHost/cPanel mailbox, use `SMTP_HOST=mail.turfon24.com`, `SMTP_PORT=465`, `SMTP_SECURE=true`, `SMTP_USER=ask@turfon24.com`, and `SMTP_FROM="TurfOn24 <ask@turfon24.com>"`. `SMTP_PASSWORD` and `MAIL_FROM` remain supported as backwards-compatible aliases. Set `APP_URL=https://turfon24.com` in Vercel; never use localhost in production.
 
 Never expose SMTP or database credentials through Vite variables or frontend code. The email provider must be configured before the request endpoint can successfully deliver a reset email.
 

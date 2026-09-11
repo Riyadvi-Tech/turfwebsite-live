@@ -17,7 +17,7 @@ export default async function handler(req, res) {
   const raw = sessionToken(req)
 
   if (!raw) {
-    return res.status(401).json({
+    return res.status(200).json({
       authenticated: false,
     })
   }
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
     })
 
     if (!session) {
-      return res.status(401).json({
+      return res.status(200).json({
         authenticated: false,
       })
     }
@@ -49,7 +49,7 @@ export default async function handler(req, res) {
         _id: session._id,
       })
 
-      return res.status(401).json({
+      return res.status(200).json({
         authenticated: false,
       })
     }
@@ -61,9 +61,7 @@ export default async function handler(req, res) {
 
     const authenticated = Boolean(admin)
 
-    return res
-      .status(authenticated ? 200 : 401)
-      .json({ authenticated })
+    return res.status(200).json({ authenticated })
   } catch (error) {
     console.error(
       'admin session check failed',

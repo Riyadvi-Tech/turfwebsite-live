@@ -794,7 +794,8 @@
       MAIL_UNREACHABLE: 'The email server could not be reached. Check the SMTP host/port settings.',
       MAIL_AUTH_ERROR: 'The email server rejected the SMTP credentials. Check SMTP user/password.',
       MAIL_SSL_ERROR: 'The email server has a TLS/SSL issue. Contact the administrator.',
-      MAIL_INVALID_RECIPIENT: 'The reset email recipient is invalid. Contact the administrator.'
+      MAIL_INVALID_RECIPIENT: 'The reset email recipient is invalid. Contact the administrator.',
+      RESET_RATE_LIMITED: 'Too many reset requests. Please wait 15 minutes before trying again.'
     };
     if (code && map[code]) return map[code];
     return fallback || 'Unable to send the reset email.';

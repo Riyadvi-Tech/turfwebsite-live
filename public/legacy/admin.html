@@ -886,6 +886,20 @@
 <script>
   // ---- login ----
   const ADMIN_EMAIL = 'ask@turfon24.com';
+  let adminSessionReady = false;
+  function initializeAdminData(){
+    loadWebsiteSettings();
+    loadAdminProfile();
+    loadAdminEnquiries();
+    loadAdminWhatsApp();
+    loadAdminChatbot();
+    loadAdminBookings();
+    loadCustomers();
+    loadDashboardSummary();
+    renderPayments();
+    selectAnalyticsMetric('total');
+    renderCalendar();
+  }
   function showDashboard(){
     const loginScreen = document.getElementById('loginScreen');
     const app = document.getElementById('app');
@@ -893,6 +907,7 @@
     if (app) app.classList.add('active');
   }
   function showLoggedIn(){
+    adminSessionReady = true;
     const err = document.getElementById('loginErr');
     const loginBtn = document.getElementById('loginBtn');
     if (err) err.style.display = 'none';
@@ -904,7 +919,11 @@
       const response = await fetch('/api/admin/session', {credentials:'include'});
       if(response.ok){
         const data = await response.json().catch(() => ({}));
-        if(data.authenticated) showDashboard();
+        if(data.authenticated){
+          adminSessionReady = true;
+          showDashboard();
+          initializeAdminData();
+        }
       }
     } catch(error) {}
   }
@@ -921,7 +940,7 @@
       if(!response.ok){ err.textContent = response.status === 401 ? 'Incorrect email or password.' : 'Login is temporarily unavailable.'; err.style.display = 'block'; return; }
       document.getElementById('loginPass').value = '';
       showLoggedIn();
-      loadDashboardSummary();
+      initializeAdminData();
     } catch(error) {
       err.textContent = 'Login is temporarily unavailable.';
       err.style.display = 'block';
@@ -949,14 +968,17 @@
       MAIL_UNREACHABLE: 'The email server could not be reached. Check the SMTP host/port settings.',
       MAIL_AUTH_ERROR: 'The email server rejected the SMTP credentials. Check SMTP user/password.',
       MAIL_SSL_ERROR: 'The email server has a TLS/SSL issue. Contact the administrator.',
-      MAIL_INVALID_RECIPIENT: 'The reset email recipient is invalid. Contact the administrator.'
+      MAIL_INVALID_RECIPIENT: 'The reset email recipient is invalid. Contact the administrator.',
+      RESET_RATE_LIMITED: 'Too many reset requests. Please wait 15 minutes before trying again.'
     };
     if (code && map[code]) return map[code];
     return fallback || 'Unable to send the reset email.';
   }
   async function requestPasswordReset(){
     const error = document.getElementById('resetRequestError');
+    const buttons = document.querySelectorAll('#resetRequestStage button.btn, #resetSentStage button.btn');
     if (document.getElementById('resetEmail').value.trim().toLowerCase() !== ADMIN_EMAIL) { error.textContent = 'Use the admin email address.'; error.style.display = 'block'; return; }
+    buttons.forEach(button => { button.disabled = true; button.dataset.originalText = button.textContent; button.textContent = 'Sending...'; });
     try {
       const response = await fetch('/api/admin/forgot-password', {method:'POST', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email:ADMIN_EMAIL})});
       let data = {};
@@ -968,6 +990,8 @@
     } catch (requestError) {
       error.textContent = resetErrorMessage(requestError.code, requestError.message || 'Unable to send the reset email.');
       error.style.display = 'block';
+    } finally {
+      buttons.forEach(button => { button.disabled = false; button.textContent = button.dataset.originalText || button.textContent; });
     }
   }
   let resetToken = '';
@@ -1163,7 +1187,7 @@
     } catch(error) { showToast(error.message); }
     finally { if(saveButton) saveButton.disabled = false; }
   }
-  loadWebsiteSettings();
+  if(adminSessionReady) loadWebsiteSettings();
   const PROFILE_PICTURE_KEY = 'turfon24-admin-profile-picture';
   const PROFILE_PICTURE_SOURCE = '/logo-assets/LogoWater.png';
   let currentProfilePicture = null;
@@ -1221,7 +1245,7 @@
     } catch(error) { showToast(error.message); }
   }
   applyProfilePicture(PROFILE_PICTURE_SOURCE);
-  loadAdminProfile();
+  if(adminSessionReady) loadAdminProfile();
   function openAdminPage(page, cardMode = null){
     const target = document.getElementById('page-' + page);
     if(!target) return;
@@ -1997,7 +2021,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   document.querySelector('#page-enquiries .today-filter').addEventListener('click', ()=>{ enquiryStatus = 'all'; enquiryDateMode = 'today'; document.getElementById('enquiryDate').value = ''; document.querySelectorAll('#page-enquiries [data-enquiry-status]').forEach(item=>item.classList.remove('sel')); syncEnquiryFilters(); loadAdminEnquiries(); });
   syncEnquiryFilters();
   document.getElementById('enquiryExport').addEventListener('click', ()=>exportCsv(`extended-enquiries-${new Date().toISOString().slice(0,10)}.csv`, [{key:'id',label:'Enquiry ID'},{key:'mobile',label:'Mobile'},{key:'start',label:'Start Date'},{key:'end',label:'End Date'},{key:'preferred',label:'Preferred Time'},{key:'status',label:'Status'},{key:'summary',label:'Summary'}], enquiryRows().map(enquiry=>({id:enquiry._id,mobile:enquiry.mobile,start:enquiry.startDate,end:enquiry.endDate,preferred:enquiry.preferredTime,status:enquiry.status,summary:enquiry.summary}))));
-  loadAdminEnquiries();
+  if(adminSessionReady) loadAdminEnquiries();
   document.querySelectorAll('[data-wa-status]').forEach(button=>button.addEventListener('click', ()=>{
     waStatus = button.dataset.waStatus;
     if(waStatus === 'all') waDateMode = 'all';
@@ -2029,7 +2053,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     if(!rows.length){ showToast('No data available to export'); return; }
     exportCsv(`turfon24-whatsapp-enquiries-${new Date().toISOString().slice(0,10)}.csv`, [{key:'name',label:'Name'},{key:'phone',label:'Phone'},{key:'email',label:'Email'},{key:'message',label:'Message'},{key:'enquiryDate',label:'Enquiry Date'},{key:'received',label:'Received'},{key:'status',label:'Status'}], rows.map(w=>({name:w.name,phone:w.mobile,email:w.email,message:w.message,enquiryDate:formatDateDDMMYYYY(w.createdAt),received:w.createdAt,status:w.status})));
   });
-  loadAdminWhatsApp();
+  if(adminSessionReady) loadAdminWhatsApp();
 
   // ---- Chatbot conversations table ----
   let liveChatbot = [];
@@ -2108,7 +2132,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     renderChatbot();
   });
   syncChatbotFilters();
-  loadAdminChatbot();
+  if(adminSessionReady) loadAdminChatbot();
 
   // ---- customers table ----
   function normalizeStatus(value){ return String(value || '').trim().toLowerCase(); }
@@ -2277,7 +2301,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   syncBookingFilters();
   document.getElementById('bookingExport').addEventListener('click', ()=>exportCsv(`bookings-${new Date().toISOString().slice(0,10)}.csv`, [{key:'id',label:'Booking ID'},{key:'mobile',label:'Mobile'},{key:'date',label:'Date'},{key:'slot',label:'Slot'},{key:'time',label:'Time'},{key:'duration',label:'Duration'},{key:'amount',label:'Amount'},{key:'payment',label:'Payment Status'},{key:'status',label:'Booking Status'}], bookingRows().map(booking=>({id:booking._id,mobile:booking.mobile,date:booking.date,slot:(booking.slots || []).map((item,index)=>`Slot ${index + 1}`).join(' | '),time:(booking.slots || []).map(item=>item.end ? `${item.start} - ${item.end}` : item.start).join(' | ') || booking.time,duration:(booking.slots || []).map(item=>`${item.hours || 0} hr${Number(item.hours) === 1 ? '' : 's'}`).join(' | ') || booking.duration,amount:booking.amount,payment:booking.paymentStatus,status:booking.bookingStatus}))));
 
-  loadAdminBookings();
+  if(adminSessionReady) loadAdminBookings();
 
   // ---- Payment sessions (server-verified records) ----
   let paymentStatus = 'all';
@@ -2375,7 +2399,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     if(!rows.length){ showToast('No data available to export'); return; }
     exportCsv(`payment-sessions-${new Date().toISOString().slice(0,10)}.csv`, [{key:'reference',label:'Payment Reference'},{key:'amount',label:'Amount'},{key:'status',label:'Payment Status'}], rows);
   });
-  renderPayments();
+  if(adminSessionReady) renderPayments();
 
   const customerHistory = {
     hourly: [
@@ -2506,7 +2530,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     renderCustomerHistory();
   }));
   historyDate.addEventListener('change', renderCustomerHistory);
-  loadCustomers();
+  if(adminSessionReady) loadCustomers();
   document.getElementById('customerHistoryExport').addEventListener('click', ()=>{
     const filteredRows = renderCustomerHistory();
     const columns = activeHistoryType === 'hourly'
@@ -2516,7 +2540,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     exportCsv(`customer-${activeHistoryType}-history-${new Date().toISOString().slice(0,10)}.csv`, columns, rows);
   });
 
-  loadDashboardSummary();
+  if(adminSessionReady) loadDashboardSummary();
 
   // ---- daily analytics modal (stat card graphs) ----
   const analyticsMetrics = {
@@ -2994,7 +3018,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     if(el) el.addEventListener('change', ()=>{ if(analyticsState.range === 'custom') renderAnalytics(); });
   });
   buildAnalyticsSelector();
-  selectAnalyticsMetric('total');
+  if(adminSessionReady) selectAnalyticsMetric('total');
   function applyAnalyticsHashMetric(){
     const q = window.location.hash.indexOf('?');
     if(q === -1) return;
@@ -3116,7 +3140,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   document.getElementById('calPrev').addEventListener('click', function(){ calShift(-1); });
   document.getElementById('calNext').addEventListener('click', function(){ calShift(1); });
   document.getElementById('calBack').addEventListener('click', function(){ closeCalendarDetails(); });
-  renderCalendar();
+  if(adminSessionReady) renderCalendar();
 
   // ---- login visual particles ----
   const lvBox = document.getElementById('lvParticles');

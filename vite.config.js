@@ -14,9 +14,11 @@ export default defineConfig(({ mode }) => {
     'RESET_DEST_EMAIL',
     'SMTP_HOST',
     'SMTP_PORT',
+    'SMTP_PASS',
     'SMTP_USER',
     'SMTP_PASSWORD',
     'SMTP_SECURE',
+    'SMTP_FROM',
     'MSG91_AUTH_KEY',
   ]) {
     if (env[name]) process.env[name] = env[name]

@@ -106,17 +106,6 @@ function App() {
       if (footer && footerAvatar && !footer.querySelector('.admin-profile')) {
         const profilePicture = '/logo-assets/LogoWater.png'
         footer.innerHTML = `<div class="admin-profile"><img class="admin-profile-avatar" src="${profilePicture}" alt="TurfOn24" /><div class="admin-profile-email">ask@turfon24.com</div></div>`
-        fetch('/api/admin/profile', { credentials: 'include' })
-          .then((response) => response.ok ? response.json() : null)
-          .then((data) => {
-            const email = data?.profile?.email
-            const emailElement = pageDocument.querySelector('.admin-profile-email')
-            if (email && emailElement) emailElement.textContent = email
-            const profilePicture = data?.profile?.profilePicture
-            const avatar = pageDocument.querySelector('.admin-profile-avatar')
-            if (profilePicture && avatar) avatar.src = profilePicture
-          })
-          .catch(() => {})
       }
     }
   }
