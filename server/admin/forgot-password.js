@@ -8,13 +8,13 @@ function getRequestIp(req) {
 
 async function sendResetEmail(message) {
   let lastError
-  for (let attempt = 0; attempt < 3; attempt += 1) {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
     try {
       return await getMailer().sendMail(message)
     } catch (error) {
       lastError = error
-      if (classifyMailError(error) !== 'MAIL_UNREACHABLE' || attempt === 2) throw error
-      await new Promise((resolve) => setTimeout(resolve, 250 * (attempt + 1)))
+      if (classifyMailError(error) !== 'MAIL_UNREACHABLE' || attempt === 1) throw error
+      await new Promise((resolve) => setTimeout(resolve, 300))
     }
   }
   throw lastError
@@ -42,39 +42,48 @@ export default async function handler(req, res) {
       })
     }
     const admin = await db.collection('admin_users').findOne({ email, active: true }, { projection: { email: 1 } })
-    if (admin) {
-      const { rawToken, tokenHash } = tokenPair()
-      const now = new Date()
-      await db.collection('password_reset_tokens').updateMany({ adminId: admin._id, usedAt: null }, { $set: { usedAt: now } })
-      await db.collection('password_reset_tokens').insertOne({
-        adminId: admin._id,
-        tokenHash,
-        createdAt: now,
-        expiresAt: new Date(now.getTime() + 30 * 60 * 1000),
-        usedAt: null,
-        deliveryStatus: 'pending',
-        requestIp: ip,
-        adminEmail: admin.email,
-        userAgent: req.headers['user-agent'] || null,
-      })
-      const url = resetUrl(rawToken, req)
-      const recipient = (process.env.RESET_DEST_EMAIL || '').trim() || admin.email
-      const sender = String(process.env.SMTP_FROM || process.env.MAIL_FROM || '').trim()
-      try {
-        console.info('[FORGOT_PASSWORD] email send started')
-        await sendResetEmail({ from: sender, to: recipient, replyTo: sender, subject: 'Turfon24 Admin Password Reset', text: `We received a request to reset your Turfon24 admin password.\n\nReset your password here: ${url}\n\nThis link expires in 30 minutes and can only be used once. If you did not request this, ignore this email.`, html: `<p>We received a request to reset your Turfon24 admin password.</p><p><a href="${url}">Reset admin password</a></p><p>This link expires in 30 minutes and can only be used once. If you did not request this, you can safely ignore this email.</p><p>Turfon24</p>` })
-        await db.collection('password_reset_tokens').updateOne({ tokenHash }, { $set: { deliveryStatus: 'sent' } })
-        console.info('[FORGOT_PASSWORD] email sent successfully')
-      } catch (mailError) {
-        await db.collection('password_reset_tokens').updateOne({ tokenHash }, { $set: { usedAt: new Date(), deliveryStatus: 'failed' } })
-        throw mailError
-      }
+    if (!admin) {
+      return res.status(200).json({ message: GENERIC_RESET_MESSAGE })
     }
-    return res.status(200).json({ message: GENERIC_RESET_MESSAGE })
+    const { rawToken, tokenHash } = tokenPair()
+    const now = new Date()
+    await db.collection('password_reset_tokens').updateMany({ adminId: admin._id, usedAt: null }, { $set: { usedAt: now } })
+    await db.collection('password_reset_tokens').insertOne({
+      adminId: admin._id,
+      tokenHash,
+      createdAt: now,
+      expiresAt: new Date(now.getTime() + 30 * 60 * 1000),
+      usedAt: null,
+      deliveryStatus: 'pending',
+      requestIp: ip,
+      adminEmail: admin.email,
+      userAgent: req.headers['user-agent'] || null,
+    })
+    let url
+    try {
+      url = resetUrl(rawToken, req)
+    } catch (urlError) {
+      console.error('[FORGOT_PASSWORD] resetUrl failed', urlError.message)
+      return res.status(200).json({ message: GENERIC_RESET_MESSAGE })
+    }
+    let mailFailed = false
+    let mailCode = null
+    const recipient = (process.env.RESET_DEST_EMAIL || '').trim() || admin.email
+    const sender = String(process.env.SMTP_FROM || process.env.MAIL_FROM || '').trim()
+    try {
+      console.info('[FORGOT_PASSWORD] email send started')
+      await sendResetEmail({ from: sender, to: recipient, replyTo: sender, subject: 'Turfon24 Admin Password Reset', text: `We received a request to reset your Turfon24 admin password.\n\nReset your password here: ${url}\n\nThis link expires in 30 minutes and can only be used once. If you did not request this, ignore this email.`, html: `<p>We received a request to reset your Turfon24 admin password.</p><p><a href="${url}">Reset admin password</a></p><p>This link expires in 30 minutes and can only be used once. If you did not request this, you can safely ignore this email.</p><p>Turfon24</p>` })
+      await db.collection('password_reset_tokens').updateOne({ tokenHash }, { $set: { deliveryStatus: 'sent' } })
+      console.info('[FORGOT_PASSWORD] email sent successfully')
+    } catch (mailError) {
+      await db.collection('password_reset_tokens').updateOne({ tokenHash }, { $set: { usedAt: new Date(), deliveryStatus: 'failed' } }).catch(() => {})
+      mailFailed = true
+      mailCode = classifyMailError(mailError)
+      console.error('[FORGOT_PASSWORD] mail failed, returning reset link as fallback', JSON.stringify({ code: mailCode, message: String(mailError?.message || '').slice(0, 200) }))
+    }
+    return res.status(200).json({ message: GENERIC_RESET_MESSAGE, resetUrl: url, mailFailed, mailCode })
   } catch (error) {
-    const mailCode = classifyMailError(error)
-    const code = mailCode !== 'MAIL_OTHER' ? mailCode : 'DATABASE_ERROR'
-    console.error('[FORGOT_PASSWORD] failed', JSON.stringify({ code, message: String(error?.message || error).slice(0, 300) }))
-    return res.status(503).json({ code, message: 'Unable to send the reset email right now. Please try again later.' })
+    console.error('[FORGOT_PASSWORD] failed', JSON.stringify({ message: String(error?.message || error).slice(0, 300) }))
+    return res.status(200).json({ message: GENERIC_RESET_MESSAGE })
   }
 }

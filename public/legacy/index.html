@@ -324,7 +324,7 @@
     .fn-strip{width:100%; margin-left:0;}
     .fn-featured{aspect-ratio:16/12; min-height:0; height:auto;}
     .fn-featured-copy{padding:20px 16px 22px;}
-    .fn-feat-chip{top:125px;}
+    .fn-feat-chip{position:absolute; top:125px; right:14px; margin-bottom:0;}
     .fn-feat-chip.fn-feat-chip-first{top:106px;}
     .fn-feat-chip.fn-feat-chip-third{top:125px;}
     .fn-featured-copy h3{font-size:18px;}
@@ -886,6 +886,14 @@
     footer p{grid-column:1 / -1; grid-row:2; justify-self:center; text-align:center; line-height:1.6;}
     .copyright-text,.designer-credit{display:block;}
     .copyright-separator{display:none;}
+  }
+
+  @media(max-width:600px){
+    .hero{min-height:74svh; padding:72px 16px 18px;}
+    .hero-badge{margin-bottom:18px;}
+    .hero p{margin-top:18px; font-size:15px; line-height:1.5;}
+    .hero-cta{gap:10px; margin-top:28px;}
+    .scroll-ind{margin-top:34px;}
   }
 
   /* ===== TURF EXPERIENCE + GALLERY — mobile responsiveness (keep cards fully inside the viewport) ===== */

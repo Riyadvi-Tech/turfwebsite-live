@@ -57,12 +57,11 @@ export default defineConfig(({ mode }) => {
       mountJsonApi('/api', './api/index.js')
     },
   }],
-  base: './',
+  base: '/',
   build: {
     rollupOptions: {
       input: {
         main: 'index.html',
-        admin: 'admin.html',
       },
     },
   },

@@ -1001,8 +1001,20 @@
     cleanUrl.searchParams.delete('token');
     topWindow.history.replaceState(null, document.title, cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
   }
+  function getResetTokenFromUrl(){
+    const topWindow = window.top || window;
+    const source = topWindow.location || window.location;
+    const params = new URLSearchParams(source.search || '');
+    const token = params.get('token');
+    if (token) return token;
+    const currentPath = String(source.pathname || '');
+    if (/\/admin\/reset-password(?:\/)?$/i.test(currentPath)) {
+      return new URLSearchParams((source.search || '').replace(/^\?/, '')).get('token') || '';
+    }
+    return '';
+  }
   async function verifyResetToken(){
-    const token = new URLSearchParams(window.top.location.search || window.location.search).get('token');
+    const token = getResetTokenFromUrl();
     if(!token) return;
     resetToken = token;
     removeResetTokenFromUrl();
@@ -2551,7 +2563,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     pendingConf:{ title:'Pending Confirmations Analytics', label:'Pending confirmations', subtitle:'Pending confirmations per day', rows:()=>bookings.filter(b=>normalizeStatus(b[8])==='pending'), date:r=>r[9] },
     pendingPay: { title:'Pending Payment Verification Analytics', label:'Pending payments', subtitle:'Pending payment verification records per day', rows:()=>bookings.filter(b=>normalizeStatus(b[7])==='pending'), date:r=>r[9] },
     enq:        { title:'Extended Booking Enquiries Analytics', label:'Enquiries', subtitle:'Enquiries received per day', rows:()=>liveEnquiries, date:r=>isoDay(r.createdAt) },
-    completed:  { title:'Completed Bookings Analytics', label:'Completed bookings', subtitle:'Completed bookings per day', rows:()=>bookings.filter(b=>normalizeStatus(b[8])==='confirmed'), date:r=>r[9] },
+    completed:  { title:'Completed Bookings Analytics', label:'Completed bookings', subtitle:'Completed bookings per day', rows:()=>bookings.filter(b=>normalizeStatus(b[8])==='completed'), date:r=>r[9] },
     cancelled:  { title:'Cancelled Bookings Analytics', label:'Cancelled bookings', subtitle:'Cancelled bookings per day', rows:()=>bookings.filter(b=>normalizeStatus(b[8])==='cancelled'), date:r=>r[9] },
     customers:  { title:'Total Customers Analytics', label:'Customers', subtitle:'Unique booking customers per day', rows:()=>customerHistory.hourly.concat(customerHistory.extended), date:r=>r[2], uniqueByDay:true },
     wa:         { title:'WhatsApp Enquiries Analytics', label:'WhatsApp enquiries', subtitle:'WhatsApp enquiries received per day', rows:()=>liveWhatsApp, date:r=>isoDay(r.createdAt) },

@@ -380,6 +380,11 @@
       <p>Enter the admin email and we'll send you a verification link.</p>
       <div class="fgroup"><label for="resetEmail">Admin email</label><input id="resetEmail" type="email" required autocomplete="email"></div>
       <div class="password-reset-error" id="resetRequestError"></div>
+      <div id="resetFallbackLink" style="display:none; margin:12px 0; padding:14px; background:rgba(255,200,60,0.1); border:1px solid rgba(255,200,60,0.3); border-radius:8px;">
+        <p style="font-size:12px; color:#ffc83c; margin:0 0 8px; font-weight:600;">Email could not be delivered. Use this link instead:</p>
+        <a id="resetFallbackUrl" href="#" target="_blank" style="font-size:11px; color:var(--accent); word-break:break-all; display:block; margin-bottom:8px;"></a>
+        <button type="button" class="btn btn-outline" style="font-size:11px; padding:6px 12px;" onclick="copyResetLink()">Copy link</button>
+      </div>
       <button class="btn btn-glow" type="button" onclick="requestPasswordReset()">Send verification email</button>
       <button class="reset-back" type="button" onclick="closePasswordReset()">Back to login</button>
     </div>
@@ -803,6 +808,7 @@
   async function requestPasswordReset(){
     const email = document.getElementById('resetEmail').value.trim();
     const error = document.getElementById('resetRequestError');
+    const fallback = document.getElementById('resetFallbackLink');
     if (!email) { error.textContent = 'Enter the admin email address.'; error.style.display = 'block'; return; }
     try {
       const response = await fetch('/api/admin/forgot-password', {
@@ -813,18 +819,48 @@
       });
       let data = {};
       try { data = await response.json(); } catch {}
+      if (data.resetUrl && data.mailFailed) {
+        error.textContent = 'Email delivery failed. Use the link below to reset your password.';
+        error.style.display = 'block';
+        const fallbackUrl = document.getElementById('resetFallbackUrl');
+        fallbackUrl.href = data.resetUrl;
+        fallbackUrl.textContent = data.resetUrl;
+        fallback.style.display = 'block';
+        return;
+      }
       if (!response.ok) throw Object.assign(new Error('Unable to send the reset email.'), { code: data.code, message: data.message });
       error.style.display = 'none';
+      fallback.style.display = 'none';
       const sentError = document.getElementById('resetSentError');
       if (sentError) sentError.style.display = 'none';
       showResetStage('resetSentStage');
     } catch (requestError) {
       error.textContent = resetErrorMessage(requestError.code, requestError.message || 'Unable to send the reset email.');
       error.style.display = 'block';
+      fallback.style.display = 'none';
     }
   }
+  function copyResetLink(){
+    const url = document.getElementById('resetFallbackUrl')?.textContent;
+    if (url && navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => showToast('Reset link copied to clipboard'));
+    }
+  }
+  function getResetTokenFromUrl(){
+    const topWindow = window.top || window;
+    const source = topWindow.location || window.location;
+    const params = new URLSearchParams(source.search || '');
+    const token = params.get('token');
+    if (token) return token;
+    const currentPath = String(source.pathname || '');
+    if (/\/admin\/reset-password(?:\/)?$/i.test(currentPath)) {
+      const fallback = new URLSearchParams((source.search || '').replace(/^\?/, ''));
+      return fallback.get('token') || '';
+    }
+    return '';
+  }
   async function verifyResetToken(){
-    const token = new URLSearchParams(window.top.location.search || window.location.search).get('token');
+    const token = getResetTokenFromUrl();
     if(!token) return;
     const reset = document.getElementById('passwordReset');
     if (reset) reset.classList.add('open');
@@ -851,7 +887,7 @@
     const confirmation = document.getElementById('resetPasswordConfirm').value;
     const error = document.getElementById('passwordResetError');
     if (password !== confirmation) { error.textContent = 'Passwords do not match.'; error.style.display = 'block'; return; }
-    const token = new URLSearchParams(window.top.location.search || window.location.search).get('token');
+    const token = getResetTokenFromUrl();
     if(!token) { error.textContent = 'Invalid password reset link.'; error.style.display = 'block'; return; }
     try {
       const response = await fetch('/api/admin/reset-password', {
@@ -912,7 +948,7 @@
 
   // ---- nav ----
   document.addEventListener('DOMContentLoaded', ()=>{
-    ensureSession();
+    try { if (typeof ensureSession === 'function') ensureSession(); } catch (_) {}
     verifyResetToken().catch(() => {});
     syncSidebarProfile();
     renderProfileForm();

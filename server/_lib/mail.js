@@ -34,9 +34,9 @@ export function getMailer() {
     port,
     secure,
     auth: { user: config.user, pass: config.password },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
+    connectionTimeout: 6000,
+    greetingTimeout: 6000,
+    socketTimeout: 8000,
   })
 }
 
@@ -58,6 +58,10 @@ export function resetUrl(token, req = null) {
   if (process.env.VERCEL === '1' && /localhost|127\.0\.0\.1/i.test(baseUrl)) {
     throw new Error('APP_URL must use the production website URL on Vercel')
   }
+
+  // Use the canonical reset route that matches the deployed admin page route.
+  // This ensures the link opens the admin reset form on both localhost and the
+  // production site without redirecting into the wrong page shell.
   return `${baseUrl.replace(/\/$/, '')}/admin/reset-password?token=${encodeURIComponent(token)}`
 }
 

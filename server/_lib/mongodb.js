@@ -74,12 +74,12 @@ async function getMongoClient() {
       throw new Error('MONGODB_URI is not configured')
     }
 
-    client = new MongoClient(uri)
+    client = new MongoClient(uri, { serverSelectionTimeoutMS: 6000, connectTimeoutMS: 6000 })
     clientPromise = client.connect().catch(async (error) => {
       if (!/querySrv|ECONNREFUSED|EAI_AGAIN|ENOTFOUND/i.test(error.message || '')) throw error
 
       dns.setServers(['8.8.8.8', '1.1.1.1'])
-      client = new MongoClient(uri)
+      client = new MongoClient(uri, { serverSelectionTimeoutMS: 6000, connectTimeoutMS: 6000 })
       return client.connect()
     }).catch((error) => {
       clientPromise = undefined

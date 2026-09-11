@@ -4,6 +4,7 @@
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/admin/", "destination": "/admin.html" },
     { "source": "/admin/reset-password", "destination": "/admin.html" },
+    { "source": "/admin/reset-password/:path*", "destination": "/admin.html" },
     { "source": "/countdown", "destination": "/index.html" },
     { "source": "/countdown/", "destination": "/index.html" },
     { "source": "/loader", "destination": "/index.html" },

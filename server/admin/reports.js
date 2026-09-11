@@ -57,6 +57,7 @@ export default async function handler(req, res) {
     const days = dateSeries(startDate, endDate)
     if (days.length > 366) return res.status(400).json({ message: 'Date range is too large.' })
     const nextDate = addDay(endDate)
+    const todayKey = new Date(Date.now() + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10)
 
     const bookings = db.collection('bookings')
     const enquiries = db.collection('extended_enquiries')
@@ -118,10 +119,57 @@ export default async function handler(req, res) {
       { $match: { createdAt: { $gte: localStart(startDate), $lt: localStart(nextDate) } } },
       { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt', timezone: REPORT_TIMEZONE } }, count: { $sum: 1 } } },
     ]
-    const [statusRows, dailyRows, dailyStatusRows, paidRows, dailyRevenueRows, paymentStatusRows, pendingRows, durationRows, dailyEnquiryRows, dailyWhatsappRows, dailyChatRows, dailyPendingRows, dailyCustomerRows] = await Promise.all([
+    const [statusRows, dailyRows, dailyStatusRows, completedRows, paidRows, dailyRevenueRows, paymentStatusRows, pendingRows, durationRows, dailyEnquiryRows, dailyWhatsappRows, dailyChatRows, dailyPendingRows, dailyCustomerRows] = await Promise.all([
       bookings.aggregate([{ $match: bookingFilter }, ...hourlyBookingStages, { $group: { _id: '$bookingStatus', count: { $sum: 1 } } }]).toArray(),
       bookings.aggregate([{ $match: bookingFilter }, ...hourlyBookingStages, { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt', timezone: REPORT_TIMEZONE } }, count: { $sum: 1 }, duration: { $sum: '$duration' } } }]).toArray(),
       bookings.aggregate([{ $match: createdBookingFilter }, ...hourlyBookingStages, { $group: { _id: { date: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt', timezone: REPORT_TIMEZONE } }, status: '$bookingStatus' }, count: { $sum: 1 } } }]).toArray(),
+      bookings.aggregate([
+        {
+          $addFields: {
+            normalizedStatus: { $toUpper: { $ifNull: ['$bookingStatus', ''] } },
+            bookingDate: {
+              $ifNull: [
+                '$date',
+                { $dateToString: { format: '%Y-%m-%d', date: '$createdAt', timezone: REPORT_TIMEZONE } },
+              ],
+            },
+            bookingDateAsDate: {
+              $convert: {
+                input: { $ifNull: ['$date', { $dateToString: { format: '%Y-%m-%d', date: '$createdAt', timezone: REPORT_TIMEZONE } }] },
+                to: 'date',
+                onError: null,
+                onNull: null,
+              },
+            },
+          },
+        },
+        {
+          $match: {
+            $or: [
+              {
+                $and: [
+                  { normalizedStatus: 'COMPLETED' },
+                  { bookingDate: { $gte: startDate, $lt: nextDate } },
+                ],
+              },
+              {
+                $and: [
+                  { normalizedStatus: 'CONFIRMED' },
+                  { bookingDate: { $gte: startDate, $lt: nextDate } },
+                  { bookingDateAsDate: { $lt: new Date() } },
+                ],
+              },
+              {
+                $and: [
+                  { normalizedStatus: 'COMPLETED' },
+                  { bookingDate: { $exists: false } },
+                ],
+              },
+            ],
+          },
+        },
+        { $group: { _id: '$bookingDate', count: { $sum: 1 } } },
+      ]).toArray(),
       paymentSessions.aggregate([...paidRecordStages, { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } }]).toArray(),
       paymentSessions.aggregate([
         ...paidRecordStages,
@@ -155,14 +203,8 @@ export default async function handler(req, res) {
     dailyRows.forEach((row) => { if (dailyMap[row._id]) dailyMap[row._id] = { ...dailyMap[row._id], bookings: row.count, duration: row.duration } })
     dailyRevenueRows.forEach((row) => { if (dailyMap[row._id]) dailyMap[row._id].revenue = row.revenue })
     dailyStatusRows.forEach((row) => { if (dailyMap[row._id.date]) { if (!dailyMap[row._id.date].statuses) dailyMap[row._id.date].statuses = { CONFIRMED: 0, CANCELLED: 0, COMPLETED: 0, NO_SHOW: 0 }; if (Object.hasOwn(dailyMap[row._id.date].statuses, row._id.status)) dailyMap[row._id.date].statuses[row._id.status] = row.count } })
-    const completedByDate = {}
-    dailyStatusRows.forEach((row) => {
-      const status = row._id.status
-      if (status === 'COMPLETED') completedByDate[row._id.date] = (completedByDate[row._id.date] || 0) + row.count
-    })
-    Object.entries(completedByDate).forEach(([date, count]) => {
-      if (dailyMap[date]) dailyMap[date].statuses.COMPLETED = count
-    })
+    const completedByDate = Object.fromEntries(completedRows.map((row) => [row._id, row.count]))
+    Object.entries(completedByDate).forEach(([date, count]) => { if (dailyMap[date]) dailyMap[date].statuses.COMPLETED = count })
     dailyEnquiryRows.forEach((row) => { if (dailyMap[row._id]) dailyMap[row._id].enquiries = row.count })
     dailyWhatsappRows.forEach((row) => { if (dailyMap[row._id]) dailyMap[row._id].whatsapp = row.count })
     dailyChatRows.forEach((row) => { if (dailyMap[row._id]) dailyMap[row._id].chat = row.count })
