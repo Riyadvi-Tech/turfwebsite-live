@@ -1,8 +1,8 @@
 {
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/index?route=:path*" },
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/admin/", "destination": "/admin.html" },
+    { "source": "/admin", "destination": "/legacy/admin.html" },
+    { "source": "/admin/", "destination": "/legacy/admin.html" },
     { "source": "/admin/reset-password", "destination": "/admin.html" },
     { "source": "/admin/reset-password/:path*", "destination": "/admin.html" },
     { "source": "/countdown", "destination": "/index.html" },
