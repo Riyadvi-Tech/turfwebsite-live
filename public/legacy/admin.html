@@ -461,15 +461,15 @@
     #loginScreen{grid-template-columns:1fr; height:100vh; min-height:100vh; overflow:hidden; background:linear-gradient(145deg, #0b2118 0%, #06100c 46%, var(--black) 100%); background-attachment:fixed;}
     #loginScreen::before{content:""; position:absolute; inset:0; z-index:0; pointer-events:none; opacity:0.2; background-image:linear-gradient(rgba(57,255,122,0.12) 1px, transparent 1px),linear-gradient(90deg, rgba(57,255,122,0.12) 1px, transparent 1px),radial-gradient(circle, rgba(57,255,122,0.55) 0 1px, transparent 1.5px); background-size:64px 64px,64px 64px,180px 180px; background-position:center,center,12px 30px;}
     #loginScreen::after{content:"24"; position:absolute; right:-12%; bottom:8%; z-index:0; pointer-events:none; font-family:'Space Grotesk',sans-serif; font-size:min(88vw,420px); font-weight:700; line-height:0.85; color:transparent; -webkit-text-stroke:1.5px rgba(57,255,122,0.3); text-shadow:0 0 18px rgba(57,255,122,0.1); opacity:1;}
-    .login-visual{display:flex; align-items:center; justify-content:center; padding:18px 18px 0; min-height:auto; position:relative; z-index:1;}
+    .login-visual{display:flex; align-items:center; justify-content:center; padding:10px 18px 0; min-height:auto; position:relative; z-index:1;}
     .vcontent{max-width:100%; width:100%; display:flex; flex-direction:column; align-items:center; text-align:center;}
     .vcontent .vlogo{margin-bottom:0; justify-content:center;}
     .vcontent .vlogo img{max-width:188px; display:block; margin:0 auto;}
     .vcontent h2, .vcontent > p, .vchips{display:none;}
-    .login-form-side{z-index:1; background:transparent; padding-top:8px;}
+    .login-form-side{z-index:1; background:transparent; padding-top:0; margin-top:-8px;}
     .login-form-side::before{content:""; position:absolute; inset:0; z-index:0; pointer-events:none; opacity:0.28; background-image:radial-gradient(circle, rgba(57,255,122,0.7) 0 1.5px, transparent 2px),radial-gradient(circle, rgba(57,255,122,0.35) 0 1px, transparent 1.5px); background-size:82px 96px,137px 151px; background-position:0 0,34px 48px; animation:loginDotsMove 12s linear infinite;}
     .login-form-side > *{position:relative; z-index:1;}
-    .login-card{position:relative; z-index:2;}
+    .login-card{position:relative; z-index:2; margin-top:0;}
     .table-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
     table{min-width:640px;}
     .date-wrap{width:auto !important; flex:0 0 auto !important; min-width:120px !important; max-width:160px !important; height:32px !important; max-height:32px !important; min-height:32px !important; overflow:hidden !important; align-items:center !important;}
