@@ -1039,19 +1039,16 @@
       document.getElementById('resetPasswordConfirm').value = '';
       error.style.display = 'none';
       resetToken = '';
-      showResetStage('resetSuccessStage');
-      setTimeout(() => {
-        const reset = document.getElementById('passwordReset');
-        if (reset) {
-          reset.classList.remove('open');
-          reset.setAttribute('aria-hidden', 'true');
-          showResetStage('resetRequestStage');
-        }
-        const loginScreen = document.getElementById('loginScreen');
-        const app = document.getElementById('app');
-        if (loginScreen) loginScreen.style.display = 'grid';
-        if (app) app.classList.remove('active');
-      }, 1200);
+      const reset = document.getElementById('passwordReset');
+      if (reset) {
+        reset.classList.remove('open');
+        reset.setAttribute('aria-hidden', 'true');
+      }
+      const loginScreen = document.getElementById('loginScreen');
+      const app = document.getElementById('app');
+      if (loginScreen) loginScreen.style.display = 'grid';
+      if (app) app.classList.remove('active');
+      showResetStage('resetRequestStage');
     } catch(requestError) {
       error.textContent = 'Unable to reset the password right now.';
       error.style.display = 'block';

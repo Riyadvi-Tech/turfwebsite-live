@@ -913,7 +913,16 @@
       if(!response.ok){ error.textContent = data.message || 'Unable to reset the password.'; error.style.display = 'block'; return; }
       localStorage.setItem(ADMIN_PASSWORD_KEY, password);
       error.style.display = 'none';
-      showResetStage('resetSuccessStage');
+      const reset = document.getElementById('passwordReset');
+      if (reset) {
+        reset.classList.remove('open');
+        reset.setAttribute('aria-hidden', 'true');
+      }
+      const loginScreen = document.getElementById('loginScreen');
+      const app = document.getElementById('app');
+      if (loginScreen) loginScreen.style.display = 'grid';
+      if (app) app.classList.remove('active');
+      showResetStage('resetRequestStage');
     } catch (requestError) {
       error.textContent = requestError.message || 'Unable to reset the password.';
       error.style.display = 'block';
