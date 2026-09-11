@@ -1048,6 +1048,12 @@
       const app = document.getElementById('app');
       if (loginScreen) loginScreen.style.display = 'grid';
       if (app) app.classList.remove('active');
+      if (window.opener) {
+        try { window.close(); } catch (closeErr) {}
+      }
+      try {
+        window.location.replace('/admin');
+      } catch (redirectErr) {}
       showResetStage('resetRequestStage');
     } catch(requestError) {
       error.textContent = 'Unable to reset the password right now.';
