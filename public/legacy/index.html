@@ -1685,7 +1685,10 @@
           <p style="font-size:13px; color:var(--muted); margin-bottom:6px;">Please scan the QR Code using any UPI application to complete your payment.</p>
           <p class="mono" style="font-size:13px; color:var(--neon);" data-site-upi>turfon24@okaxis</p>
           <div class="bk-pay-total"><span>Total amount</span><strong id="bkPayTotal">Preparing...</strong></div>
-          <div class="payment-actions"><a class="btn btn-glow" id="bkPayApp" href="#" onclick="payNow(event)">Pay Now</a></div>
+          <div class="payment-actions" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:stretch;">
+            <button type="button" class="btn btn-glow" id="bkPayApp" onclick="payNow(event)">Use QR to pay</button>
+            <button type="button" class="btn btn-outline" onclick="copyPaymentUpi()">Copy UPI ID</button>
+          </div>
           <div class="bk-payment-details" style="text-align:left; margin-top:22px; padding-top:18px; border-top:1px solid var(--border);">
             <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-bottom:14px;"><span>Date</span><span class="mono" style="color:var(--white);" id="bkPayDate">—</span></div>
             <div id="bkPaySlots"></div>
@@ -3314,8 +3317,16 @@
   }
   async function copyPaymentUpi(){
     if(!paymentSession) return;
-    await navigator.clipboard?.writeText(paymentSession.upiId);
-    document.querySelectorAll('.payment-pending').forEach(el=>{ el.textContent='UPI ID copied. Payment remains pending until verified by the payment provider.'; });
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(paymentSession.upiId);
+      }
+      document.querySelectorAll('.payment-pending').forEach(el=>{ el.textContent='UPI ID copied. Please open your UPI app and paste it manually to complete the payment.'; });
+      const status = document.getElementById('bkPaymentStatus');
+      if(status) status.textContent = 'UPI ID copied. Please open your UPI app and complete the payment manually.';
+    } catch (error) {
+      document.querySelectorAll('.payment-pending').forEach(el=>{ el.textContent='Copy failed. Please use the UPI ID shown above and pay manually in your UPI app.'; });
+    }
   }
   function openUpiAppPicker(event){
     if(event && event.preventDefault) event.preventDefault();
@@ -3324,23 +3335,25 @@
   }
   function payNow(event){
     if(event && event.preventDefault) event.preventDefault();
-    if(!paymentSession?.upiUri) return;
+    if(!paymentSession) return;
+    const status = document.getElementById('bkPaymentStatus');
+    if(status){
+      status.style.display = 'block';
+      status.textContent = 'Use the QR code above or copy the UPI ID and complete the payment in your UPI app. Payment will be verified after you finish the transfer.';
+    }
     startPaymentPolling();
-    window.location.href = paymentSession.upiUri;
   }
   function payWithUpiApp(app){
     closeModal('upiAppModal');
     if(!paymentSession) return;
-    const link = document.getElementById('bkPayApp');
-    if(link) link.href = paymentSession.upiUri;
     const status = document.getElementById('bkPaymentStatus');
     if(status){
+      status.style.display = 'block';
       status.textContent = app === 'phonepe'
-        ? 'Open PhonePe and scan the QR code above using your phone.'
-        : 'Payment pending. Scan the QR and complete payment in your UPI app.';
+        ? 'Open PhonePe manually and pay using the UPI ID shown above or the QR code on this page.'
+        : 'Use the QR code above or copy the UPI ID and complete the payment in your UPI app.';
     }
     startPaymentPolling();
-    window.location.href = paymentSession.upiUri;
   }
   function stopPaymentPolling(){
     if(paymentPollingTimer){ clearInterval(paymentPollingTimer); paymentPollingTimer = null; }
