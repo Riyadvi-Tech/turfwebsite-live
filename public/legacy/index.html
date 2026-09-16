@@ -1683,7 +1683,7 @@
           <label class="field-label">Scan to pay</label>
           <div class="qr-box"><img id="bkQrImage" class="dynamic-qr" alt="Dynamic UPI payment QR code"><span id="bkQrStatus" style="font-size:11px; color:#111; font-family:'JetBrains Mono',monospace;">Generating QR...</span></div>
           <p style="font-size:13px; color:var(--muted); margin-bottom:6px;">Please scan the QR Code using any UPI application to complete your payment.</p>
-          <p class="mono" style="font-size:13px; color:var(--neon);" data-site-upi>turfon24@okaxis</p>
+          <p class="mono" style="font-size:13px; color:var(--neon);" data-site-upi>vijaykarthiku7@kvb</p>
           <div class="bk-pay-total"><span>Total amount</span><strong id="bkPayTotal">Preparing...</strong></div>
           <div class="payment-actions" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:stretch;">
             <button type="button" class="btn btn-glow" id="bkPayApp" onclick="payNow(event)">Pay Now</button>
@@ -2315,7 +2315,7 @@
     const units = type === 'extended' ? Number(details.days) * 8 : Number(details.hours);
     const amount = Math.round(units * getSiteRate() * 100) / 100;
     const reference = `T24-${Date.now().toString(36).toUpperCase()}`;
-    const upiId = siteSettings.upi || 'turfon24@okaxis';
+    const upiId = siteSettings.upi || 'vijaykarthiku7@kvb';
     const params = new URLSearchParams({pa:upiId, pn:'Turfon24', am:amount.toFixed(2), cu:'INR', tr:reference});
     return {reference, amount, upiId, merchantName:'Turfon24', upiUri:`upi://pay?${params.toString()}`, status:'PAYMENT_PENDING'};
   }
@@ -3332,7 +3332,7 @@
     const merchantName = String(session?.merchantName || 'Turfon24').trim() || 'Turfon24';
     const amount = Number(session?.amount || 0);
     return {
-      pa: String(session?.upiId || siteSettings.upi || 'turfon24@okaxis'),
+      pa: String(session?.upiId || siteSettings.upi || 'vijaykarthiku7@kvb'),
       pn: merchantName.slice(0, 25),
       am: Number.isFinite(amount) ? amount.toFixed(2) : '0.00',
       cu: String(session?.currency || 'INR'),
