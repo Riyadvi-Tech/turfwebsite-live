@@ -150,6 +150,15 @@ function sessionResponse(session) {
     cu: session.currency,
     tr: session.reference,
   })
+  if (process.env.NODE_ENV !== 'production') {
+    console.info('[payment] UPI request', {
+      pa: session.upiId,
+      pn: session.merchantName,
+      am: session.amount.toFixed(2),
+      cu: session.currency,
+      tr: session.reference,
+    })
+  }
   return {
     reference: session.reference,
     amount: session.amount,

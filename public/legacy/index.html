@@ -2311,25 +2311,12 @@
     if(!response.ok) throw new Error((await response.json().catch(()=>({}))).message || 'Payment setup failed');
     return response.json();
   }
-  function createLocalPaymentSession(type, details){
-    const units = type === 'extended' ? Number(details.days) * 8 : Number(details.hours);
-    const amount = Math.round(units * getSiteRate() * 100) / 100;
-    const reference = `T24-${Date.now().toString(36).toUpperCase()}`;
-    const upiId = siteSettings.upi || 'vijaykarthiku7@kvb';
-    const params = new URLSearchParams({pa:upiId, pn:'Turfon24', am:amount.toFixed(2), cu:'INR', tr:reference});
-    return {reference, amount, upiId, merchantName:'Turfon24', upiUri:`upi://pay?${params.toString()}`, status:'PAYMENT_PENDING'};
-  }
   async function requestPaymentSession(type, details){
-    try {
-      const session = await createPaymentSession(type, details);
-      if (!session || typeof session.amount === 'undefined') {
-        throw new Error('Payment session missing amount info.');
-      }
-      return session;
-    } catch (error) {
-      console.warn('Primary payment session failed, using local fallback:', error);
-      return createLocalPaymentSession(type, details);
+    const session = await createPaymentSession(type, details);
+    if (!session || typeof session.amount === 'undefined' || !session.upiUri || !session.reference) {
+      throw new Error('Payment session is incomplete. Please try again.');
     }
+    return session;
   }
   async function showPayment(session, imageId, statusId, appId){
     paymentSession = session;
@@ -3328,22 +3315,13 @@
       document.querySelectorAll('.payment-pending').forEach(el=>{ el.textContent='Copy failed. Please use the UPI ID shown above and pay manually in your UPI app.'; });
     }
   }
-  function buildUpiRequestParams(session){
-    const merchantName = String(session?.merchantName || 'Turfon24').trim() || 'Turfon24';
-    const amount = Number(session?.amount || 0);
-    return {
-      pa: String(session?.upiId || siteSettings.upi || 'vijaykarthiku7@kvb'),
-      pn: merchantName.slice(0, 25),
-      am: Number.isFinite(amount) ? amount.toFixed(2) : '0.00',
-      cu: String(session?.currency || 'INR'),
-      tr: String(session?.reference || `T24-${Date.now().toString(36).toUpperCase()}`),
-      tn: `TURFON24-${String(session?.reference || Date.now().toString(36).toUpperCase())}`
-    };
-  }
   function buildUpiLaunchUrls(session, app){
-    const params = buildUpiRequestParams(session);
-    const query = new URLSearchParams(params).toString();
-    const base = `upi://pay?${query}`;
+    const base = String(session?.upiUri || '');
+    const query = base.startsWith('upi://pay?') ? base.slice('upi://pay?'.length) : '';
+    const params = Object.fromEntries(new URLSearchParams(query));
+    if (!params.pa || !params.pn || !params.am || params.cu !== 'INR' || !params.tr) {
+      throw new Error('Payment request is missing required UPI fields.');
+    }
     const appPackages = {
       gpay: 'com.google.android.apps.nbu.paisa.user',
       phonepe: 'com.phonepe.app'
@@ -3355,31 +3333,17 @@
   function launchUpiUriSequence(session, app){
     if(!session) return;
     const { base, intent } = buildUpiLaunchUrls(session, app);
-    const launchCandidates = [intent, base].filter(Boolean);
-    if (!launchCandidates.length) return;
-
-    let attemptIndex = 0;
-    const invokeNext = () => {
-      if (attemptIndex >= launchCandidates.length) {
-        const status = document.getElementById('bkPaymentStatus');
-        if(status){
-          status.style.display = 'block';
-          status.textContent = 'Your UPI app did not open. Please scan the QR code or copy the UPI ID and complete the payment manually.';
-        }
-        return;
+    const candidate = intent || base;
+    if (!candidate) return;
+    try {
+      window.location.href = candidate;
+    } catch (error) {
+      const status = document.getElementById('bkPaymentStatus');
+      if(status){
+        status.style.display = 'block';
+        status.textContent = 'Your UPI app did not open. Please scan the QR code or copy the UPI ID and complete the payment manually.';
       }
-      const candidate = launchCandidates[attemptIndex];
-      attemptIndex += 1;
-      try {
-        window.location.href = candidate;
-      } catch (error) {
-        // no-op: fallback will be attempted below
-      }
-      if (attemptIndex < launchCandidates.length) {
-        setTimeout(invokeNext, 1200);
-      }
-    };
-    invokeNext();
+    }
   }
   function openUpiAppPicker(event){
     if(event && event.preventDefault) event.preventDefault();

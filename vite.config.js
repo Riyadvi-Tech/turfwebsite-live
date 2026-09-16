@@ -20,6 +20,8 @@ export default defineConfig(({ mode }) => {
     'SMTP_SECURE',
     'SMTP_FROM',
     'MSG91_AUTH_KEY',
+    'PAYMENT_UPI_ID',
+    'PAYMENT_UPI_NAME',
   ]) {
     if (env[name]) process.env[name] = env[name]
   }
