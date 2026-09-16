@@ -3297,9 +3297,15 @@
       const session = await requestPaymentSession('hourly', {...bookingRequest, idempotencyKey:bkPaymentIdempotencyKey});
       document.getElementById('bkPayAmt').textContent = formatAmount(session.amount);
       document.getElementById('bkPayTotal').textContent = formatAmount(session.amount);
+      console.log('[payment] payment session available', session.reference);
       await showPayment(session, 'bkQrImage', 'bkQrStatus', 'bkPayApp');
     } catch (error) {
-      document.getElementById('bkPaymentStatus').textContent = error.message;
+      const status = document.getElementById('bkPaymentStatus');
+      if(status){
+        status.style.display = 'block';
+        status.textContent = `Unable to prepare payment: ${error.message}`;
+      }
+      console.error('[payment] session creation failed', error);
     }
   }
   async function copyPaymentUpi(){
@@ -3332,10 +3338,11 @@
   }
   function launchUpiUriSequence(session, app){
     if(!session) return;
-    const { base, intent } = buildUpiLaunchUrls(session, app);
-    const candidate = intent || base;
-    if (!candidate) return;
     try {
+      const { base, intent } = buildUpiLaunchUrls(session, app);
+      const candidate = intent || base;
+      if (!candidate) throw new Error('No UPI launch URL was generated.');
+      console.log('[payment] launch URL generated', { app, url: candidate });
       window.location.href = candidate;
     } catch (error) {
       const status = document.getElementById('bkPaymentStatus');
@@ -3343,6 +3350,7 @@
         status.style.display = 'block';
         status.textContent = 'Your UPI app did not open. Please scan the QR code or copy the UPI ID and complete the payment manually.';
       }
+      console.error('[payment] UPI launch failed', error);
     }
   }
   function openUpiAppPicker(event){
@@ -3352,8 +3360,19 @@
   }
   function payNow(event){
     if(event && event.preventDefault) event.preventDefault();
-    if(!paymentSession) return;
+    console.log('[payment] Pay Now clicked');
+    if(!paymentSession){
+      const status = document.getElementById('bkPaymentStatus');
+      if(status){
+        status.style.display = 'block';
+        status.textContent = 'Payment is not ready yet. Please wait for the payment session to finish loading, then try again.';
+      }
+      console.error('[payment] Pay Now clicked without a payment session');
+      return;
+    }
+    console.log('[payment] payment session available', paymentSession.reference);
     openModal('upiAppModal');
+    console.log('[payment] chooser opened');
     const status = document.getElementById('bkPaymentStatus');
     if(status){
       status.style.display = 'block';
@@ -3362,8 +3381,18 @@
     startPaymentPolling();
   }
   function payWithUpiApp(app){
+    console.log(`[payment] ${app === 'phonepe' ? 'PhonePe' : 'Google Pay'} clicked`);
     closeModal('upiAppModal');
-    if(!paymentSession) return;
+    if(!paymentSession){
+      const status = document.getElementById('bkPaymentStatus');
+      if(status){
+        status.style.display = 'block';
+        status.textContent = 'Payment is not ready. Please return to the payment step and try again.';
+      }
+      console.error('[payment] UPI app clicked without a payment session');
+      return;
+    }
+    console.log('[payment] payment session available', paymentSession.reference);
     const status = document.getElementById('bkPaymentStatus');
     if(status){
       status.style.display = 'block';
