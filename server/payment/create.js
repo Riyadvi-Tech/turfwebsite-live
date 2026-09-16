@@ -1,6 +1,5 @@
 import crypto from 'node:crypto'
 import { getDb } from '../_lib/mongodb.js'
-import { OtpAuthorizationError, verifyOtpAccessToken } from '../_lib/otp-authorization.js'
 
 export const HOURLY_RATE = 800
 const PAYMENT_TTL_MINUTES = 15
@@ -184,11 +183,9 @@ export default async function handler(req, res) {
 
   let bookingData
   let amount
-  let otpAuthorization
   try {
     if (type === 'hourly') {
       bookingData = normalizeHourlyBookingData(req.body)
-      otpAuthorization = await verifyOtpAccessToken(req.body?.otpAccessToken, bookingData.mobile)
       amount = bookingData.amount
     } else {
       if (typeof req.body.days !== 'number' || !Number.isInteger(req.body.days) || req.body.days < 1 || req.body.days > 30) {
@@ -207,7 +204,6 @@ export default async function handler(req, res) {
       }
     }
   } catch (error) {
-    if (error instanceof OtpAuthorizationError) return res.status(401).json({ message: error.message })
     if (error.code === 'INVALID_BOOKING') return res.status(400).json({ message: error.message })
     console.error('payment validation failed', error.message)
     return res.status(400).json({ message: 'Invalid payment request.' })
@@ -252,7 +248,6 @@ export default async function handler(req, res) {
       idempotencyKey,
       bookingData,
       ...(type === 'hourly' && draftReference ? { draftReference } : {}),
-      ...(type === 'hourly' ? { otpAuthorization } : {}),
       createdAt: new Date(),
       updatedAt: new Date(),
       merchantName,

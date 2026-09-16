@@ -1,6 +1,5 @@
 import { getMongoClient } from './mongodb.js'
 import { normalizeHourlyBookingData } from '../payment/create.js'
-import { assertOtpAuthorization } from './otp-authorization.js'
 
 export class MaterializationError extends Error {
   constructor(code, message) {
@@ -94,12 +93,6 @@ export async function materializeHourlyPayment(db, reference, { transitionToPaid
         throw new MaterializationError('AMOUNT_CONFLICT', 'Payment amount does not match the booking.')
       }
 
-      const now = new Date()
-      try {
-        assertOtpAuthorization(paymentSession.otpAuthorization, normalized.mobile, now)
-      } catch (error) {
-        throw new MaterializationError('OTP_NOT_VERIFIED', error.message)
-      }
       const existingBooking = await bookings.findOne(
         { paymentReference: reference },
         { session },
