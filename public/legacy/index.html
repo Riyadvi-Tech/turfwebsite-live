@@ -1686,7 +1686,7 @@
           <p class="mono" style="font-size:13px; color:var(--neon);" data-site-upi>turfon24@okaxis</p>
           <div class="bk-pay-total"><span>Total amount</span><strong id="bkPayTotal">Preparing...</strong></div>
           <div class="payment-actions" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:stretch;">
-            <button type="button" class="btn btn-glow" id="bkPayApp" onclick="payNow(event)">Use QR to pay</button>
+            <button type="button" class="btn btn-glow" id="bkPayApp" onclick="payNow(event)">Pay Now</button>
             <button type="button" class="btn btn-outline" onclick="copyPaymentUpi()">Copy UPI ID</button>
           </div>
           <div class="bk-payment-details" style="text-align:left; margin-top:22px; padding-top:18px; border-top:1px solid var(--border);">
@@ -3336,24 +3336,31 @@
   function payNow(event){
     if(event && event.preventDefault) event.preventDefault();
     if(!paymentSession) return;
+    openModal('upiAppModal');
     const status = document.getElementById('bkPaymentStatus');
     if(status){
       status.style.display = 'block';
-      status.textContent = 'Use the QR code above or copy the UPI ID and complete the payment in your UPI app. Payment will be verified after you finish the transfer.';
+      status.textContent = 'Choose your UPI app to continue. If you prefer, you can also scan the QR code or copy the UPI ID below.';
     }
     startPaymentPolling();
   }
   function payWithUpiApp(app){
     closeModal('upiAppModal');
-    if(!paymentSession) return;
+    if(!paymentSession?.upiUri) return;
     const status = document.getElementById('bkPaymentStatus');
     if(status){
       status.style.display = 'block';
       status.textContent = app === 'phonepe'
-        ? 'Open PhonePe manually and pay using the UPI ID shown above or the QR code on this page.'
-        : 'Use the QR code above or copy the UPI ID and complete the payment in your UPI app.';
+        ? 'PhonePe should open with the payment prefilled. Complete the payment in PhonePe and return here.'
+        : 'Google Pay should open with the payment prefilled. Complete the payment in Google Pay and return here.';
     }
-    startPaymentPolling();
+    try {
+      window.location.href = paymentSession.upiUri;
+    } catch (error) {
+      if(status){
+        status.textContent = 'Your browser blocked the direct app launch. Please scan the QR code or copy the UPI ID manually and complete payment in the app.';
+      }
+    }
   }
   function stopPaymentPolling(){
     if(paymentPollingTimer){ clearInterval(paymentPollingTimer); paymentPollingTimer = null; }
