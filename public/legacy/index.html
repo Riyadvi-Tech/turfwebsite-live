@@ -2344,7 +2344,7 @@
     const paymentStatus = document.getElementById('bkPaymentStatus');
     if(paymentStatus){
       paymentStatus.style.display = 'block';
-      paymentStatus.textContent = 'Payment pending. Complete the UPI payment and wait for manual verification.';
+      paymentStatus.textContent = 'Payment pending. Choose your UPI app to complete the payment. Your booking will be confirmed only after backend verification.';
     }
     startPaymentPolling();
   }
@@ -3328,6 +3328,59 @@
       document.querySelectorAll('.payment-pending').forEach(el=>{ el.textContent='Copy failed. Please use the UPI ID shown above and pay manually in your UPI app.'; });
     }
   }
+  function buildUpiRequestParams(session){
+    const merchantName = String(session?.merchantName || 'Turfon24').trim() || 'Turfon24';
+    const amount = Number(session?.amount || 0);
+    return {
+      pa: String(session?.upiId || siteSettings.upi || 'turfon24@okaxis'),
+      pn: merchantName.slice(0, 25),
+      am: Number.isFinite(amount) ? amount.toFixed(2) : '0.00',
+      cu: String(session?.currency || 'INR'),
+      tr: String(session?.reference || `T24-${Date.now().toString(36).toUpperCase()}`),
+      tn: `TURFON24-${String(session?.reference || Date.now().toString(36).toUpperCase())}`
+    };
+  }
+  function buildUpiLaunchUrls(session, app){
+    const params = buildUpiRequestParams(session);
+    const query = new URLSearchParams(params).toString();
+    const base = `upi://pay?${query}`;
+    const appPackages = {
+      gpay: 'com.google.android.apps.nbu.paisa.user',
+      phonepe: 'com.phonepe.app'
+    };
+    const packageName = appPackages[app];
+    const intent = packageName ? `intent://pay?${query}#Intent;scheme=upi;package=${packageName};S.browser_fallback_url=${encodeURIComponent(base)};end;` : null;
+    return { base, intent };
+  }
+  function launchUpiUriSequence(session, app){
+    if(!session) return;
+    const { base, intent } = buildUpiLaunchUrls(session, app);
+    const launchCandidates = [intent, base].filter(Boolean);
+    if (!launchCandidates.length) return;
+
+    let attemptIndex = 0;
+    const invokeNext = () => {
+      if (attemptIndex >= launchCandidates.length) {
+        const status = document.getElementById('bkPaymentStatus');
+        if(status){
+          status.style.display = 'block';
+          status.textContent = 'Your UPI app did not open. Please scan the QR code or copy the UPI ID and complete the payment manually.';
+        }
+        return;
+      }
+      const candidate = launchCandidates[attemptIndex];
+      attemptIndex += 1;
+      try {
+        window.location.href = candidate;
+      } catch (error) {
+        // no-op: fallback will be attempted below
+      }
+      if (attemptIndex < launchCandidates.length) {
+        setTimeout(invokeNext, 1200);
+      }
+    };
+    invokeNext();
+  }
   function openUpiAppPicker(event){
     if(event && event.preventDefault) event.preventDefault();
     if(!paymentSession) return;
@@ -3340,27 +3393,21 @@
     const status = document.getElementById('bkPaymentStatus');
     if(status){
       status.style.display = 'block';
-      status.textContent = 'Choose your UPI app to continue. If you prefer, you can also scan the QR code or copy the UPI ID below.';
+      status.textContent = 'Choose your UPI app to complete payment. Your booking will be confirmed only after payment verification.';
     }
     startPaymentPolling();
   }
   function payWithUpiApp(app){
     closeModal('upiAppModal');
-    if(!paymentSession?.upiUri) return;
+    if(!paymentSession) return;
     const status = document.getElementById('bkPaymentStatus');
     if(status){
       status.style.display = 'block';
       status.textContent = app === 'phonepe'
-        ? 'PhonePe should open with the payment prefilled. Complete the payment in PhonePe and return here.'
-        : 'Google Pay should open with the payment prefilled. Complete the payment in Google Pay and return here.';
+        ? 'PhonePe is opening with the prefilled payment request. Complete the payment in PhonePe and return here. We will verify the payment before confirming your booking.'
+        : 'Google Pay is opening with the prefilled payment request. Complete the payment in Google Pay and return here. We will verify the payment before confirming your booking.';
     }
-    try {
-      window.location.href = paymentSession.upiUri;
-    } catch (error) {
-      if(status){
-        status.textContent = 'Your browser blocked the direct app launch. Please scan the QR code or copy the UPI ID manually and complete payment in the app.';
-      }
-    }
+    launchUpiUriSequence(paymentSession, app);
   }
   function stopPaymentPolling(){
     if(paymentPollingTimer){ clearInterval(paymentPollingTimer); paymentPollingTimer = null; }
