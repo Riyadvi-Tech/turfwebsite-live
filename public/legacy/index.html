@@ -2691,7 +2691,7 @@
           if(verifyBtn) verifyBtn.disabled = false;
           console.log('[MSG91] verify success:', data);
           bkOtpVerified = true;
-          bkOtpAccessToken = (data && (data.token || data.accessToken || data.jwt || data.access_token)) || null;
+          bkOtpAccessToken = (data && (data.token || data.accessToken || data.jwt || data.access_token || data['access-token'])) || null;
           bkVerifiedMobile = bkNormalizeMobile(document.getElementById('bkMobile').value || '');
           document.getElementById('bkOtpStatus').style.display = 'flex';
           document.getElementById('bkVerifyContinue').removeAttribute('disabled');
