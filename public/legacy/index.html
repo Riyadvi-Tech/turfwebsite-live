@@ -3332,15 +3332,23 @@
       gpay: 'com.google.android.apps.nbu.paisa.user',
       phonepe: 'com.phonepe.app'
     };
+    const appSchemes = {
+      gpay: { scheme: 'tez', path: 'upi/pay' },
+      phonepe: { scheme: 'phonepe', path: 'pay' }
+    };
     const packageName = appPackages[app];
-    const intent = packageName ? `intent://pay?${query}#Intent;scheme=upi;package=${packageName};S.browser_fallback_url=${encodeURIComponent(base)};end;` : null;
-    return { base, intent };
+    const appProtocol = appSchemes[app];
+    const appUri = appProtocol ? `${appProtocol.scheme}://${appProtocol.path}?${query}` : null;
+    const intent = packageName && appProtocol
+      ? `intent://${appProtocol.path}?${query}#Intent;scheme=${appProtocol.scheme};package=${packageName};S.browser_fallback_url=${encodeURIComponent(base)};end;`
+      : null;
+    return { base, appUri, intent };
   }
   function launchUpiUriSequence(session, app){
     if(!session) return;
     try {
-      const { base, intent } = buildUpiLaunchUrls(session, app);
-      const candidate = intent || base;
+      const { base, appUri, intent } = buildUpiLaunchUrls(session, app);
+      const candidate = intent || appUri || base;
       if (!candidate) throw new Error('No UPI launch URL was generated.');
       console.log('[payment] launch URL generated', { app, url: candidate });
       window.location.href = candidate;
