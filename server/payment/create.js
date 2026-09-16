@@ -141,13 +141,17 @@ function createReference() {
   return `T24-${new Date().toISOString().slice(0, 10).replaceAll('-', '')}-${crypto.randomBytes(16).toString('hex').toUpperCase()}`
 }
 
+function upiTransactionReference(session) {
+  return crypto.createHash('sha256').update(session.reference).digest('hex').slice(0, 32)
+}
+
 function sessionResponse(session) {
   const params = new URLSearchParams({
     pa: session.upiId,
     pn: session.merchantName,
     am: session.amount.toFixed(2),
     cu: session.currency,
-    tr: session.reference,
+    tr: upiTransactionReference(session),
   })
   if (process.env.NODE_ENV !== 'production') {
     console.info('[payment] UPI request', {
@@ -155,7 +159,7 @@ function sessionResponse(session) {
       pn: session.merchantName,
       am: session.amount.toFixed(2),
       cu: session.currency,
-      tr: session.reference,
+      tr: upiTransactionReference(session),
     })
   }
   return {
