@@ -1683,7 +1683,7 @@
           <label class="field-label">Scan to pay</label>
           <div class="qr-box"><img id="bkQrImage" class="dynamic-qr" alt="Dynamic UPI payment QR code"><span id="bkQrStatus" style="font-size:11px; color:#111; font-family:'JetBrains Mono',monospace;">Generating QR...</span></div>
           <p style="font-size:13px; color:var(--muted); margin-bottom:6px;">Please scan the QR Code using any UPI application to complete your payment.</p>
-          <p class="mono" style="font-size:13px; color:var(--neon);" data-site-upi>vijaykarthiku7-1@oksbi</p>
+          <p class="mono" style="font-size:13px; color:var(--neon);" data-site-upi>turfon24@okaxis</p>
           <div class="bk-pay-total"><span>Total amount</span><strong id="bkPayTotal">Preparing...</strong></div>
           <div class="payment-actions"><a class="btn btn-glow" id="bkPayApp" href="#" onclick="payNow(event)">Pay Now</a></div>
           <div class="bk-payment-details" style="text-align:left; margin-top:22px; padding-top:18px; border-top:1px solid var(--border);">
@@ -1832,7 +1832,7 @@
   setTimeout(()=>{ document.querySelectorAll('.reveal,.editorial-row,.story-line,.fn-reveal').forEach(el=>el.classList.add('in')); }, 1200);
 
   const SITE_SETTINGS_KEY = 'turfon24-site-settings';
-  const DEFAULT_SITE_SETTINGS = {phone:'+91 89399 89366', whatsapp:'+91 89399 89366', email:'ask@turfon24.com', address:'cuddalore', hourlyRate:'800', upi:'vijaykarthiku7-1@oksbi'};
+  const DEFAULT_SITE_SETTINGS = {phone:'+91 89399 89366', whatsapp:'+91 89399 89366', email:'ask@turfon24.com', address:'cuddalore', hourlyRate:'800', upi:'turfon24@okaxis'};
   let siteSettings = {...DEFAULT_SITE_SETTINGS};
   function whatsappNumber(value){
     const digits = String(value || '').replace(/\D/g,'');
@@ -2312,8 +2312,8 @@
     const units = type === 'extended' ? Number(details.days) * 8 : Number(details.hours);
     const amount = Math.round(units * getSiteRate() * 100) / 100;
     const reference = `T24-${Date.now().toString(36).toUpperCase()}`;
-    const upiId = siteSettings.upi || 'vijaykarthiku7-1@oksbi';
-    const params = new URLSearchParams({pa:upiId, pn:'Vijay Karthikeyan U', am:amount.toFixed(2), cu:'INR', tr:reference});
+    const upiId = siteSettings.upi || 'turfon24@okaxis';
+    const params = new URLSearchParams({pa:upiId, pn:'Turfon24', am:amount.toFixed(2), cu:'INR', tr:reference});
     return {reference, amount, upiId, merchantName:'Turfon24', upiUri:`upi://pay?${params.toString()}`, status:'PAYMENT_PENDING'};
   }
   async function requestPaymentSession(type, details){
