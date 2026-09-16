@@ -206,7 +206,7 @@ export default async function handler(req, res) {
 
   const reference = createReference()
 
-  const upiId = process.env.PAYMENT_UPI_ID || 'turfon24@okaxis'
+  const upiId = process.env.PAYMENT_UPI_ID || 'vijaykarthiku7@kvb'
   const merchantName = process.env.PAYMENT_UPI_NAME || 'Turfon24'
 
   const expiresAt = new Date(
