@@ -1598,7 +1598,7 @@
           <div class="bk-otp-row"><button class="bk-resend-btn" id="bkResendOtpBtn" type="button" onclick="bkResendOtp()" disabled>Resend OTP</button><span class="bk-resend-timer" id="bkResendTimer"></span></div>
         </div>
         <div class="bk-note">Booking actions stay locked until your number is verified.</div>
-        <button class="btn btn-glow magnetic" id="bkVerifyContinue" style="width:100%; justify-content:center; margin-top:18px;" disabled onclick="bkContinueFromVerification()">Continue to date selection →</button>
+        <button class="btn btn-glow magnetic" id="bkVerifyContinue" style="display:none; width:100%; justify-content:center; margin-top:18px;" disabled onclick="bkContinueFromVerification()">Continue to date selection →</button>
       </div>
 
       <!-- PANE 2 — DATE -->
@@ -1615,7 +1615,7 @@
           </div>
           <div class="rc-grid" id="bkCalGrid"></div>
         </div>
-        <button class="btn btn-glow magnetic" id="bkDateContinue" style="width:100%; justify-content:center;" disabled onclick="bkGoStep(3)">Continue to duration →</button>
+        <button class="btn btn-glow magnetic" id="bkDateContinue" style="display:none; width:100%; justify-content:center;" disabled onclick="bkGoStep(3)">Continue to duration →</button>
       </div>
 
       <!-- PANE 3 — DURATION -->
@@ -1645,7 +1645,7 @@
           <div class="ms-hint" id="bkSlotCountHint">Pick how many time windows to book — from 2 up to 5 slots on the same date.</div>
           <div id="bkSlotDurations"></div>
         </div>
-        <button class="btn btn-glow magnetic" id="bkDurationContinue" style="width:100%; justify-content:center; margin-top:14px;" disabled onclick="bkGoStep(4)">Continue to time range →</button>
+        <button class="btn btn-glow magnetic" id="bkDurationContinue" style="display:none; width:100%; justify-content:center; margin-top:14px;" disabled onclick="bkGoStep(4)">Continue to time range →</button>
       </div>
 
       <!-- PANE 4 — AVAILABLE TIME RANGES -->
@@ -1663,7 +1663,7 @@
           <button class="btn btn-outline magnetic" id="bkAddSlotBtn" type="button" style="display:none; width:100%; justify-content:center; margin-top:18px;" onclick="bkAddAnotherSlot()">+ Add another slot</button>
         </div>
         <div id="bkMultiSlotArea" style="display:none;"></div>
-        <button class="btn btn-glow magnetic" id="bkTimeContinue" style="width:100%; justify-content:center; margin-top:14px;" disabled onclick="bkConfirmSlots()">Continue to summary →</button>
+        <button class="btn btn-glow magnetic" id="bkTimeContinue" style="width:100%; justify-content:center; margin-top:14px;" disabled onclick="bkConfirmSlots()">Go to Summary →</button>
       </div>
 
       <!-- PANE 5 — BOOKING SUMMARY -->
@@ -2143,6 +2143,11 @@
     document.getElementById('bkTimeContinue').setAttribute('disabled', '');
     document.getElementById('bkDateHint').textContent = 'Date selected';
     document.getElementById('bkDateContinue').removeAttribute('disabled');
+    setTimeout(() => {
+      if (bkState.date && bkCurrentStep === 2) {
+        bkGoStep(3);
+      }
+    }, 180);
     const lastDayOfMonth = new Date(bkCalYear, bkCalMonth + 1, 0).getDate();
     if(date.getDate() === lastDayOfMonth){
       // no further selectable dates remain in the displayed month — show the next month automatically
@@ -2708,7 +2713,10 @@
           document.getElementById('bkOtpStatus').style.display = 'flex';
           document.getElementById('bkVerifyContinue').removeAttribute('disabled');
           bkClearOtpCooldown();
-          bkOtpMsg('Number verified.', 'ok');
+          bkOtpMsg('Number verified. Loading date selection…', 'ok');
+          setTimeout(() => {
+            bkGoStep(2);
+          }, 250);
           bkPersist();
         },
         function(error){
@@ -2828,6 +2836,11 @@
     }
     bkAddingSlot = false;
     document.getElementById('bkDurationContinue').removeAttribute('disabled');
+    setTimeout(() => {
+      if (bkDurationHours > 0 && bkState.date && bkCurrentStep === 3) {
+        bkGoStep(4);
+      }
+    }, 180);
   });
 
   function bkSlotAvailable(hour){ return !bkUnavailable.includes(bkTimes[hour]); }
