@@ -3371,24 +3371,7 @@
   function payNow(event){
     if(event && event.preventDefault) event.preventDefault();
     console.log('[payment] Pay Now clicked');
-    if(!paymentSession){
-      const status = document.getElementById('bkPaymentStatus');
-      if(status){
-        status.style.display = 'block';
-        status.textContent = 'Payment is not ready yet. Please wait for the payment session to finish loading, then try again.';
-      }
-      console.error('[payment] Pay Now clicked without a payment session');
-      return;
-    }
-    console.log('[payment] payment session available', paymentSession.reference);
-    openModal('upiAppModal');
-    console.log('[payment] chooser opened');
-    const status = document.getElementById('bkPaymentStatus');
-    if(status){
-      status.style.display = 'block';
-      status.textContent = 'Choose your UPI app to complete payment. Your booking will be confirmed only after payment verification.';
-    }
-    startPaymentPolling();
+    openRazorpayCheckout();
   }
   function payWithUpiApp(app){
     console.log(`[payment] ${app === 'phonepe' ? 'PhonePe' : 'Google Pay'} clicked`);
@@ -3923,6 +3906,94 @@
       }
     })
   })
+</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  const RAZORPAY_KEY_ID = 'rzp_test_Td3mC9iwGCTEBO';
+  let razorpayCheckout = null;
+
+  function openRazorpayCheckout() {
+    if (!window.Razorpay) {
+      const status = document.getElementById('bkPaymentStatus');
+      if (status) {
+        status.style.display = 'block';
+        status.textContent = 'Razorpay SDK is unavailable. Please try again in a moment.';
+      }
+      return;
+    }
+    if (!paymentSession || typeof paymentSession.amount === 'undefined') {
+      const status = document.getElementById('bkPaymentStatus');
+      if (status) {
+        status.style.display = 'block';
+        status.textContent = 'Payment is not ready yet. Please wait for the payment session to finish loading.';
+      }
+      return;
+    }
+
+    const amountInPaise = Math.round(Number(paymentSession.amount || 0) * 100);
+    const buyerName = document.getElementById('bkName')?.value?.trim() || '';
+    const buyerMobile = document.getElementById('bkMobile')?.value?.replace(/\D/g, '') || '';
+    const buyerEmail = document.getElementById('bkEmail')?.value?.trim() || '';
+
+    const options = {
+      key: RAZORPAY_KEY_ID,
+      amount: amountInPaise,
+      currency: 'INR',
+      name: 'Turf On 24',
+      description: 'Slot Booking Payment',
+      image: '/logo-assets/LogoWater.png',
+      handler: function(response) {
+        if (response && response.razorpay_payment_id) {
+          paymentSession.status = 'PAID';
+          paymentSession.razorpayPaymentId = response.razorpay_payment_id;
+          if (typeof bkCompletePayment === 'function') {
+            bkCompletePayment();
+          } else {
+            alert('Payment successful. Your booking is being confirmed.');
+          }
+        }
+      },
+      prefill: {
+        name: buyerName,
+        contact: buyerMobile,
+        email: buyerEmail,
+      },
+      theme: {
+        color: '#39FF7A'
+      },
+      modal: {
+        ondismiss: function() {
+          const status = document.getElementById('bkPaymentStatus');
+          if (status) {
+            status.style.display = 'block';
+            status.textContent = 'Payment was cancelled. Please try again when you are ready.';
+          }
+        }
+      }
+    };
+
+    try {
+      razorpayCheckout = new window.Razorpay(options);
+      razorpayCheckout.open();
+    } catch (error) {
+      const status = document.getElementById('bkPaymentStatus');
+      if (status) {
+        status.style.display = 'block';
+        status.textContent = 'Unable to open Razorpay checkout. Please try again.';
+      }
+      console.error('[payment] Razorpay checkout failed', error);
+    }
+  }
+
+  const bkPayAppButton = document.getElementById('bkPayApp');
+  if (bkPayAppButton) {
+    bkPayAppButton.onclick = null;
+    bkPayAppButton.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      openRazorpayCheckout();
+    });
+  }
 </script>
 </body>
 </html>
