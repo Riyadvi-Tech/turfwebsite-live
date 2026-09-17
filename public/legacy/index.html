@@ -2313,7 +2313,10 @@
   }
   async function requestPaymentSession(type, details){
     const session = await createPaymentSession(type, details);
-    if (!session || typeof session.amount === 'undefined' || !session.upiUri || !session.reference) {
+    if (!session || typeof session.amount === 'undefined' || !session.reference) {
+      throw new Error('Payment session is incomplete. Please try again.');
+    }
+    if (!session.upiUri && !session.razorpayOrderId) {
       throw new Error('Payment session is incomplete. Please try again.');
     }
     return session;
@@ -2321,14 +2324,23 @@
   async function showPayment(session, imageId, statusId, appId){
     paymentSession = session;
     stopPaymentPolling();
-    const image = document.getElementById(imageId);
     const status = document.getElementById(statusId);
+    const paymentStatus = document.getElementById('bkPaymentStatus');
+
+    if (session.paymentMode === 'RAZORPAY' || session.razorpayOrderId) {
+      if (paymentStatus) {
+        paymentStatus.style.display = 'block';
+        paymentStatus.textContent = 'Razorpay checkout is ready. Please complete the payment in the popup to confirm your booking.';
+      }
+      return;
+    }
+
+    const image = document.getElementById(imageId);
     document.querySelectorAll('[data-site-upi]').forEach(el=>{ el.textContent=session.upiId; });
     const qrRenderer = window.parent?.renderPaymentQr || window.renderPaymentQr;
     if (!qrRenderer) throw new Error('QR generator is unavailable');
     await qrRenderer(image, status, session.upiUri);
     document.getElementById(appId).href = session.upiUriFallback || session.upiUri;
-    const paymentStatus = document.getElementById('bkPaymentStatus');
     if(paymentStatus){
       paymentStatus.style.display = 'block';
       paymentStatus.textContent = 'Payment pending. Choose your UPI app to complete the payment. Your booking will be confirmed only after backend verification.';
@@ -3930,15 +3942,17 @@
       return;
     }
 
-    const amountInPaise = Math.round(Number(paymentSession.amount || 0) * 100);
+    const amountInPaise = Math.round(Number(paymentSession.razorpayAmount || paymentSession.amount || 0) * 100);
     const buyerName = document.getElementById('bkName')?.value?.trim() || '';
     const buyerMobile = document.getElementById('bkMobile')?.value?.replace(/\D/g, '') || '';
     const buyerEmail = document.getElementById('bkEmail')?.value?.trim() || '';
+    const keyForCheckout = paymentSession.razorpayKey || RAZORPAY_KEY_ID;
 
     const options = {
-      key: RAZORPAY_KEY_ID,
+      key: keyForCheckout,
       amount: amountInPaise,
-      currency: 'INR',
+      currency: paymentSession.razorpayCurrency || 'INR',
+      order_id: paymentSession.razorpayOrderId || undefined,
       name: 'Turf On 24',
       description: 'Slot Booking Payment',
       image: '/logo-assets/LogoWater.png',

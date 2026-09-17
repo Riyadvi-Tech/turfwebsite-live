@@ -1,4 +1,5 @@
 import crypto from 'node:crypto'
+import Razorpay from 'razorpay'
 import { getDb } from '../_lib/mongodb.js'
 
 export const HOURLY_RATE = 800
@@ -33,6 +34,55 @@ async function getConfiguredPaymentDetails(db) {
   } catch (error) {
     return { upiId: fallbackUpiId, merchantName: fallbackMerchantName }
   }
+}
+
+function getRazorpayClient() {
+  const keyId = process.env.RAZORPAY_KEY_ID
+  const keySecret = process.env.RAZORPAY_KEY_SECRET
+
+  if (!keyId || !keySecret) return null
+
+  try {
+    return new Razorpay({
+      key_id: keyId,
+      key_secret: keySecret,
+    })
+  } catch (error) {
+    console.error('[payment] Razorpay client initialization failed', error)
+    return null
+  }
+}
+
+async function maybeCreateRazorpayOrder(session) {
+  const client = getRazorpayClient()
+  if (!client) return null
+
+  try {
+    const amountInPaise = Math.round(Number(session.amount || 0) * 100)
+    const order = await client.orders.create({
+      amount: amountInPaise,
+      currency: 'INR',
+      receipt: String(session.reference),
+      notes: {
+        reference: session.reference,
+        bookingType: session.bookingType,
+      },
+    })
+
+    if (order && order.id) {
+      return {
+        paymentMode: 'RAZORPAY',
+        razorpayKey: process.env.RAZORPAY_KEY_ID,
+        razorpayOrderId: order.id,
+        razorpayAmount: amountInPaise,
+        razorpayCurrency: 'INR',
+      }
+    }
+  } catch (error) {
+    console.error('[payment] Razorpay order creation failed', error)
+  }
+
+  return null
 }
 
 function money(value) {
@@ -181,7 +231,24 @@ function sessionResponse(session) {
   const amountUri = `upi://pay?pa=${upiId}&pn=${merchantName}&am=${session.amount.toFixed(2)}&cu=${session.currency}`
   const fallbackUri = `upi://pay?pa=${upiId}&pn=${merchantName}`
 
-  if (process.env.NODE_ENV !== 'production') {
+  const response = {
+    reference: session.reference,
+    amount: session.amount,
+    currency: session.currency,
+    paymentMode: session.paymentMode || 'UPI',
+    upiId,
+    merchantName,
+    upiUri: amountUri,
+    upiUriFallback: fallbackUri,
+    status: session.status,
+    expiresAt: session.expiresAt.toISOString(),
+    razorpayKey: session.razorpayKey || null,
+    razorpayOrderId: session.razorpayOrderId || null,
+    razorpayAmount: session.razorpayAmount || null,
+    razorpayCurrency: session.razorpayCurrency || null,
+  }
+
+  if (process.env.NODE_ENV !== 'production' && response.paymentMode === 'UPI') {
     console.info('[payment] UPI request', {
       pa: upiId,
       pn: merchantName,
@@ -191,17 +258,7 @@ function sessionResponse(session) {
     })
   }
 
-  return {
-    reference: session.reference,
-    amount: session.amount,
-    currency: session.currency,
-    upiId,
-    merchantName,
-    upiUri: amountUri,
-    upiUriFallback: fallbackUri,
-    status: session.status,
-    expiresAt: session.expiresAt.toISOString(),
-  }
+  return response
 }
 
 export default async function handler(req, res) {
@@ -280,6 +337,7 @@ export default async function handler(req, res) {
       return res.status(200).json(sessionResponse(existing))
     }
 
+    const razorpayOrder = await maybeCreateRazorpayOrder({ reference, bookingType: type, amount, currency: 'INR' })
     const session = {
       reference,
       bookingType: type,
@@ -290,6 +348,11 @@ export default async function handler(req, res) {
       expiresAt,
       idempotencyKey,
       bookingData,
+      paymentMode: razorpayOrder?.paymentMode || 'UPI',
+      razorpayKey: razorpayOrder?.razorpayKey || null,
+      razorpayOrderId: razorpayOrder?.razorpayOrderId || null,
+      razorpayAmount: razorpayOrder?.razorpayAmount || null,
+      razorpayCurrency: razorpayOrder?.razorpayCurrency || null,
       ...(type === 'hourly' && draftReference ? { draftReference } : {}),
       createdAt: new Date(),
       updatedAt: new Date(),
