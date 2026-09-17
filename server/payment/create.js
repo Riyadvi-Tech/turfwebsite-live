@@ -7,6 +7,19 @@ const MAX_HOURLY_DURATION = 60
 const MAX_SLOTS = 5
 const TIME_PATTERN = /^(\d{1,2}):(\d{2})\s?(AM|PM)(?:\s*\(next day\))?$/i
 
+async function getConfiguredHourlyRate(db) {
+  const fallback = Number(process.env.HOURLY_RATE ?? HOURLY_RATE) || HOURLY_RATE
+  if (!db) return fallback
+
+  try {
+    const settings = await db.collection('website_settings').findOne({ key: 'main' }, { projection: { _id: 0, hourlyRate: 1 } })
+    const value = Number(settings?.hourlyRate)
+    return Number.isFinite(value) && value > 0 ? value : fallback
+  } catch (error) {
+    return fallback
+  }
+}
+
 function money(value) {
   return Math.round(value * 100) / 100
 }
@@ -75,13 +88,15 @@ function normalizeName(value) {
   return name
 }
 
-export function normalizeHourlyBookingData(input) {
+export function normalizeHourlyBookingData(input, hourlyRate = HOURLY_RATE) {
   if (!input || input.type !== 'hourly') throw invalidBooking('Only hourly bookings are supported.')
 
   const date = parseDate(input.date)
   if (typeof input.duration !== 'number' || !Number.isInteger(input.duration)) {
     throw invalidBooking('Invalid booking duration.')
   }
+
+  const rate = Number(hourlyRate) || HOURLY_RATE
 
   const rawSlots = Array.isArray(input.slots) && input.slots.length
     ? input.slots
@@ -124,7 +139,7 @@ export function normalizeHourlyBookingData(input) {
     throw invalidBooking('Invalid booking duration.')
   }
 
-  const amount = money(duration * HOURLY_RATE)
+  const amount = money(duration * rate)
   return {
     type: 'hourly',
     name: normalizeName(input.name),
@@ -185,17 +200,26 @@ export default async function handler(req, res) {
   if (!['hourly', 'extended'].includes(type)) return res.status(400).json({ message: 'Invalid payment type.' })
   if (!/^[A-Za-z0-9_-]{16,128}$/.test(idempotencyKey)) return res.status(400).json({ message: 'Invalid payment request.' })
 
+  let db
+  try {
+    db = await getDb()
+  } catch (error) {
+    db = null
+  }
+
+  const effectiveHourlyRate = await getConfiguredHourlyRate(db)
+
   let bookingData
   let amount
   try {
     if (type === 'hourly') {
-      bookingData = normalizeHourlyBookingData(req.body)
+      bookingData = normalizeHourlyBookingData(req.body, effectiveHourlyRate)
       amount = bookingData.amount
     } else {
       if (typeof req.body.days !== 'number' || !Number.isInteger(req.body.days) || req.body.days < 1 || req.body.days > 30) {
         throw invalidBooking('Invalid booking duration.')
       }
-      amount = money(req.body.days * 8 * HOURLY_RATE)
+      amount = money(req.body.days * 8 * effectiveHourlyRate)
       bookingData = {
         type: 'extended',
         days: req.body.days,
@@ -222,9 +246,8 @@ export default async function handler(req, res) {
     Date.now() + PAYMENT_TTL_MINUTES * 60 * 1000,
   )
 
-  let db
   try {
-    db = await getDb()
+    if (!db) db = await getDb()
     await db.collection('payment_sessions').createIndex(
       { idempotencyKey: 1 },
       { unique: true, sparse: true, name: 'idempotency_key_unique' },
