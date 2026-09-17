@@ -20,6 +20,21 @@ async function getConfiguredHourlyRate(db) {
   }
 }
 
+async function getConfiguredPaymentDetails(db) {
+  const fallbackUpiId = process.env.PAYMENT_UPI_ID || '20221229583742@yesbank'
+  const fallbackMerchantName = process.env.PAYMENT_UPI_NAME || 'Easebuzz'
+  if (!db) return { upiId: fallbackUpiId, merchantName: fallbackMerchantName }
+
+  try {
+    const settings = await db.collection('website_settings').findOne({ key: 'main' }, { projection: { _id: 0, upiId: 1, upi: 1, businessName: 1 } })
+    const upiId = String(settings?.upiId || settings?.upi || '').trim() || fallbackUpiId
+    const merchantName = String(settings?.businessName || '').trim() || fallbackMerchantName
+    return { upiId, merchantName }
+  } catch (error) {
+    return { upiId: fallbackUpiId, merchantName: fallbackMerchantName }
+  }
+}
+
 function money(value) {
   return Math.round(value * 100) / 100
 }
@@ -239,8 +254,9 @@ export default async function handler(req, res) {
 
   const reference = createReference()
 
-  const upiId = process.env.PAYMENT_UPI_ID || '20221229583742@yesbank'
-  const merchantName = process.env.PAYMENT_UPI_NAME || 'Easebuzz'
+  const paymentDetails = await getConfiguredPaymentDetails(db)
+  const upiId = paymentDetails.upiId
+  const merchantName = paymentDetails.merchantName
 
   const expiresAt = new Date(
     Date.now() + PAYMENT_TTL_MINUTES * 60 * 1000,
