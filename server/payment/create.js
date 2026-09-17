@@ -22,7 +22,7 @@ async function getConfiguredHourlyRate(db) {
 
 async function getConfiguredPaymentDetails(db) {
   const fallbackUpiId = process.env.PAYMENT_UPI_ID || 'Vyapar.176885106737@hdfcbank'
-  const fallbackMerchantName = process.env.PAYMENT_UPI_NAME || 'Default'
+  const fallbackMerchantName = process.env.PAYMENT_UPI_NAME || 'Turf'
   if (!db) return { upiId: fallbackUpiId, merchantName: fallbackMerchantName }
 
   try {
@@ -176,32 +176,29 @@ function upiTransactionReference(session) {
 }
 
 function sessionResponse(session) {
-  const tr = upiTransactionReference(session)
-  const params = new URLSearchParams({
-    pa: session.upiId,
-    pn: session.merchantName,
-    mc: '8999',
-    cu: session.currency,
-    am: session.amount.toFixed(2),
-    tr,
-  })
+  const upiId = String(session.upiId || '').trim() || 'Vyapar.176885106737@hdfcbank'
+  const merchantName = String(session.merchantName || 'Turf').trim() || 'Turf'
+  const amountUri = `upi://pay?pa=${upiId}&pn=${merchantName}&am=${session.amount.toFixed(2)}&cu=${session.currency}`
+  const fallbackUri = `upi://pay?pa=${upiId}&pn=${merchantName}`
+
   if (process.env.NODE_ENV !== 'production') {
     console.info('[payment] UPI request', {
-      pa: session.upiId,
-      pn: session.merchantName,
-      mc: '8999',
-      cu: session.currency,
+      pa: upiId,
+      pn: merchantName,
       am: session.amount.toFixed(2),
-      tr,
+      cu: session.currency,
+      fallback: fallbackUri,
     })
   }
+
   return {
     reference: session.reference,
     amount: session.amount,
     currency: session.currency,
-    upiId: session.upiId,
-    merchantName: session.merchantName,
-    upiUri: `upi://pay?${params.toString()}`,
+    upiId,
+    merchantName,
+    upiUri: amountUri,
+    upiUriFallback: fallbackUri,
     status: session.status,
     expiresAt: session.expiresAt.toISOString(),
   }

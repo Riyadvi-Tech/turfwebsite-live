@@ -2327,7 +2327,7 @@
     const qrRenderer = window.parent?.renderPaymentQr || window.renderPaymentQr;
     if (!qrRenderer) throw new Error('QR generator is unavailable');
     await qrRenderer(image, status, session.upiUri);
-    document.getElementById(appId).href = session.upiUri;
+    document.getElementById(appId).href = session.upiUriFallback || session.upiUri;
     const paymentStatus = document.getElementById('bkPaymentStatus');
     if(paymentStatus){
       paymentStatus.style.display = 'block';
@@ -3323,9 +3323,12 @@
   }
   function buildUpiLaunchUrls(session, app){
     const base = String(session?.upiUri || '');
+    const fallback = String(session?.upiUriFallback || 'upi://pay?pa=Vyapar.176885106737@hdfcbank&pn=Turf');
     const query = base.startsWith('upi://pay?') ? base.slice('upi://pay?'.length) : '';
+    const fallbackQuery = fallback.startsWith('upi://pay?') ? fallback.slice('upi://pay?'.length) : '';
     const params = Object.fromEntries(new URLSearchParams(query));
-    if (!params.pa || !params.pn || !params.am || params.cu !== 'INR' || !params.tr) {
+    const fallbackParams = Object.fromEntries(new URLSearchParams(fallbackQuery));
+    if (!params.pa || !params.pn || params.cu !== 'INR') {
       throw new Error('Payment request is missing required UPI fields.');
     }
     const appPackages = {
@@ -3336,16 +3339,21 @@
     const intent = packageName
       ? `intent://pay?${query}#Intent;scheme=upi;package=${packageName};S.browser_fallback_url=${encodeURIComponent(base)};end;`
       : null;
-    return { base, intent };
+    const fallbackIntent = packageName && fallbackParams.pa && fallbackParams.pn
+      ? `intent://pay?${fallbackQuery}#Intent;scheme=upi;package=${packageName};S.browser_fallback_url=${encodeURIComponent(fallback)};end;`
+      : null;
+    return { base, fallback, intent, fallbackIntent };
   }
   function launchUpiUriSequence(session, app){
     if(!session) return;
     try {
-      const { base, intent } = buildUpiLaunchUrls(session, app);
+      const { base, fallback, intent, fallbackIntent } = buildUpiLaunchUrls(session, app);
       const candidate = intent || base;
+      const fallbackCandidate = fallbackIntent || fallback;
       if (!candidate) throw new Error('No UPI launch URL was generated.');
-      console.log('[payment] launch URL generated', { app, url: candidate });
+      console.log('[payment] launch URL generated', { app, url: candidate, fallbackUrl: fallbackCandidate });
       window.location.href = candidate;
+      setTimeout(()=>{ if (document.visibilityState === 'visible') { window.location.href = fallbackCandidate; } }, 600);
     } catch (error) {
       const status = document.getElementById('bkPaymentStatus');
       if(status){
