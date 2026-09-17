@@ -21,8 +21,8 @@ async function getConfiguredHourlyRate(db) {
 }
 
 async function getConfiguredPaymentDetails(db) {
-  const fallbackUpiId = process.env.PAYMENT_UPI_ID || '20221229583742@yesbank'
-  const fallbackMerchantName = process.env.PAYMENT_UPI_NAME || 'Easebuzz'
+  const fallbackUpiId = process.env.PAYMENT_UPI_ID || 'Vyapar.176885106737@hdfcbank'
+  const fallbackMerchantName = process.env.PAYMENT_UPI_NAME || 'Default'
   if (!db) return { upiId: fallbackUpiId, merchantName: fallbackMerchantName }
 
   try {
@@ -176,20 +176,23 @@ function upiTransactionReference(session) {
 }
 
 function sessionResponse(session) {
+  const tr = upiTransactionReference(session)
   const params = new URLSearchParams({
     pa: session.upiId,
     pn: session.merchantName,
-    am: session.amount.toFixed(2),
+    mc: '8999',
     cu: session.currency,
-    tr: upiTransactionReference(session),
+    am: session.amount.toFixed(2),
+    tr,
   })
   if (process.env.NODE_ENV !== 'production') {
     console.info('[payment] UPI request', {
       pa: session.upiId,
       pn: session.merchantName,
-      am: session.amount.toFixed(2),
+      mc: '8999',
       cu: session.currency,
-      tr: upiTransactionReference(session),
+      am: session.amount.toFixed(2),
+      tr,
     })
   }
   return {
