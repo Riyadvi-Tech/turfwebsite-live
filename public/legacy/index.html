@@ -1683,7 +1683,7 @@
           <label class="field-label">Scan to pay</label>
           <div class="qr-box"><img id="bkQrImage" class="dynamic-qr" alt="Dynamic UPI payment QR code"><span id="bkQrStatus" style="font-size:11px; color:#111; font-family:'JetBrains Mono',monospace;">Generating QR...</span></div>
           <p style="font-size:13px; color:var(--muted); margin-bottom:6px;">Please scan the QR Code using any UPI application to complete your payment.</p>
-          <p class="mono" style="font-size:13px; color:var(--neon);" data-site-upi>vijaykarthiku7@kvb</p>
+          <p class="mono" style="font-size:13px; color:var(--neon);" data-site-upi>20221229583742@yesbank</p>
           <div class="bk-pay-total"><span>Total amount</span><strong id="bkPayTotal">Preparing...</strong></div>
           <div class="payment-actions" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:stretch;">
             <button type="button" class="btn btn-glow" id="bkPayApp" onclick="payNow(event)">Pay Now</button>
@@ -1835,7 +1835,7 @@
   setTimeout(()=>{ document.querySelectorAll('.reveal,.editorial-row,.story-line,.fn-reveal').forEach(el=>el.classList.add('in')); }, 1200);
 
   const SITE_SETTINGS_KEY = 'turfon24-site-settings';
-  const DEFAULT_SITE_SETTINGS = {phone:'+91 89399 89366', whatsapp:'+91 89399 89366', email:'ask@turfon24.com', address:'cuddalore', hourlyRate:'800', upi:'vijaykarthiku7@kvb'};
+  const DEFAULT_SITE_SETTINGS = {phone:'+91 89399 89366', whatsapp:'+91 89399 89366', email:'ask@turfon24.com', address:'cuddalore', hourlyRate:'800', upi:'20221229583742@yesbank'};
   let siteSettings = {...DEFAULT_SITE_SETTINGS};
   function whatsappNumber(value){
     const digits = String(value || '').replace(/\D/g,'');
@@ -3332,23 +3332,17 @@
       gpay: 'com.google.android.apps.nbu.paisa.user',
       phonepe: 'com.phonepe.app'
     };
-    const appSchemes = {
-      gpay: { scheme: 'tez', path: 'upi/pay' },
-      phonepe: { scheme: 'phonepe', path: 'pay' }
-    };
     const packageName = appPackages[app];
-    const appProtocol = appSchemes[app];
-    const appUri = appProtocol ? `${appProtocol.scheme}://${appProtocol.path}?${query}` : null;
-    const intent = packageName && appProtocol
-      ? `intent://${appProtocol.path}?${query}#Intent;scheme=${appProtocol.scheme};package=${packageName};S.browser_fallback_url=${encodeURIComponent(base)};end;`
+    const intent = packageName
+      ? `intent://pay?${query}#Intent;scheme=upi;package=${packageName};S.browser_fallback_url=${encodeURIComponent(base)};end;`
       : null;
-    return { base, appUri, intent };
+    return { base, intent };
   }
   function launchUpiUriSequence(session, app){
     if(!session) return;
     try {
-      const { base, appUri, intent } = buildUpiLaunchUrls(session, app);
-      const candidate = intent || appUri || base;
+      const { base, intent } = buildUpiLaunchUrls(session, app);
+      const candidate = intent || base;
       if (!candidate) throw new Error('No UPI launch URL was generated.');
       console.log('[payment] launch URL generated', { app, url: candidate });
       window.location.href = candidate;

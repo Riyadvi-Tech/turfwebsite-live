@@ -7,7 +7,7 @@ function publicSettings(settings = {}) {
     phone: settings.phone || '+91 89399 89366',
     whatsapp: settings.whatsapp || '+91 89399 89366',
     email: settings.email || 'ask@turfon24.com',
-    upi: settings.upiId || settings.upi || 'vijaykarthiku7@kvb',
+    upi: settings.upiId || settings.upi || '20221229583742@yesbank',
     address: settings.address || 'Cuddalore',
   }
 }
