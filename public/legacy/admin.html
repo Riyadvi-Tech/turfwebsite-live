@@ -1236,7 +1236,9 @@
     } catch(error) { showToast(error.message); }
   }
   async function saveWebsiteSettings(){
-    const settings = {businessName:document.getElementById('settingBusinessName').value.trim(), hourlyRate:Number(document.getElementById('settingHourlyRate').value), phone:document.getElementById('settingPhone').value.trim(), whatsapp:document.getElementById('settingWhatsApp').value.trim(), email:document.getElementById('settingEmail').value.trim(), upiId:document.getElementById('settingUpi').value.trim(), address:document.getElementById('settingAddress').value.trim(), bookingsBlocked: document.getElementById('settingBookingsBlocked')?.checked === true};
+    const bookingBlockedInput = document.getElementById('settingBookingsBlocked');
+    const bookingBlockedChecked = bookingBlockedInput?.checked === true;
+    const settings = {businessName:document.getElementById('settingBusinessName').value.trim(), hourlyRate:Number(document.getElementById('settingHourlyRate').value), phone:document.getElementById('settingPhone').value.trim(), whatsapp:document.getElementById('settingWhatsApp').value.trim(), email:document.getElementById('settingEmail').value.trim(), upiId:document.getElementById('settingUpi').value.trim(), address:document.getElementById('settingAddress').value.trim(), bookingsBlocked: bookingBlockedChecked};
     const saveButton = document.querySelector('#page-settings button[onclick="saveWebsiteSettings()"]');
     if(saveButton) saveButton.disabled = true;
     try {
@@ -1244,8 +1246,10 @@
       const data = await response.json().catch(()=>({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to save website settings.'));
       const saved = data.settings || {};
+      const savedBookingBlocked = Boolean(saved.bookingsBlocked === true || saved.bookingsBlocked === 'true' || saved.bookingsBlocked === 1 || saved.bookingsBlocked === '1' || saved.bookingsBlocked === 'on');
+      const effectiveBookingBlocked = bookingBlockedChecked || savedBookingBlocked;
       document.getElementById('settingHourlyRate').value = saved.hourlyRate ?? 800;
-      document.getElementById('settingBookingsBlocked').checked = Boolean(saved.bookingsBlocked === true || saved.bookingsBlocked === 'true' || saved.bookingsBlocked === 1 || saved.bookingsBlocked === '1');
+      if (bookingBlockedInput) bookingBlockedInput.checked = effectiveBookingBlocked;
       try {
         const nextSettings = {
           ...defaultSiteSettings,
@@ -1256,7 +1260,7 @@
           email: saved.email || document.getElementById('settingEmail').value.trim(),
           upi: saved.upiId || saved.upi || document.getElementById('settingUpi').value.trim(),
           address: saved.address || document.getElementById('settingAddress').value.trim(),
-          bookingsBlocked: saved.bookingsBlocked === true || saved.bookingsBlocked === 'true' || saved.bookingsBlocked === 1 || saved.bookingsBlocked === '1'
+          bookingsBlocked: effectiveBookingBlocked
         };
         localStorage.setItem(SITE_SETTINGS_KEY, JSON.stringify(nextSettings));
         window.dispatchEvent(new StorageEvent('storage', { key: SITE_SETTINGS_KEY, newValue: localStorage.getItem(SITE_SETTINGS_KEY) }));

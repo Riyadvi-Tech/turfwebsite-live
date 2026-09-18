@@ -497,6 +497,9 @@
   .ext-features li .ck{color:var(--neon); font-family:'JetBrains Mono',monospace;}
 
   /* ===== BOOK YOUR SLOT ===== */
+  .booking-blocked{max-width:680px; margin:0 auto 18px; padding:20px 22px; border:1px solid var(--border); border-radius:18px; background:rgba(15,24,21,0.7); box-shadow:inset 0 0 0 1px rgba(57,255,122,0.07); text-align:center; color:var(--white);}
+  .booking-blocked strong{display:block; font-size:26px; font-weight:700; letter-spacing:-0.02em; margin-bottom:6px; color:var(--white);}
+  .booking-blocked p{margin:0; font-size:18px; line-height:1.55; color:var(--muted);}
   .booking-shell{width:100%; max-width:680px; margin:0 auto; background:var(--glass); border:1px solid var(--border); border-radius:24px; padding:44px; box-sizing:border-box; backdrop-filter:blur(14px); text-align:left; position:relative;}
   .booking-back{position:absolute; top:16px; left:16px; width:30px; height:30px; padding:0; border:1px solid var(--border); border-radius:50%; display:none; align-items:center; justify-content:center; background:rgba(255,255,255,0.04); color:var(--muted); transition:all .2s ease;}
   .booking-back:hover{border-color:var(--neon); color:var(--neon); background:rgba(57,255,122,0.08);}
@@ -1842,7 +1845,12 @@
   const DEFAULT_SITE_SETTINGS = {phone:'+91 89399 89366', whatsapp:'+91 89399 89366', email:'ask@turfon24.com', address:'cuddalore', hourlyRate:'800', upi:'20221229583742@yesbank', bookingsBlocked:false};
   let siteSettings = {...DEFAULT_SITE_SETTINGS};
   function isBookingsBlockedValue(value){
-    return Boolean(value === true || value === 'true' || value === 1 || value === '1');
+    return Boolean(value === true || value === 'true' || value === 1 || value === '1' || value === 'on');
+  }
+  function normalizeSiteSettings(settings = {}){
+    const normalized = { ...DEFAULT_SITE_SETTINGS, ...settings };
+    normalized.bookingsBlocked = isBookingsBlockedValue(normalized.bookingsBlocked);
+    return normalized;
   }
   function isBookingPageBlocked(){
     return isBookingsBlockedValue(siteSettings.bookingsBlocked);
@@ -1854,10 +1862,17 @@
     const bookingShell = document.getElementById('bookingShell');
     if (bookingSection) {
       bookingSection.dataset.bookingsBlocked = blocked ? 'true' : 'false';
-      bookingSection.style.display = blocked ? 'none' : '';
+      bookingSection.style.display = '';
     }
     if (blockedState) blockedState.style.display = blocked ? 'block' : 'none';
-    if (bookingShell) bookingShell.style.display = blocked ? 'none' : 'block';
+    if (bookingShell) {
+      bookingShell.style.display = 'block';
+      bookingShell.style.opacity = blocked ? '0.72' : '1';
+      bookingShell.style.pointerEvents = blocked ? 'none' : '';
+      bookingShell.querySelectorAll('input, button, select, textarea').forEach((element) => {
+        element.disabled = blocked;
+      });
+    }
     document.querySelectorAll('button[onclick*="document.getElementById(\'book\').scrollIntoView()"], button[onclick="document.getElementById(\'book\').scrollIntoView()"]').forEach((button) => {
       button.disabled = blocked;
       button.style.opacity = blocked ? '0.6' : '';
@@ -1875,8 +1890,9 @@
     return digits.length === 10 ? `91${digits}` : digits;
   }
   function applyWebsiteSettings(settings){
-    siteSettings = {...siteSettings, ...settings};
-    settings = siteSettings;
+    const normalized = normalizeSiteSettings(settings);
+    siteSettings = { ...siteSettings, ...normalized };
+    settings = normalizeSiteSettings(siteSettings);
     const cards = document.querySelectorAll('#contact .contact-card');
     const phoneLink = cards[0]?.querySelector('a');
     const whatsappLink = cards[1]?.querySelector('a');
@@ -1903,13 +1919,23 @@
       const response = await fetch('/api/settings', {credentials:'same-origin'});
       const data = await response.json().catch(() => ({}));
       const remoteSettings = response.ok && data && data.settings ? data.settings : {};
-      const mergedSettings = { ...DEFAULT_SITE_SETTINGS, ...remoteSettings };
+      const mergedSettings = normalizeSiteSettings({
+        ...DEFAULT_SITE_SETTINGS,
+        ...remoteSettings,
+        ...localSettings,
+      });
       if (Object.prototype.hasOwnProperty.call(localSettings, 'bookingsBlocked')) {
-        mergedSettings.bookingsBlocked = localSettings.bookingsBlocked;
+        mergedSettings.bookingsBlocked = isBookingsBlockedValue(localSettings.bookingsBlocked);
+      }
+      if (Object.prototype.hasOwnProperty.call(remoteSettings, 'bookingsBlocked')) {
+        mergedSettings.bookingsBlocked = isBookingsBlockedValue(remoteSettings.bookingsBlocked);
+      }
+      if (mergedSettings.bookingsBlocked) {
+        localStorage.setItem(SITE_SETTINGS_KEY, JSON.stringify(mergedSettings));
       }
       applyWebsiteSettings(mergedSettings);
     } catch(error) {
-      applyWebsiteSettings({ ...DEFAULT_SITE_SETTINGS, ...localSettings });
+      applyWebsiteSettings(normalizeSiteSettings({ ...DEFAULT_SITE_SETTINGS, ...localSettings }));
     }
   }
   function getSiteRate(){ return Number(siteSettings.hourlyRate) || 800; }
@@ -1919,7 +1945,9 @@
   window.addEventListener('message', (event) => {
     const payload = event.data || {};
     if (payload.type !== 'turfon24-settings-update' || !payload.settings) return;
-    applyWebsiteSettings({ ...DEFAULT_SITE_SETTINGS, ...payload.settings });
+    const nextSettings = normalizeSiteSettings({ ...DEFAULT_SITE_SETTINGS, ...payload.settings });
+    try { localStorage.setItem(SITE_SETTINGS_KEY, JSON.stringify(nextSettings)); } catch (error) {}
+    applyWebsiteSettings(nextSettings);
   });
 
   document.querySelectorAll('.pin').forEach(pin=>{
@@ -2829,7 +2857,14 @@
       const blockedState = document.getElementById('bkBlockedState');
       const bookingShell = document.getElementById('bookingShell');
       if (blockedState) blockedState.style.display = 'block';
-      if (bookingShell) bookingShell.style.display = 'none';
+      if (bookingShell) {
+        bookingShell.style.display = 'block';
+        bookingShell.style.opacity = '0.72';
+        bookingShell.style.pointerEvents = 'none';
+        bookingShell.querySelectorAll('input, button, select, textarea').forEach((element) => {
+          element.disabled = true;
+        });
+      }
       const bookingSection = document.getElementById('book');
       if (bookingSection) bookingSection.dataset.bookingsBlocked = 'true';
       return;
