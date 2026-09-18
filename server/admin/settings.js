@@ -19,7 +19,7 @@ async function requireAdmin(req, db) {
   return Boolean(admin)
 }
 
-function safeSettings(settings) {
+export function safeSettings(settings) {
   return {
     key: 'main',
     businessName: settings.businessName || 'Turfon24',
@@ -29,6 +29,7 @@ function safeSettings(settings) {
     email: settings.email || '',
     upiId: settings.upiId || settings.upi || '',
     address: settings.address || '',
+    bookingsBlocked: Boolean(settings.bookingsBlocked === true || settings.bookingsBlocked === 'true' || settings.bookingsBlocked === 1 || settings.bookingsBlocked === '1'),
     updatedAt: settings.updatedAt || null,
   }
 }
@@ -37,6 +38,9 @@ function validate(body) {
   const updates = {}
   for (const field of SETTINGS_FIELDS) {
     if (body[field] !== undefined) updates[field] = String(body[field]).trim()
+  }
+  if (body.bookingsBlocked !== undefined) {
+    updates.bookingsBlocked = Boolean(body.bookingsBlocked === true || body.bookingsBlocked === 'true' || body.bookingsBlocked === 1 || body.bookingsBlocked === '1' || body.bookingsBlocked === 'on')
   }
   if (body.hourlyRate !== undefined && (!Number.isFinite(Number(body.hourlyRate)) || Number(body.hourlyRate) <= 0)) throw new Error('Hourly rate must be a positive number.')
   if (updates.businessName !== undefined && (!updates.businessName || updates.businessName.length > 120)) throw new Error('Invalid business name.')
@@ -55,7 +59,7 @@ export default async function handler(req, res) {
     const collection = db.collection('website_settings')
 
     if (req.method === 'GET') {
-      const settings = await collection.findOne({ key: 'main' }, { projection: { _id: 0, key: 1, businessName: 1, hourlyRate: 1, phone: 1, whatsapp: 1, email: 1, upiId: 1, upi: 1, address: 1, updatedAt: 1 } })
+      const settings = await collection.findOne({ key: 'main' }, { projection: { _id: 0, key: 1, businessName: 1, hourlyRate: 1, phone: 1, whatsapp: 1, email: 1, upiId: 1, upi: 1, address: 1, bookingsBlocked: 1, updatedAt: 1 } })
       if (!settings) return res.status(404).json({ message: 'Website settings are not initialized.' })
       return res.status(200).json({ settings: safeSettings(settings) })
     }
@@ -64,7 +68,7 @@ export default async function handler(req, res) {
     const result = await collection.findOneAndUpdate(
       { key: 'main' },
       { $set: { ...updates, updatedAt: new Date() } },
-      { returnDocument: 'after', projection: { _id: 0, key: 1, businessName: 1, hourlyRate: 1, phone: 1, whatsapp: 1, email: 1, upiId: 1, upi: 1, address: 1, updatedAt: 1 } },
+      { returnDocument: 'after', projection: { _id: 0, key: 1, businessName: 1, hourlyRate: 1, phone: 1, whatsapp: 1, email: 1, upiId: 1, upi: 1, address: 1, bookingsBlocked: 1, updatedAt: 1 } },
     )
     if (!result) return res.status(404).json({ message: 'Website settings are not initialized.' })
     return res.status(200).json({ settings: safeSettings(result) })

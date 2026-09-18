@@ -1569,7 +1569,11 @@
       <p class="section-sub" style="margin-left:auto;margin-right:auto;">Verify your number, then pick any date and time, day or night — <span data-site-rate-text>₹800</span> per hour.</p>
     </div>
 
-    <div class="booking-shell reveal">
+    <div id="bkBlockedState" class="booking-blocked" aria-live="polite">
+      <strong>Bookings have been blocked</strong>
+      <p>The bookings have been blocked.</p>
+    </div>
+    <div class="booking-shell reveal" id="bookingShell">
       <button class="booking-back" id="bkBackButton" type="button" aria-label="Go back" title="Go back" onclick="bkGoBack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg></button>
       <button class="booking-close" id="bkCloseButton" type="button" aria-label="Close booking" title="Exit booking" onclick="bkCloseBooking()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
       <div class="steps-row" id="bkStepsRow">
@@ -1835,8 +1839,37 @@
   setTimeout(()=>{ document.querySelectorAll('.reveal,.editorial-row,.story-line,.fn-reveal').forEach(el=>el.classList.add('in')); }, 1200);
 
   const SITE_SETTINGS_KEY = 'turfon24-site-settings';
-  const DEFAULT_SITE_SETTINGS = {phone:'+91 89399 89366', whatsapp:'+91 89399 89366', email:'ask@turfon24.com', address:'cuddalore', hourlyRate:'800', upi:'20221229583742@yesbank'};
+  const DEFAULT_SITE_SETTINGS = {phone:'+91 89399 89366', whatsapp:'+91 89399 89366', email:'ask@turfon24.com', address:'cuddalore', hourlyRate:'800', upi:'20221229583742@yesbank', bookingsBlocked:false};
   let siteSettings = {...DEFAULT_SITE_SETTINGS};
+  function isBookingsBlockedValue(value){
+    return Boolean(value === true || value === 'true' || value === 1 || value === '1');
+  }
+  function isBookingPageBlocked(){
+    return isBookingsBlockedValue(siteSettings.bookingsBlocked);
+  }
+  function applyBookingBlockState(){
+    const blocked = isBookingPageBlocked();
+    const bookingSection = document.getElementById('book');
+    const blockedState = document.getElementById('bkBlockedState');
+    const bookingShell = document.getElementById('bookingShell');
+    if (bookingSection) {
+      bookingSection.dataset.bookingsBlocked = blocked ? 'true' : 'false';
+      bookingSection.style.display = blocked ? 'none' : '';
+    }
+    if (blockedState) blockedState.style.display = blocked ? 'block' : 'none';
+    if (bookingShell) bookingShell.style.display = blocked ? 'none' : 'block';
+    document.querySelectorAll('button[onclick*="document.getElementById(\'book\').scrollIntoView()"], button[onclick="document.getElementById(\'book\').scrollIntoView()"]').forEach((button) => {
+      button.disabled = blocked;
+      button.style.opacity = blocked ? '0.6' : '';
+      button.style.cursor = blocked ? 'not-allowed' : '';
+    });
+    if (blocked) {
+      try {
+        const openButtons = document.querySelectorAll('#book .btn, #book .magnetic');
+        openButtons.forEach((button) => { button.disabled = true; });
+      } catch (error) { }
+    }
+  }
   function whatsappNumber(value){
     const digits = String(value || '').replace(/\D/g,'');
     return digits.length === 10 ? `91${digits}` : digits;
@@ -1861,6 +1894,7 @@
     document.querySelectorAll('[data-site-upi]').forEach(el=>{ el.textContent=settings.upi; });
     document.querySelectorAll('a[aria-label="WhatsApp"]').forEach(el=>{ el.href=`https://wa.me/${whatsappNumber(settings.whatsapp)}`; });
     if(typeof WA_NUMBER !== 'undefined') WA_NUMBER = whatsappNumber(settings.whatsapp);
+    applyBookingBlockState();
   }
   async function readWebsiteSettings(){
     let localSettings = {};
@@ -1868,14 +1902,25 @@
     try {
       const response = await fetch('/api/settings', {credentials:'same-origin'});
       const data = await response.json().catch(() => ({}));
-      applyWebsiteSettings({...DEFAULT_SITE_SETTINGS, ...localSettings, ...(response.ok ? data.settings : {})});
+      const remoteSettings = response.ok && data && data.settings ? data.settings : {};
+      const mergedSettings = { ...DEFAULT_SITE_SETTINGS, ...remoteSettings };
+      if (Object.prototype.hasOwnProperty.call(localSettings, 'bookingsBlocked')) {
+        mergedSettings.bookingsBlocked = localSettings.bookingsBlocked;
+      }
+      applyWebsiteSettings(mergedSettings);
     } catch(error) {
-      applyWebsiteSettings({...DEFAULT_SITE_SETTINGS, ...localSettings});
+      applyWebsiteSettings({ ...DEFAULT_SITE_SETTINGS, ...localSettings });
     }
   }
   function getSiteRate(){ return Number(siteSettings.hourlyRate) || 800; }
   readWebsiteSettings();
+  setInterval(() => { readWebsiteSettings(); }, 10000);
   window.addEventListener('storage', event=>{ if(event.key === SITE_SETTINGS_KEY) readWebsiteSettings(); });
+  window.addEventListener('message', (event) => {
+    const payload = event.data || {};
+    if (payload.type !== 'turfon24-settings-update' || !payload.settings) return;
+    applyWebsiteSettings({ ...DEFAULT_SITE_SETTINGS, ...payload.settings });
+  });
 
   document.querySelectorAll('.pin').forEach(pin=>{
     pin.addEventListener('click', e=>{
@@ -2624,6 +2669,10 @@
   })();
 
   function bkSendOtp(){
+    if (isBookingPageBlocked()) {
+      bkOtpMsg('The bookings have been blocked.', 'err');
+      return;
+    }
     if(bkOtpVerified){ return; }
     const btn = document.getElementById('bkSendOtpBtn');
     const mobileRaw = document.getElementById('bkMobile').value || '';
@@ -2690,6 +2739,10 @@
   }
 
   function bkVerifyOtp(){
+    if (isBookingPageBlocked()) {
+      bkOtpMsg('The bookings have been blocked.', 'err');
+      return;
+    }
     if(!bkOtpReqId && typeof window.verifyOtp === 'function'){ bkOtpMsg('Please send an OTP first.', 'err'); return; }
     const otpValue = (document.getElementById('bkOtp').value || '').replace(/\D/g, '');
     if(otpValue.length < 4){ bkOtpMsg('Please enter the OTP you received.', 'err'); return; }
@@ -2772,6 +2825,15 @@
   }
 
   function bkGoStep(n){
+    if (isBookingPageBlocked()) {
+      const blockedState = document.getElementById('bkBlockedState');
+      const bookingShell = document.getElementById('bookingShell');
+      if (blockedState) blockedState.style.display = 'block';
+      if (bookingShell) bookingShell.style.display = 'none';
+      const bookingSection = document.getElementById('book');
+      if (bookingSection) bookingSection.dataset.bookingsBlocked = 'true';
+      return;
+    }
     bkCurrentStep = n;
     for(let i=1;i<=7;i++){ document.getElementById('bkPane'+i).style.display = i===n ? 'block' : 'none'; }
     document.getElementById('bkBackButton').style.display = n > 1 ? 'flex' : 'none';
@@ -2789,6 +2851,10 @@
     bkSaveDraft();
   }
   function bkContinueFromVerification(){
+    if (isBookingPageBlocked()) {
+      bkOtpMsg('The bookings have been blocked.', 'err');
+      return;
+    }
     const name = document.getElementById('bkName').value.trim();
     if(!name){
       document.getElementById('bkName').focus();

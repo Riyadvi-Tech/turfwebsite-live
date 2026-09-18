@@ -253,6 +253,14 @@
   .badge.confirmed{background:rgba(57,255,122,0.12); color:var(--neon);}
   .badge.cancelled{background:rgba(255,107,107,0.12); color:var(--red);}
   .badge.verified{background:rgba(0,201,255,0.12); color:var(--blue);}
+  .toggle-row{display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--black); border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-top:8px;}
+  .toggle-row span{font-size:12px; color:var(--white);}
+  .switch{position:relative; display:inline-flex; width:52px; height:30px;}
+  .switch input{opacity:0; width:0; height:0;}
+  .slider{position:absolute; inset:0; border-radius:999px; background:rgba(255,255,255,0.12); border:1px solid var(--border); transition:all .2s ease; cursor:pointer;}
+  .slider::before{content:""; position:absolute; width:20px; height:20px; left:5px; top:4px; border-radius:50%; background:var(--white); transition:all .2s ease; box-shadow:0 4px 12px rgba(0,0,0,0.25);}
+  .switch input:checked + .slider{background:rgba(57,255,122,0.2); border-color:var(--neon);}
+  .switch input:checked + .slider::before{transform:translateX(22px); background:var(--neon); box-shadow:0 0 10px rgba(57,255,122,0.5);}
   .row-actions{display:flex; gap:6px;}
   .row-actions button{width:28px;height:28px;border-radius:7px; border:1px solid var(--border); background:transparent; color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s ease;}
   .row-actions button:hover{border-color:var(--neon); color:var(--neon);}
@@ -847,6 +855,16 @@
           <div class="fgroup"><label>Email</label><input id="settingEmail" type="text" value="ask@turfon24.com"></div>
           <div class="fgroup"><label>UPI ID</label><input id="settingUpi" type="text" value="20221229583742@yesbank"></div>
           <div class="fgroup full"><label>Address</label><input id="settingAddress" type="text" value="Cuddaloore"></div>
+          <div class="fgroup full">
+            <label>Booking control</label>
+            <div class="toggle-row">
+              <span>Block all turf bookings</span>
+              <label class="switch" aria-label="Toggle booking block">
+                <input id="settingBookingsBlocked" type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
         </div>
         <button class="btn btn-glow" style="width:auto; padding:12px 26px;" onclick="saveWebsiteSettings()">Save changes</button>
       </div>
@@ -1201,9 +1219,9 @@
   const SITE_SETTINGS_KEY = 'turfon24-site-settings';
   const defaultSiteSettings = { businessName:'TurfOn24', hourlyRate:'800', phone:'+91 89399 89366', whatsapp:'+91 89399 89366', email:'ask@turfon24.com', upi:'20221229583742@yesbank', address:'Cuddaloore' };
   async function loadWebsiteSettings(){
-    const settingFields = ['settingBusinessName','settingHourlyRate','settingPhone','settingWhatsApp','settingEmail','settingUpi','settingAddress'].map(id=>document.getElementById(id)).filter(Boolean);
+    const settingFields = ['settingBusinessName','settingHourlyRate','settingPhone','settingWhatsApp','settingEmail','settingUpi','settingAddress','settingBookingsBlocked'].map(id=>document.getElementById(id)).filter(Boolean);
     const saveButton = document.querySelector('#page-settings button[onclick="saveWebsiteSettings()"]');
-    settingFields.forEach(field=>{ field.disabled = true; field.value = ''; });
+    settingFields.forEach(field=>{ field.disabled = true; if(field.type !== 'checkbox'){ field.value = ''; } });
     if(saveButton) saveButton.disabled = true;
     try {
       const response = await fetch('/api/admin/settings', {credentials:'include'});
@@ -1211,12 +1229,14 @@
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load website settings.'));
       const settings = data.settings || {};
       Object.entries({businessName:'settingBusinessName', hourlyRate:'settingHourlyRate', phone:'settingPhone', whatsapp:'settingWhatsApp', email:'settingEmail', upiId:'settingUpi', address:'settingAddress'}).forEach(([key,id])=>{ const field=document.getElementById(id); if(field) field.value=settings[key] ?? ''; });
+      const bookingToggle = document.getElementById('settingBookingsBlocked');
+      if(bookingToggle) bookingToggle.checked = Boolean(settings.bookingsBlocked === true || settings.bookingsBlocked === 'true' || settings.bookingsBlocked === 1 || settings.bookingsBlocked === '1');
       settingFields.forEach(field=>{ field.disabled = false; });
       if(saveButton) saveButton.disabled = false;
     } catch(error) { showToast(error.message); }
   }
   async function saveWebsiteSettings(){
-    const settings = {businessName:document.getElementById('settingBusinessName').value.trim(), hourlyRate:Number(document.getElementById('settingHourlyRate').value), phone:document.getElementById('settingPhone').value.trim(), whatsapp:document.getElementById('settingWhatsApp').value.trim(), email:document.getElementById('settingEmail').value.trim(), upiId:document.getElementById('settingUpi').value.trim(), address:document.getElementById('settingAddress').value.trim()};
+    const settings = {businessName:document.getElementById('settingBusinessName').value.trim(), hourlyRate:Number(document.getElementById('settingHourlyRate').value), phone:document.getElementById('settingPhone').value.trim(), whatsapp:document.getElementById('settingWhatsApp').value.trim(), email:document.getElementById('settingEmail').value.trim(), upiId:document.getElementById('settingUpi').value.trim(), address:document.getElementById('settingAddress').value.trim(), bookingsBlocked: document.getElementById('settingBookingsBlocked')?.checked === true};
     const saveButton = document.querySelector('#page-settings button[onclick="saveWebsiteSettings()"]');
     if(saveButton) saveButton.disabled = true;
     try {
@@ -1225,6 +1245,26 @@
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to save website settings.'));
       const saved = data.settings || {};
       document.getElementById('settingHourlyRate').value = saved.hourlyRate ?? 800;
+      document.getElementById('settingBookingsBlocked').checked = Boolean(saved.bookingsBlocked === true || saved.bookingsBlocked === 'true' || saved.bookingsBlocked === 1 || saved.bookingsBlocked === '1');
+      try {
+        const nextSettings = {
+          ...defaultSiteSettings,
+          businessName: saved.businessName || document.getElementById('settingBusinessName').value.trim(),
+          hourlyRate: saved.hourlyRate ?? document.getElementById('settingHourlyRate').value,
+          phone: saved.phone || document.getElementById('settingPhone').value.trim(),
+          whatsapp: saved.whatsapp || document.getElementById('settingWhatsApp').value.trim(),
+          email: saved.email || document.getElementById('settingEmail').value.trim(),
+          upi: saved.upiId || saved.upi || document.getElementById('settingUpi').value.trim(),
+          address: saved.address || document.getElementById('settingAddress').value.trim(),
+          bookingsBlocked: saved.bookingsBlocked === true || saved.bookingsBlocked === 'true' || saved.bookingsBlocked === 1 || saved.bookingsBlocked === '1'
+        };
+        localStorage.setItem(SITE_SETTINGS_KEY, JSON.stringify(nextSettings));
+        window.dispatchEvent(new StorageEvent('storage', { key: SITE_SETTINGS_KEY, newValue: localStorage.getItem(SITE_SETTINGS_KEY) }));
+        window.dispatchEvent(new CustomEvent('turfon24-settings-update', { detail: nextSettings }));
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'turfon24-settings-update', settings: nextSettings }, '*');
+        }
+      } catch(error) {}
       showToast('Settings saved and published');
     } catch(error) { showToast(error.message); }
     finally { if(saveButton) saveButton.disabled = false; }

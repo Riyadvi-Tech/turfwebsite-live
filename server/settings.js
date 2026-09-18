@@ -1,6 +1,7 @@
 import { getDb } from './_lib/mongodb.js'
 
-function publicSettings(settings = {}) {
+export function publicSettings(settings = {}) {
+  const isBlocked = settings.bookingsBlocked === true || settings.bookingsBlocked === 'true' || settings.bookingsBlocked === 1 || settings.bookingsBlocked === '1'
   return {
     businessName: settings.businessName || 'Turfon24',
     hourlyRate: Number(settings.hourlyRate || 800),
@@ -9,6 +10,7 @@ function publicSettings(settings = {}) {
     email: settings.email || 'ask@turfon24.com',
     upi: settings.upiId || settings.upi || '20221229583742@yesbank',
     address: settings.address || 'Cuddalore',
+    bookingsBlocked: isBlocked,
   }
 }
 
@@ -16,7 +18,7 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ message: 'Method not allowed' })
   try {
     const db = await getDb()
-    const settings = await db.collection('website_settings').findOne({ key: 'main' }, { projection: { _id: 0, businessName: 1, hourlyRate: 1, phone: 1, whatsapp: 1, email: 1, upiId: 1, upi: 1, address: 1 } })
+    const settings = await db.collection('website_settings').findOne({ key: 'main' }, { projection: { _id: 0, businessName: 1, hourlyRate: 1, phone: 1, whatsapp: 1, email: 1, upiId: 1, upi: 1, address: 1, bookingsBlocked: 1 } })
     return res.status(200).json({ settings: publicSettings(settings) })
   } catch (error) {
     console.error('public settings failed', error.message)

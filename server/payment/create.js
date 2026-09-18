@@ -36,6 +36,17 @@ async function getConfiguredPaymentDetails(db) {
   }
 }
 
+async function isBookingBlocked(db) {
+  if (!db) return false
+
+  try {
+    const settings = await db.collection('website_settings').findOne({ key: 'main' }, { projection: { _id: 0, bookingsBlocked: 1 } })
+    return settings?.bookingsBlocked === true || settings?.bookingsBlocked === 'true' || settings?.bookingsBlocked === 1 || settings?.bookingsBlocked === '1'
+  } catch (error) {
+    return false
+  }
+}
+
 function getRazorpayClient() {
   const keyId = process.env.RAZORPAY_KEY_ID
   const keySecret = process.env.RAZORPAY_KEY_SECRET
@@ -277,6 +288,10 @@ export default async function handler(req, res) {
     db = await getDb()
   } catch (error) {
     db = null
+  }
+
+  if (await isBookingBlocked(db)) {
+    return res.status(403).json({ message: 'The bookings have been blocked.' })
   }
 
   const effectiveHourlyRate = await getConfiguredHourlyRate(db)
