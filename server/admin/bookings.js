@@ -58,6 +58,58 @@ function parseDate(value) {
   return date
 }
 
+export async function deleteBookingRecord(db, idValue) {
+  const id = parseObjectId(idValue)
+  if (!id) throw new Error('Invalid booking id.')
+
+  const booking = await db.collection('bookings').findOne(
+    { _id: id },
+    { projection: { _id: 1, paymentReference: 1 } },
+  )
+
+  if (!booking) {
+    return { deleted: false, bookingId: String(idValue), paymentRecordsDeleted: 0 }
+  }
+
+  const paymentReference = typeof booking.paymentReference === 'string' ? booking.paymentReference.trim() : ''
+  const [deletedBooking, paymentSessions, payments] = await Promise.all([
+    db.collection('bookings').deleteOne({ _id: id }),
+    paymentReference ? db.collection('payment_sessions').deleteMany({ reference: paymentReference }) : Promise.resolve({ deletedCount: 0 }),
+    paymentReference ? db.collection('payments').deleteMany({ paymentReference }) : Promise.resolve({ deletedCount: 0 }),
+  ])
+
+  return {
+    deleted: deletedBooking.deletedCount > 0,
+    bookingId: String(id),
+    paymentRecordsDeleted: Number((paymentSessions?.deletedCount || 0) + (payments?.deletedCount || 0)),
+  }
+}
+
+export async function syncPaymentStatusForBooking(db, paymentReference, paymentStatus, updatedAt = new Date()) {
+  const ref = typeof paymentReference === 'string' ? paymentReference.trim() : ''
+  const normalizedStatus = paymentStatus === 'PAID' || paymentStatus === 'CANCELLED' ? paymentStatus : null
+
+  if (!ref || !normalizedStatus) {
+    return { paymentSessionsUpdated: 0, paymentsUpdated: 0 }
+  }
+
+  const [paymentSessions, payments] = await Promise.all([
+    db.collection('payment_sessions').updateMany(
+      { reference: ref },
+      { $set: { status: normalizedStatus, updatedAt } },
+    ),
+    db.collection('payments').updateMany(
+      { paymentReference: ref },
+      { $set: { status: normalizedStatus, paidAt: normalizedStatus === 'PAID' ? updatedAt : null, updatedAt } },
+    ),
+  ])
+
+  return {
+    paymentSessionsUpdated: paymentSessions?.modifiedCount || paymentSessions?.matchedCount || 0,
+    paymentsUpdated: payments?.modifiedCount || payments?.matchedCount || 0,
+  }
+}
+
 function localDateStart(value) {
   return new Date(`${value}T00:00:00.000+05:30`)
 }
@@ -101,7 +153,7 @@ function errorResponse(res, status, message) {
 }
 
 export default async function handler(req, res) {
-  if (!['GET', 'PATCH'].includes(req.method)) return errorResponse(res, 405, 'Method not allowed')
+  if (!['GET', 'PATCH', 'DELETE'].includes(req.method)) return errorResponse(res, 405, 'Method not allowed')
 
   try {
     const db = await getDb()
@@ -111,6 +163,12 @@ export default async function handler(req, res) {
     if (idValue) {
       const id = parseObjectId(idValue)
       if (!id) return errorResponse(res, 400, 'Invalid booking id.')
+
+      if (req.method === 'DELETE') {
+        const result = await deleteBookingRecord(db, idValue)
+        if (!result.deleted) return errorResponse(res, 404, 'Booking not found.')
+        return res.status(200).json({ success: true, deleted: true, bookingId: result.bookingId, paymentRecordsDeleted: result.paymentRecordsDeleted })
+      }
 
       if (req.method === 'GET') {
         const booking = await db.collection('bookings').findOne(
@@ -139,14 +197,12 @@ export default async function handler(req, res) {
 
       const currentBooking = await db.collection('bookings').findOne({ _id: id }, { projection: { paymentStatus: 1, paymentReference: 1 } })
       if (!currentBooking) return errorResponse(res, 404, 'Booking not found.')
-      if (requestedStatus === 'CONFIRMED' && currentBooking.paymentStatus !== 'PAID') {
-        return errorResponse(res, 409, 'A booking can be confirmed only after payment is paid.')
-      }
 
       const now = new Date()
+      const nextPaymentStatus = requestedStatus === 'CONFIRMED' ? 'PAID' : requestedStatus === 'CANCELLED' ? 'CANCELLED' : null
       const nextBookingValues = { bookingStatus: requestedStatus, updatedAt: now }
-      if (requestedStatus === 'CANCELLED') {
-        nextBookingValues.paymentStatus = 'CANCELLED'
+      if (nextPaymentStatus) {
+        nextBookingValues.paymentStatus = nextPaymentStatus
       }
 
       const result = await db.collection('bookings').findOneAndUpdate(
@@ -156,17 +212,8 @@ export default async function handler(req, res) {
       )
       if (!result) return errorResponse(res, 404, 'Booking not found.')
 
-      if (requestedStatus === 'CANCELLED' && currentBooking.paymentReference) {
-        await Promise.all([
-          db.collection('payment_sessions').updateMany(
-            { reference: currentBooking.paymentReference },
-            { $set: { status: 'CANCELLED', updatedAt: now } },
-          ),
-          db.collection('payments').updateMany(
-            { paymentReference: currentBooking.paymentReference },
-            { $set: { status: 'CANCELLED', updatedAt: now } },
-          ),
-        ])
+      if (nextPaymentStatus && currentBooking.paymentReference) {
+        await syncPaymentStatusForBooking(db, currentBooking.paymentReference, nextPaymentStatus, now)
       }
 
       return res.status(200).json({ booking: publicBooking(result) })
