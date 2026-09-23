@@ -1378,7 +1378,7 @@
   const bstatusLbl = {confirmed:'Confirmed', pending:'Pending', cancelled:'Cancelled'};
   const pstatusLbl = {verified:'Verified', pending:'Pending'};
   document.getElementById('bookingsBody').innerHTML = bookings.map(b=>`
-    <tr data-date="${b[9]}" data-booking-id="${b[0]}">
+    <tr data-date="${b[9]}">
       <td class="mono">${b[0]}</td><td>${b[1]}</td><td class="mono">${b[2]}</td><td>${b[3]}</td><td>${b[4]}</td><td>${b[5]}</td><td class="mono">${b[6]}</td>
       <td><span class="badge ${b[7]}">${pstatusLbl[b[7]]}</span></td>
       <td><span class="badge ${b[8]}">${bstatusLbl[b[8]]}</span></td>
@@ -1386,17 +1386,8 @@
         <button onclick='openBookingDetail(${JSON.stringify(b)})' title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
         <button onclick="showToast('Booking ${b[0]} confirmed')" title="Confirm"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button>
         <button class="danger" onclick="showToast('Booking ${b[0]} cancelled')" title="Cancel"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-        <button class="danger" onclick="deleteBookingFromTable('${b[0]}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button>
       </div></td>
     </tr>`).join('');
-
-  function deleteBookingFromTable(bookingId){
-    const confirmed = window.confirm('Delete this booking permanently from the dashboard?');
-    if (!confirmed) return;
-    const row = document.querySelector(`#bookingsBody tr[data-booking-id="${CSS.escape(String(bookingId))}"]`);
-    if (row) row.remove();
-    showToast(`Booking ${bookingId} deleted`);
-  }
 
   function openBookingDetail(b){
     document.getElementById('detailBody').innerHTML = `

@@ -366,14 +366,6 @@
   .modal-box{max-width:480px; width:100%; background:var(--charcoal); border:1px solid var(--border); border-radius:18px; padding:30px; position:relative; max-height:85vh; overflow-y:auto;}
   .modal-close{position:absolute; top:14px; right:14px; width:32px;height:32px;border-radius:50%; background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer;}
   .modal-close:hover{color:var(--neon); border-color:var(--neon);}
-  .confirm-modal-box{max-width:440px; width:min(92vw, 440px); background:linear-gradient(180deg, rgba(11,17,16,0.96), rgba(17,19,24,0.98)); border:1px solid rgba(57,255,122,0.45); border-radius:28px; padding:28px 26px 22px; position:relative; box-shadow:0 18px 40px rgba(0,0,0,0.42), 0 0 24px rgba(57,255,122,0.1);}
-  .confirm-modal-box h3{margin:0 0 12px; font-size:20px; color:var(--white); text-align:center;}
-  .confirm-modal-box p{margin:0; font-size:14px; line-height:1.6; color:rgba(202,240,221,0.92); text-align:center;}
-  .confirm-actions{display:flex; justify-content:center; gap:18px; margin-top:28px; flex-wrap:wrap;}
-  .confirm-btn{min-width:120px; padding:12px 28px; border-radius:999px; border:1px solid rgba(57,255,122,0.7); background:rgba(57,255,122,0.12); color:var(--white); font-size:15px; font-weight:600; cursor:pointer; transition:all .2s ease;}
-  .confirm-btn:hover{transform:translateY(-1px); box-shadow:0 12px 24px rgba(57,255,122,0.18);}
-  .confirm-btn.primary{background:linear-gradient(135deg, rgba(57,255,122,0.34), rgba(57,255,122,0.65)); border-color:rgba(152,255,189,0.9); color:#06150d;}
-  .confirm-btn.secondary{background:transparent; color:#eafef1;}
   /* Reduced modal detail row text */
   .detail-row{display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:12.5px;}
   .detail-row:last-child{border-bottom:none;}
@@ -918,17 +910,6 @@
     <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
     <h3 style="margin-bottom:16px;">Booking details</h3>
     <div id="detailBody"></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="deleteConfirmModal">
-  <div class="confirm-modal-box">
-    <h3>Delete booking?</h3>
-    <p id="deleteConfirmText">Delete this booking permanently from the dashboard and database?</p>
-    <div class="confirm-actions">
-      <button class="confirm-btn primary" id="deleteConfirmAction" type="button">OK</button>
-      <button class="confirm-btn secondary" type="button" onclick="closeDeleteConfirm()">Cancel</button>
-    </div>
   </div>
 </div>
 
@@ -1517,20 +1498,7 @@
   }
 
   function openModal(id){ document.getElementById(id).classList.add('open'); }
-  function closeModal(id){ const node = document.getElementById(id); if(node) node.classList.remove('open'); }
-  function openDeleteConfirm(message, onConfirm){
-    const modal = document.getElementById('deleteConfirmModal');
-    const text = document.getElementById('deleteConfirmText');
-    const action = document.getElementById('deleteConfirmAction');
-    if(!modal || !text || !action) return;
-    text.textContent = message || 'Delete this booking permanently from the dashboard and database?';
-    action.onclick = () => {
-      closeDeleteConfirm();
-      onConfirm?.();
-    };
-    modal.classList.add('open');
-  }
-  function closeDeleteConfirm(){ closeModal('deleteConfirmModal'); }
+  function closeModal(id){ document.getElementById(id).classList.remove('open'); }
   document.querySelectorAll('.modal-overlay').forEach(ov=>{
     ov.addEventListener('click', e=>{ if(e.target===ov) closeModal(ov.id); });
   });
@@ -2357,7 +2325,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const slotDurations = slotRows.map(item => `${item.hours || 0} hr${Number(item.hours) === 1 ? '' : 's'}`).join('<br>');
     const duration = escapeBookingHtml(`${booking.duration || 0} hr${Number(booking.duration) === 1 ? '' : 's'}`);
     const amount = `₹${Number(booking.amount || 0).toLocaleString('en-IN')}`;
-    return `<tr><td class="mono">${id}</td><td>${customer}</td><td>${escapeBookingHtml(bookingCreatedDate)}</td><td class="mono">${mobile}</td><td>${date}</td><td>${slot}</td><td>${time}</td><td>${slotDurations || duration}</td><td class="mono">${amount}</td><td><span class="badge ${payment === 'PAID' ? 'verified' : payment === 'CANCELLED' ? 'cancelled' : 'pending'}">${paymentStatusLabels[payment] || escapeBookingHtml(payment)}</span></td><td><span class="badge ${status.toLowerCase()}">${bookingStatusLabels[status] || escapeBookingHtml(status)}</span></td><td><div class="row-actions"><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button><button onclick="updateBookingStatus('${id}','CONFIRMED')" title="Confirm"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button><button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="danger" onclick="deleteBooking('${id}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button></div></td></tr>`;
+    return `<tr><td class="mono">${id}</td><td>${customer}</td><td>${escapeBookingHtml(bookingCreatedDate)}</td><td class="mono">${mobile}</td><td>${date}</td><td>${slot}</td><td>${time}</td><td>${slotDurations || duration}</td><td class="mono">${amount}</td><td><span class="badge ${payment === 'PAID' ? 'verified' : payment === 'CANCELLED' ? 'cancelled' : 'pending'}">${paymentStatusLabels[payment] || escapeBookingHtml(payment)}</span></td><td><span class="badge ${status.toLowerCase()}">${bookingStatusLabels[status] || escapeBookingHtml(status)}</span></td><td><div class="row-actions"><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button><button onclick="updateBookingStatus('${id}','CONFIRMED')" title="Confirm"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button><button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div></td></tr>`;
   }
   function renderBookings(message){
     const rows = bookingRows();
@@ -2412,23 +2380,6 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       showToast('Booking status updated');
       await loadAdminBookings();
     } catch(error) { showToast(error.message); }
-  }
-  async function deleteBooking(bookingId){
-    openDeleteConfirm('Delete this booking permanently from the dashboard and database?', async () => {
-      try {
-        const response = await fetch('/api/admin/bookings?id=' + encodeURIComponent(bookingId), {method:'DELETE', credentials:'include'});
-        const data = await response.json().catch(()=>({}));
-        if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to delete booking.'));
-        showToast('Booking deleted');
-        await Promise.all([
-          loadAdminBookings(),
-          loadDashboardSummary(),
-          renderPayments(),
-          loadCustomers(),
-          renderCalendar(),
-        ]);
-      } catch(error) { showToast(error.message); }
-    });
   }
   document.querySelectorAll('[data-booking-status]').forEach(button=>button.addEventListener('click', ()=>{
     bookingStatus = String(button.dataset.bookingStatus || 'all').toUpperCase();
