@@ -2377,6 +2377,13 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       : [{ start: booking.time || '—', end: '', hours: booking.duration || 0 }];
     return slotRows.map((slot, index) => `Slot ${index + 1}: ${slot.end ? `${slot.start} - ${slot.end}` : slot.start} (${slot.hours || 0} hr${Number(slot.hours) === 1 ? '' : 's'})`).join(' | ');
   }
+  function buildDynamicUpiQrUrl(upiId, amount, merchantName){
+    const cleanUpiId = String(upiId || '').trim();
+    const cleanMerchantName = String(merchantName || 'TurfOn24').trim() || 'TurfOn24';
+    const safeAmount = Number(amount || 0);
+    const upiUri = `upi://pay?pa=${encodeURIComponent(cleanUpiId)}&pn=${encodeURIComponent(cleanMerchantName)}&am=${safeAmount.toFixed(2)}&cu=INR`;
+    return `https://api.qrserver.com/v1/create-qr-code/?size=800x800&data=${encodeURIComponent(upiUri)}`;
+  }
   async function openBookingWhatsApp(booking){
     try {
       const settingsResponse = await fetch('/api/settings', { credentials: 'include' });
@@ -2393,6 +2400,8 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       const dateLabel = bookingDateLabel(booking.date) || 'your selected date';
       const duration = Number(booking.duration || 0);
       const amount = Number(booking.amount || 0);
+      const qrUrl = buildDynamicUpiQrUrl(upiId, amount, businessName);
+      const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(businessName)}&am=${amount.toFixed(2)}&cu=INR`;
       const text = [
         `Hello ${customerName},`,
         '',
@@ -2402,20 +2411,22 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
         `• Date: ${dateLabel}`,
         `• Slot: ${bookingSlotSummary(booking)}`,
         `• Duration: ${duration} hr${duration === 1 ? '' : 's'}`,
-        `• Amount: ₹${amount.toLocaleString('en-IN')}`,
+        `• Amount Due: ₹${amount.toLocaleString('en-IN')}`,
         '',
         'Payment Details:',
         `• UPI ID: ${upiId}`,
-        '• QR Code: Please scan the QR code shared in the payment section or the booking confirmation page to complete the payment.',
+        `• Dynamic QR Code: ${qrUrl}`,
+        `• UPI Link: ${upiUri}`,
         '',
-        'Once the payment is received, your slot will be secured.',
+        'Please scan the QR code or use the UPI link above to complete the payment securely.',
+        'Once the payment is received, your slot will be confirmed and reserved.',
         '',
-        `Thank you for choosing ${businessName}. We look forward to hosting you.`,
+        `Thank you for choosing ${businessName}. We look forward to welcoming you.`,
       ].join('\n');
       const whatsappUrl = `https://wa.me/${mobile}?text=${encodeURIComponent(text)}`;
       const popup = window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
       if (!popup) window.location.href = whatsappUrl;
-      showToast('WhatsApp confirmation drafted for the customer.');
+      showToast('WhatsApp confirmation with dynamic QR sent to the customer.');
     } catch (error) {
       console.error('WhatsApp booking confirmation failed', error);
       showToast('Unable to prepare the WhatsApp confirmation message.');
