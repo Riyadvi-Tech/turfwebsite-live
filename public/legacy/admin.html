@@ -2377,9 +2377,12 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       : [{ start: booking.time || '—', end: '', hours: booking.duration || 0 }];
     return slotRows.map((slot, index) => `Slot ${index + 1}: ${slot.end ? `${slot.start} - ${slot.end}` : slot.start} (${slot.hours || 0} hr${Number(slot.hours) === 1 ? '' : 's'})`).join(' | ');
   }
-  function staticBookingQrUrl(){
-    const origin = window.location.origin || 'https://turfwebsite-live-git-preview-riyasoftwaresolutions-8111.vercel.app';
-    return `${origin}/logo-assets/QR%20code.jpeg`;
+  function buildDynamicUpiQrUrl(upiId, amount, merchantName){
+    const cleanUpiId = String(upiId || '').trim();
+    const cleanMerchantName = String(merchantName || 'TurfOn24').trim() || 'TurfOn24';
+    const safeAmount = Number(amount || 0);
+    const upiUri = `upi://pay?pa=${encodeURIComponent(cleanUpiId)}&pn=${encodeURIComponent(cleanMerchantName)}&am=${safeAmount.toFixed(2)}&cu=INR`;
+    return `https://api.qrserver.com/v1/create-qr-code/?size=800x800&data=${encodeURIComponent(upiUri)}`;
   }
   async function openBookingWhatsApp(booking){
     try {
@@ -2398,7 +2401,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       const duration = Number(booking.duration || 0);
       const amount = Number(booking.amount || 0);
       const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(businessName)}&am=${amount.toFixed(2)}&cu=INR`;
-      const qrImageUrl = staticBookingQrUrl();
+      const qrUrl = buildDynamicUpiQrUrl(upiId, amount, businessName);
       const text = [
         `Hello ${customerName},`,
         '',
@@ -2413,16 +2416,18 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
         'Payment Instructions:',
         `• UPI ID: ${upiId}`,
         `• Pay Now: ${upiUri}`,
-        `• QR Code Image: ${qrImageUrl}`,
+        `• QR Code: ${qrUrl}`,
         '',
-        'Please complete the payment using the Pay Now link or scan the QR code image. After successfully paying, kindly share the payment screenshot in this chat so we can confirm your booking.',
+        'Please complete the payment using the Pay Now link or scan the QR code. After successfully paying, kindly share the payment screenshot in this chat so we can confirm your booking.',
         'Once we receive the screenshot and confirm the payment, your slot will be reserved.',
         '',
         `Thank you for choosing ${businessName}. We look forward to welcoming you.`,
       ].join('\n');
       const whatsappUrl = `https://wa.me/${mobile}?text=${encodeURIComponent(text)}`;
       const popup = window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
-      if (!popup) window.location.href = whatsappUrl;
+      if (!popup) {
+        window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+      }
       showToast('WhatsApp confirmation with dynamic QR sent to the customer.');
     } catch (error) {
       console.error('WhatsApp booking confirmation failed', error);
