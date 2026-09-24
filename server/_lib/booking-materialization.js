@@ -57,6 +57,7 @@ export async function materializeHourlyPayment(db, reference, { transitionToPaid
   let result
   try {
     await session.withTransaction(async () => {
+      const now = new Date()
       const paymentSession = await db.collection('payment_sessions').findOne(
         { reference },
         { session },

@@ -1696,6 +1696,13 @@
             <button type="button" class="btn btn-glow" id="bkPayApp" onclick="payNow(event)">Pay Now</button>
             <button type="button" class="btn btn-outline" onclick="copyPaymentUpi()">Copy UPI ID</button>
           </div>
+          <div style="text-align:left; margin-top:22px; padding-top:18px; border-top:1px solid var(--border);">
+            <label class="field-label" for="bkUtrId">Submit payment proof</label>
+            <input id="bkUtrId" type="text" maxlength="32" placeholder="Enter UTR / transaction ID" style="width:100%; margin:8px 0 10px;">
+            <input id="bkPaymentScreenshot" type="file" accept="image/jpeg,image/png,image/webp" style="width:100%; margin-bottom:10px;">
+            <button type="button" class="btn btn-outline" onclick="submitPaymentProof()">Submit screenshot &amp; UTR</button>
+            <p id="bkProofStatus" class="payment-pending" style="display:none; margin-bottom:0;"></p>
+          </div>
           <div class="bk-payment-details" style="text-align:left; margin-top:22px; padding-top:18px; border-top:1px solid var(--border);">
             <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-bottom:14px;"><span>Date</span><span class="mono" style="color:var(--white);" id="bkPayDate">—</span></div>
             <div id="bkPaySlots"></div>
@@ -3556,6 +3563,41 @@
   async function restartPaymentSession(){
     if(!paymentSession || paymentSession.status !== 'EXPIRED') return;
     await bkFillPayment();
+  }
+  function resizePaymentScreenshot(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const image = new Image();
+        image.onload = () => {
+          const scale = Math.min(1, 1400 / Math.max(image.width, image.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(image.width * scale));
+          canvas.height = Math.max(1, Math.round(image.height * scale));
+          canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.78));
+        };
+        image.onerror = () => reject(new Error('The selected screenshot could not be read.'));
+        image.src = reader.result;
+      };
+      reader.onerror = () => reject(new Error('The selected screenshot could not be read.'));
+      reader.readAsDataURL(file);
+    });
+  }
+  async function submitPaymentProof(){
+    const status = document.getElementById('bkProofStatus');
+    const utrId = document.getElementById('bkUtrId')?.value.trim();
+    const file = document.getElementById('bkPaymentScreenshot')?.files?.[0];
+    if(!paymentSession?.reference){ if(status){ status.style.display='block'; status.textContent='Please wait for the payment request to load.'; } return; }
+    if(!/^[A-Za-z0-9-]{6,32}$/.test(utrId || '') || !file){ if(status){ status.style.display='block'; status.textContent='Enter the UTR and select your payment screenshot.'; } return; }
+    try {
+      if(status){ status.style.display='block'; status.textContent='Submitting payment proof...'; }
+      const screenshot = await resizePaymentScreenshot(file);
+      const response = await fetch('/api/payment/proof', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({reference:paymentSession.reference, utrId, screenshot})});
+      const result = await response.json().catch(()=>({}));
+      if(!response.ok) throw new Error(result.message || 'Unable to submit payment proof.');
+      if(status) status.textContent='Payment proof submitted. Our team will verify it shortly.';
+    } catch(error) { if(status){ status.style.display='block'; status.textContent=error.message; } }
   }
   function acknowledgePaymentPending(){
     closeModal('paymentConfirmModal');
