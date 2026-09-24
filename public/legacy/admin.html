@@ -2363,6 +2363,64 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const rows = bookingRows();
     document.getElementById('bookingsBody').innerHTML = rows.length ? rows.map(bookingRowHtml).join('') : `<tr><td colspan="12" class="tbl-empty">${escapeBookingHtml(message || 'No bookings found')}</td></tr>`;
   }
+  function normalizeWhatsAppNumber(value){
+    const digits = String(value || '').replace(/\D/g, '');
+    if (!digits) return '';
+    let normalized = digits.replace(/^00/, '');
+    if (normalized.startsWith('91') && normalized.length === 12) return normalized;
+    if (normalized.length === 10) return `91${normalized}`;
+    return normalized;
+  }
+  function bookingSlotSummary(booking){
+    const slotRows = Array.isArray(booking.slots) && booking.slots.length
+      ? booking.slots
+      : [{ start: booking.time || '—', end: '', hours: booking.duration || 0 }];
+    return slotRows.map((slot, index) => `Slot ${index + 1}: ${slot.end ? `${slot.start} - ${slot.end}` : slot.start} (${slot.hours || 0} hr${Number(slot.hours) === 1 ? '' : 's'})`).join(' | ');
+  }
+  async function openBookingWhatsApp(booking){
+    try {
+      const settingsResponse = await fetch('/api/settings', { credentials: 'include' });
+      const settingsData = await settingsResponse.json().catch(() => ({}));
+      const settings = settingsData.settings || {};
+      const businessName = String(settings.businessName || 'Turfon24').trim();
+      const upiId = String(settings.upi || settings.upiId || '20221229583742@yesbank').trim();
+      const customerName = String(booking.name || booking.customerName || 'Customer').trim() || 'Customer';
+      const mobile = normalizeWhatsAppNumber(booking.mobile);
+      if (!mobile) {
+        showToast('No valid customer WhatsApp number found for this booking.');
+        return;
+      }
+      const dateLabel = bookingDateLabel(booking.date) || 'your selected date';
+      const duration = Number(booking.duration || 0);
+      const amount = Number(booking.amount || 0);
+      const text = [
+        `Hello ${customerName},`,
+        '',
+        `Your turf booking at ${businessName} has been confirmed.`,
+        '',
+        'Booking Details:',
+        `• Date: ${dateLabel}`,
+        `• Slot: ${bookingSlotSummary(booking)}`,
+        `• Duration: ${duration} hr${duration === 1 ? '' : 's'}`,
+        `• Amount: ₹${amount.toLocaleString('en-IN')}`,
+        '',
+        'Payment Details:',
+        `• UPI ID: ${upiId}`,
+        '• QR Code: Please scan the QR code shared in the payment section or the booking confirmation page to complete the payment.',
+        '',
+        'Once the payment is received, your slot will be secured.',
+        '',
+        `Thank you for choosing ${businessName}. We look forward to hosting you.`,
+      ].join('\n');
+      const whatsappUrl = `https://wa.me/${mobile}?text=${encodeURIComponent(text)}`;
+      const popup = window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+      if (!popup) window.location.href = whatsappUrl;
+      showToast('WhatsApp confirmation drafted for the customer.');
+    } catch (error) {
+      console.error('WhatsApp booking confirmation failed', error);
+      showToast('Unable to prepare the WhatsApp confirmation message.');
+    }
+  }
   async function loadAdminBookings(){
     const requestId = ++bookingRequestId;
     const params = new URLSearchParams({limit:'100', page:'1'});
@@ -2410,6 +2468,9 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       const data = await response.json().catch(()=>({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to update booking status.'));
       showToast('Booking status updated');
+      if (status === 'CONFIRMED') {
+        await openBookingWhatsApp(data.booking || { mobile: '', date: '', name: '', duration: 0, amount: 0, slots: [] });
+      }
       await loadAdminBookings();
     } catch(error) { showToast(error.message); }
   }
