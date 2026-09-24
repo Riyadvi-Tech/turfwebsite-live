@@ -2426,7 +2426,6 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       const dateLabel = bookingDateLabel(booking.date) || 'your selected date';
       const duration = Number(booking.duration || 0);
       const amount = Number(booking.amount || 0);
-      const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(businessName)}&am=${amount.toFixed(2)}&cu=INR`;
       const qrUrl = buildDynamicUpiQrUrl(upiId, amount, businessName);
       const text = [
         `Hello ${customerName},`,
@@ -2441,8 +2440,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
         '',
         'Payment Instructions:',
         `• UPI ID: ${upiId}`,
-        `• Pay Now: ${upiUri}`,
-        `• QR Code: ${qrUrl}`,
+        `• Pay Now: ${qrUrl}`,
         '',
         'Please complete the payment using the Pay Now link or scan the QR code. After successfully paying, kindly share the payment screenshot in this chat so we can confirm your booking.',
         'Your selected slot is reserved for the timing mentioned above. Please complete the payment and share the payment screenshot here for verification.',
