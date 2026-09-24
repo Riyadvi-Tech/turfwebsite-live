@@ -2357,7 +2357,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const slotDurations = slotRows.map(item => `${item.hours || 0} hr${Number(item.hours) === 1 ? '' : 's'}`).join('<br>');
     const duration = escapeBookingHtml(`${booking.duration || 0} hr${Number(booking.duration) === 1 ? '' : 's'}`);
     const amount = `₹${Number(booking.amount || 0).toLocaleString('en-IN')}`;
-    return `<tr><td class="mono">${id}</td><td>${customer}</td><td>${escapeBookingHtml(bookingCreatedDate)}</td><td class="mono">${mobile}</td><td>${date}</td><td>${slot}</td><td>${time}</td><td>${slotDurations || duration}</td><td class="mono">${amount}</td><td><span class="badge ${payment === 'PAID' ? 'verified' : payment === 'CANCELLED' ? 'cancelled' : 'pending'}">${paymentStatusLabels[payment] || escapeBookingHtml(payment)}</span></td><td><span class="badge ${status.toLowerCase()}">${bookingStatusLabels[status] || escapeBookingHtml(status)}</span></td><td><div class="row-actions"><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button><button onclick="updateBookingStatus('${id}','CONFIRMED')" title="Confirm"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button><button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="danger" onclick="deleteBooking('${id}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button></div></td></tr>`;
+    return `<tr><td class="mono">${id}</td><td>${customer}</td><td>${escapeBookingHtml(bookingCreatedDate)}</td><td class="mono">${mobile}</td><td>${date}</td><td>${slot}</td><td>${time}</td><td>${slotDurations || duration}</td><td class="mono">${amount}</td><td><span class="badge ${payment === 'PAID' ? 'verified' : payment === 'CANCELLED' ? 'cancelled' : 'pending'}">${paymentStatusLabels[payment] || escapeBookingHtml(payment)}</span></td><td><span class="badge ${status.toLowerCase()}">${bookingStatusLabels[status] || escapeBookingHtml(status)}</span></td><td><div class="row-actions"><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button><button onclick="confirmBookingStatus('${id}')" title="Confirm"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button><button onclick="sendBookingPaymentMessage('${id}')" title="Send WhatsApp payment message"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 8h8M8 12h6"/></svg></button><button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="danger" onclick="deleteBooking('${id}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button></div></td></tr>`;
   }
   function renderBookings(message){
     const rows = bookingRows();
@@ -2382,7 +2382,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const cleanMerchantName = String(merchantName || 'TurfOn24').trim() || 'TurfOn24';
     const safeAmount = Number(amount || 0);
     const upiUri = `upi://pay?pa=${encodeURIComponent(cleanUpiId)}&pn=${encodeURIComponent(cleanMerchantName)}&am=${safeAmount.toFixed(2)}&cu=INR`;
-    return `https://api.qrserver.com/v1/create-qr-code/?size=800x800&data=${encodeURIComponent(upiUri)}`;
+    return `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(upiUri)}`;
   }
   async function openBookingWhatsApp(booking){
     try {
@@ -2475,15 +2475,23 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       openModal('detailModal');
     } catch(error) { showToast(error.message); }
   }
+  async function confirmBookingStatus(bookingId){
+    await updateBookingStatus(bookingId, 'CONFIRMED');
+  }
+  async function sendBookingPaymentMessage(bookingId){
+    try {
+      const bookingResponse = await fetch('/api/admin/bookings?id=' + encodeURIComponent(bookingId), {credentials:'include'});
+      const bookingData = await bookingResponse.json().catch(()=>({}));
+      if(!bookingResponse.ok) throw new Error(bookingResponse.status === 401 ? 'Your admin session has expired.' : (bookingData.message || 'Unable to load booking details.'));
+      await openBookingWhatsApp(bookingData.booking || { mobile: '', date: '', name: '', duration: 0, amount: 0, slots: [] });
+    } catch(error) { showToast(error.message); }
+  }
   async function updateBookingStatus(bookingId, status){
     try {
       const response = await fetch('/api/admin/bookings?id=' + encodeURIComponent(bookingId), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({bookingStatus:status})});
       const data = await response.json().catch(()=>({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to update booking status.'));
       showToast('Booking status updated');
-      if (status === 'CONFIRMED') {
-        await openBookingWhatsApp(data.booking || { mobile: '', date: '', name: '', duration: 0, amount: 0, slots: [] });
-      }
       await loadAdminBookings();
     } catch(error) { showToast(error.message); }
   }
