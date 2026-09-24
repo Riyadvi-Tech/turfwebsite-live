@@ -2400,8 +2400,8 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       const dateLabel = bookingDateLabel(booking.date) || 'your selected date';
       const duration = Number(booking.duration || 0);
       const amount = Number(booking.amount || 0);
-      const qrUrl = buildDynamicUpiQrUrl(upiId, amount, businessName);
       const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(businessName)}&am=${amount.toFixed(2)}&cu=INR`;
+      const qrUrl = buildDynamicUpiQrUrl(upiId, amount, businessName);
       const text = [
         `Hello ${customerName},`,
         '',
@@ -2415,10 +2415,10 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
         '',
         'Payment Details:',
         `• UPI ID: ${upiId}`,
-        `• Dynamic QR Code: ${qrUrl}`,
-        `• UPI Link: ${upiUri}`,
+        `• Pay Now: ${upiUri}`,
+        `• QR Code: ${qrUrl}`,
         '',
-        'Please scan the QR code or use the UPI link above to complete the payment securely.',
+        'Tap the Pay Now link to open your UPI app directly. If you prefer, you can scan the QR image from the link above.',
         'Once the payment is received, your slot will be confirmed and reserved.',
         '',
         `Thank you for choosing ${businessName}. We look forward to welcoming you.`,
