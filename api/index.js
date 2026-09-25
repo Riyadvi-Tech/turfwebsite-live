@@ -21,6 +21,7 @@ import adminSession from '../server/admin/session.js'
 import adminSettings from '../server/admin/settings.js'
 import adminVerifyResetToken from '../server/admin/verify-reset-token.js'
 import adminWhatsappEnquiries from '../server/admin/whatsapp-enquiries.js'
+import adminWhatsappNotify from '../server/admin/whatsapp-notify.js'
 import paymentCreate from '../server/payment/create.js'
 import paymentStatus from '../server/payment/status.js'
 import paymentProof from '../server/payment/proof.js'
@@ -49,6 +50,7 @@ const handlers = {
   'admin/settings': adminSettings,
   'admin/verify-reset-token': adminVerifyResetToken,
   'admin/whatsapp-enquiries': adminWhatsappEnquiries,
+  'admin/whatsapp-notify': adminWhatsappNotify,
   'payment/create': paymentCreate,
   'payment/status': paymentStatus,
   'payment/proof': paymentProof,

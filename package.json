@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@wppconnect-team/wppconnect": "^2.3.3",
     "bcryptjs": "^3.0.3",
     "mongodb": "^6.20.0",
     "nodemailer": "^9.0.5",
