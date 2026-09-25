@@ -2402,25 +2402,32 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       const duration = Number(booking.duration || 0);
       const amount = Number(booking.amount || 0);
       const qrUrl = buildDynamicUpiQrUrl(upiId, amount, businessName);
-      const response = await fetch('/api/admin/whatsapp-notify', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          mobile,
-          name: customerName,
-          businessName,
-          amount,
-          duration,
-          date: dateLabel,
-          slotSummary: bookingSlotSummary(booking),
-          upiId,
-          qrUrl,
-        }),
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || !result.success) throw new Error(result.message || 'Unable to send the WhatsApp notification.');
-      showToast('WhatsApp image notification sent to the customer.');
+      const text = [
+        `Hello ${customerName},`,
+        '',
+        `Your slot at ${businessName} has been booked successfully.`,
+        '',
+        'Booking Details:',
+        `• Date: ${dateLabel}`,
+        `• Booked slot timing: ${bookingSlotSummary(booking)}`,
+        `• Duration: ${duration} hr${duration === 1 ? '' : 's'}`,
+        `• Amount Due: ₹${amount.toLocaleString('en-IN')}`,
+        '',
+        'Payment Instructions:',
+        `• UPI ID: ${upiId}`,
+        `• Pay Now: ${qrUrl}`,
+        '',
+        'Please complete the payment using the Pay Now link or scan the QR code. After successfully paying, kindly share the payment screenshot in this chat so we can confirm your booking.',
+        'Your selected slot is reserved for the timing mentioned above. Please complete the payment and share the payment screenshot here for verification.',
+        '',
+        `Thank you for choosing ${businessName}. We look forward to welcoming you.`,
+      ].join('\n');
+      const whatsappUrl = `https://wa.me/${mobile}?text=${encodeURIComponent(text)}`;
+      const popup = window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+      if (!popup) {
+        window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+      }
+      showToast('WhatsApp confirmation with dynamic QR sent to the customer.');
     } catch (error) {
       console.error('WhatsApp booking confirmation failed', error);
       showToast('Unable to prepare the WhatsApp confirmation message.');
