@@ -2878,7 +2878,7 @@
     }
     bkCurrentStep = n;
     for(let i=1;i<=7;i++){ document.getElementById('bkPane'+i).style.display = i===n ? 'block' : 'none'; }
-    document.getElementById('bkBackButton').style.display = n > 1 ? 'flex' : 'none';
+    document.getElementById('bkBackButton').style.display = n > 2 ? 'flex' : 'none';
     document.querySelectorAll('#bkStepsRow .bstep').forEach(s=>{
       const sn = parseInt(s.dataset.step);
       s.classList.toggle('active', sn===n);
@@ -2906,7 +2906,7 @@
     bkGoStep(2);
   }
   function bkGoBack(){
-    if(bkCurrentStep > 1) bkGoStep(bkCurrentStep - 1);
+    if(bkCurrentStep > 2) bkGoStep(bkCurrentStep - 1);
   }
 
   // date calendar — single-select, past dates disabled, dynamic month navigation
@@ -3665,6 +3665,7 @@
     if(slotMinus) slotMinus.disabled = true;
     const slotPlus = document.getElementById('bkSlotPlus');
     if(slotPlus) slotPlus.disabled = false;
+    document.getElementById('bkName').value = '';
     document.getElementById('bkMobile').value = '';
     document.getElementById('bkOtp').value = '';
     document.getElementById('bkOtpBlock').style.display = 'none';
