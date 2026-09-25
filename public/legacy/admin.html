@@ -279,10 +279,6 @@
   #page-payments table{min-width:1040px;}
   #page-payments th:last-child, #page-payments td:last-child{min-width:98px; padding-right:20px;}
   #page-payments .row-actions{min-width:40px; white-space:nowrap;}
-  #page-payment-verification .table-wrap{overflow-x:auto; overflow-y:hidden;}
-  #page-payment-verification table{min-width:1080px;}
-  #page-payment-verification th:last-child, #page-payment-verification td:last-child{min-width:120px; padding-right:20px;}
-  #page-payment-verification .proof-thumb{width:58px; height:42px; object-fit:cover; border:1px solid var(--border); border-radius:6px; cursor:pointer;}
   /* Reduced table footer text */
   .table-foot{display:flex; justify-content:space-between; align-items:center; padding:14px 18px; font-size:11.5px; color:var(--muted); border-top:1px solid var(--border);}
 
@@ -619,7 +615,6 @@
       <div class="nav-item" data-page="customers"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6"/><circle cx="18" cy="9" r="2.6"/><path d="M15.5 14c2.8.3 4.5 2 4.5 6"/></svg><span class="nav-label">Customers</span></div>
       <div class="nav-item" data-page="calendar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="nav-label">Calendar</span></div>
       <div class="nav-item" data-page="payments"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M16 12h.01"/><path d="M2 9h5M17 9h5"/></svg><span class="nav-label">Payment Received</span></div>
-      <div class="nav-item" data-page="payment-verification"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 11.5a8 8 0 1 1-3.2-6.4"/><path d="m14 5 2 2 5-5"/><path d="M8 12h8M8 16h5"/></svg><span class="nav-label">Payment Verification</span><span class="nav-notice" id="paymentVerificationNotice" title="Pending payment proof"></span></div>
       <div class="nav-item" data-page="whatsapp"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg><span class="nav-label">WhatsApp Enquiries</span></div>
       <div class="nav-item" data-page="chatbot"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg><span class="nav-label">Chatbot Conversations</span><span class="nav-notice" title="New chat conversation"></span></div>
       <div class="nav-divider"></div>
@@ -764,25 +759,6 @@
           <tbody id="paymentsBody"></tbody>
         </table>
         <div class="table-foot"><span id="paymentsFoot">Showing today&rsquo;s received payments</span></div>
-      </div>
-    </div>
-
-    <!-- PAYMENT VERIFICATION -->
-    <div class="page" id="page-payment-verification">
-      <div class="panel" style="margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
-        <div><h3 style="margin-bottom:4px;">Payment Verification</h3><p style="font-size:12px; color:var(--muted);">Review the customer&rsquo;s UTR and payment screenshot before confirming the payment.</p></div>
-        <button class="btn btn-ghost" type="button" onclick="loadPaymentVerification()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 11a8 8 0 1 0 1 4"/><path d="M20 4v7h-7"/></svg>Refresh</button>
-      </div>
-      <div class="toolbar">
-        <input id="verificationSearch" type="text" placeholder="Search by name, mobile, UTR...">
-        <div class="filt-pill sel" data-verification-status="PENDING">Pending</div><div class="filt-pill" data-verification-status="ALL">All</div><div class="filt-pill" data-verification-status="APPROVED">Approved</div><div class="filt-pill" data-verification-status="REJECTED">Rejected</div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Customer</th><th>Mobile</th><th>Booking date</th><th>Amount</th><th>UTR / transaction ID</th><th>Screenshot</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody id="paymentVerificationBody"></tbody>
-        </table>
-        <div class="table-foot"><span id="paymentVerificationFoot">Showing pending payment proofs</span></div>
       </div>
     </div>
 
@@ -1259,7 +1235,7 @@
   document.querySelectorAll('.date-filter').forEach(el=>el.addEventListener('change', syncDateDisplay));
   syncDateDisplay();
   // ---- nav ----
-  const pageTitles = {dashboard:'Dashboard', analytics:'Analytics', bookings:'Bookings', payments:'Payment Received', 'payment-verification':'Payment Verification', enquiries:'Extended Enquiries', customers:'Customers', calendar:'Calendar', whatsapp:'WhatsApp Enquiries', chatbot:'Chatbot Conversations', settings:'Website Settings', profile:'Profile'};
+  const pageTitles = {dashboard:'Dashboard', analytics:'Analytics', bookings:'Bookings', payments:'Payment Received', enquiries:'Extended Enquiries', customers:'Customers', calendar:'Calendar', whatsapp:'WhatsApp Enquiries', chatbot:'Chatbot Conversations', settings:'Website Settings', profile:'Profile'};
   const SITE_SETTINGS_KEY = 'turfon24-site-settings';
   const defaultSiteSettings = { businessName:'TurfOn24', hourlyRate:'800', phone:'+91 89399 89366', whatsapp:'+91 89399 89366', email:'ask@turfon24.com', upi:'20221229583742@yesbank', address:'Cuddaloore' };
   async function loadWebsiteSettings(){
@@ -1396,7 +1372,6 @@
     document.querySelectorAll('.page').forEach(item => item.classList.toggle('active', item === target));
     document.getElementById('pageTitle').textContent = pageTitles[page] || page;
     if(page === 'bookings') markSectionNotificationsRead('booking');
-    if(page === 'payment-verification') loadPaymentVerification();
     if(page === 'chatbot') {
       markSectionNotificationsRead('chat');
       loadAdminChatbot();
@@ -2636,86 +2611,6 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       renderPayments();
     } catch (error) { showToast(error.message); }
   }
-  let verificationStatus = 'PENDING';
-  let paymentVerifications = [];
-  const demoPaymentVerifications = [
-    { demo: true, reference: 'DEMO-T24-PENDING', amount: 800, bookingData: { name: 'Demo Customer', mobile: '919876543210', date: '2026-09-25' }, paymentProof: { utrId: 'DEMO123456', screenshot: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22640%22 height=%22480%22%3E%3Crect width=%22640%22 height=%22480%22 fill=%22%23121c18%22/%3E%3Ctext x=%22320%22 y=%22220%22 fill=%22%2339ff7a%22 font-size=%2230%22 text-anchor=%22middle%22%3EDemo payment screenshot%3C/text%3E%3Ctext x=%22320%22 y=%22270%22 fill=%22%23a7b5ae%22 font-size=%2222%22 text-anchor=%22middle%22%3E₹800 paid via UPI%3C/text%3E%3C/svg%3E', status: 'PENDING', submittedAt: '2026-09-24T10:30:00.000Z' } },
-    { demo: true, reference: 'DEMO-T24-APPROVED', amount: 1600, bookingData: { name: 'Demo Approved', mobile: '919876543211', date: '2026-09-23' }, paymentProof: { utrId: 'DEMO654321', screenshot: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22640%22 height=%22480%22%3E%3Crect width=%22640%22 height=%22480%22 fill=%22%23121c18%22/%3E%3Ctext x=%22320%22 y=%22220%22 fill=%22%2339ff7a%22 font-size=%2230%22 text-anchor=%22middle%22%3EDemo payment screenshot%3C/text%3E%3Ctext x=%22320%22 y=%22270%22 fill=%22%23a7b5ae%22 font-size=%2222%22 text-anchor=%22middle%22%3E₹1,600 verified%3C/text%3E%3C/svg%3E', status: 'APPROVED', submittedAt: '2026-09-23T10:30:00.000Z' } },
-    { demo: true, reference: 'DEMO-T24-REJECTED', amount: 800, bookingData: { name: 'Demo Rejected', mobile: '919876543212', date: '2026-09-22' }, paymentProof: { utrId: 'DEMO999999', screenshot: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22640%22 height=%22480%22%3E%3Crect width=%22640%22 height=%22480%22 fill=%22%23121c18%22/%3E%3Ctext x=%22320%22 y=%22220%22 fill=%22%23ff6868%22 font-size=%2230%22 text-anchor=%22middle%22%3EDemo payment screenshot%3C/text%3E%3Ctext x=%22320%22 y=%22270%22 fill=%22%23a7b5ae%22 font-size=%2222%22 text-anchor=%22middle%22%3EProof rejected demo%3C/text%3E%3C/svg%3E', status: 'REJECTED', submittedAt: '2026-09-22T10:30:00.000Z' } },
-  ];
-  function verificationBadgeClass(status){ return status === 'APPROVED' ? 'verified' : status === 'REJECTED' ? 'cancelled' : 'pending'; }
-  function verificationRows(){
-    const search = (document.getElementById('verificationSearch')?.value || '').trim().toLowerCase();
-    return paymentVerifications.filter(item => {
-      const booking = item.bookingData || {};
-      return !search || [booking.name, booking.mobile, item.paymentProof?.utrId, item.reference].join(' ').toLowerCase().includes(search);
-    });
-  }
-  function renderPaymentVerification(message){
-    const rows = verificationRows();
-    const body = document.getElementById('paymentVerificationBody');
-    if(!body) return;
-    body.innerHTML = rows.length ? rows.map(item => {
-      const booking = item.bookingData || {};
-      const proof = item.paymentProof || {};
-      const status = String(proof.status || 'PENDING').toUpperCase();
-      const screenshot = proof.screenshot ? `<img class="proof-thumb" src="${escapePaymentHtml(proof.screenshot)}" alt="Payment screenshot" onclick="viewPaymentProof('${escapePaymentHtml(item.reference)}')">` : '—';
-      const viewAction = `<button onclick="viewPaymentProof('${escapePaymentHtml(item.reference)}')" title="View proof"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>`;
-      const approveAction = `<button onclick="reviewPaymentProof('${escapePaymentHtml(item.reference)}','APPROVE')" title="Approve payment"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m4 12 5 5L20 6"/></svg></button>`;
-      const rejectAction = `<button class="danger" onclick="reviewPaymentProof('${escapePaymentHtml(item.reference)}','REJECT')" title="Reject payment"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button>`;
-      const messageAction = `<button onclick="sendVerificationWhatsApp('${escapePaymentHtml(item.reference)}')" title="Send slot confirmation on WhatsApp"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 8h8M8 12h6"/></svg></button>`;
-      const actions = item.demo ? `${viewAction}${approveAction}${rejectAction}${messageAction}` : status === 'PENDING' ? `${viewAction}${approveAction}${rejectAction}${messageAction}` : `${viewAction}${messageAction}`;
-      return `<tr><td>${escapePaymentHtml(booking.name)}</td><td class="mono">${escapePaymentHtml(booking.mobile)}</td><td>${escapePaymentHtml(booking.date || booking.dateLabel)}</td><td class="mono">₹${Number(item.amount || 0).toLocaleString('en-IN')}</td><td class="mono">${escapePaymentHtml(proof.utrId)}</td><td>${screenshot}</td><td>${escapePaymentHtml(formatDateDDMMYYYY(proof.submittedAt))}</td><td><span class="badge ${verificationBadgeClass(status)}">${escapePaymentHtml(status)}</span></td><td><div class="row-actions">${actions}</div></td></tr>`;
-    }).join('') : `<tr><td colspan="9" class="tbl-empty">${escapePaymentHtml(message || 'No payment proofs found')}</td></tr>`;
-    document.getElementById('paymentVerificationFoot').textContent = `Showing ${rows.length} payment proof${rows.length === 1 ? '' : 's'}`;
-    document.getElementById('paymentVerificationNotice')?.classList.toggle('show', verificationStatus === 'PENDING' && rows.length > 0);
-  }
-  async function loadPaymentVerification(){
-    const body = document.getElementById('paymentVerificationBody');
-    if(!body) return;
-    body.innerHTML = '<tr><td colspan="9" class="tbl-empty">Loading payment proofs...</td></tr>';
-    try {
-      const response = await fetch('/api/admin/payment-verification?status=' + encodeURIComponent(verificationStatus), {credentials:'include'});
-      const data = await response.json().catch(()=>({}));
-      if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load payment proofs.'));
-      paymentVerifications = Array.isArray(data.verifications) ? data.verifications : [];
-      if(!paymentVerifications.length) paymentVerifications = demoPaymentVerifications.filter(item => verificationStatus === 'ALL' || item.paymentProof.status === verificationStatus);
-      renderPaymentVerification();
-    } catch(error) { paymentVerifications = []; renderPaymentVerification(error.message); showToast(error.message); }
-  }
-  function viewPaymentProof(reference){
-    const item = paymentVerifications.find(row => row.reference === reference);
-    if(!item) return;
-    const booking = item.bookingData || {};
-    const proof = item.paymentProof || {};
-    document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Customer</span><span>${escapePaymentHtml(booking.name)}</span></div><div class="detail-row"><span>Mobile</span><span class="mono">${escapePaymentHtml(booking.mobile)}</span></div><div class="detail-row"><span>Amount</span><span class="mono">₹${Number(item.amount || 0).toLocaleString('en-IN')}</span></div><div class="detail-row"><span>UTR / transaction ID</span><span class="mono">${escapePaymentHtml(proof.utrId)}</span></div><div class="detail-row"><span>Status</span><span class="badge ${verificationBadgeClass(proof.status)}">${escapePaymentHtml(proof.status)}</span></div><div class="detail-row" style="display:block;"><span style="display:block; margin-bottom:10px;">Payment screenshot</span><img src="${escapePaymentHtml(proof.screenshot)}" alt="Payment screenshot" style="display:block; max-width:100%; max-height:480px; object-fit:contain; border:1px solid var(--border); border-radius:8px;"></div>`;
-    openModal('detailModal');
-  }
-  async function sendVerificationWhatsApp(reference){
-    const item = paymentVerifications.find(row => row.reference === reference);
-    if(!item) return;
-    if(item.demo){ showToast('Demo WhatsApp action'); return; }
-    await openBookingWhatsApp({ ...(item.bookingData || {}), amount: item.amount, mobile: item.bookingData?.mobile || item.bookingData?.phone });
-  }
-  async function reviewPaymentProof(reference, decision){
-    const item = paymentVerifications.find(row => row.reference === reference);
-    if(item?.demo){ showToast(`Demo payment ${decision === 'APPROVE' ? 'approval' : 'rejection'} action`); return; }
-    const action = decision === 'APPROVE' ? 'approve' : 'reject';
-    if(!window.confirm(`Are you sure you want to ${action} this payment proof?`)) return;
-    try {
-      const response = await fetch('/api/admin/payment-verification', {method:'POST', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({reference, decision})});
-      const data = await response.json().catch(()=>({}));
-      if(!response.ok) throw new Error(data.message || `Unable to ${action} payment proof.`);
-      showToast(`Payment proof ${decision === 'APPROVE' ? 'approved' : 'rejected'}`);
-      await loadPaymentVerification();
-    } catch(error) { showToast(error.message); }
-  }
-  document.querySelectorAll('[data-verification-status]').forEach(button=>button.addEventListener('click', ()=>{
-    verificationStatus = button.dataset.verificationStatus;
-    document.querySelectorAll('[data-verification-status]').forEach(item=>item.classList.toggle('sel', item === button));
-    loadPaymentVerification();
-  }));
-  document.getElementById('verificationSearch')?.addEventListener('input', ()=>renderPaymentVerification());
   document.querySelectorAll('[data-payment-status]').forEach(button=>button.addEventListener('click', ()=>{
     paymentStatus = button.dataset.paymentStatus;
     paymentDateMode = 'all';
