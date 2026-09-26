@@ -3,6 +3,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { getDb } from '../_lib/mongodb.js'
 import { parseAdminSessionToken } from '../_lib/cookies.js'
+import { sendWhatsAppImage } from '../_lib/whatsapp-delivery.js'
 
 const moduleDirectory = path.dirname(fileURLToPath(import.meta.url))
 const imagePath = path.resolve(moduleDirectory, '../../public/logo-assets/qrcodepng.png')
@@ -74,8 +75,7 @@ export default async function handler(req, res) {
       'Reply with the 12-digit UTR/Ref number or payment screenshot to confirm your booking.',
     ].join('\n')
 
-    const { sendImage } = await import('../_lib/whatsapp-client.js')
-    await sendImage(mobile, imagePath, caption)
+    await sendWhatsAppImage(mobile, imagePath, caption)
     return res.status(200).json({ success: true, message: 'WhatsApp image notification sent.' })
   } catch (error) {
     console.error('[whatsapp-notify] failed:', error.message)

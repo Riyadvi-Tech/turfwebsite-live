@@ -33,7 +33,14 @@ Checkout calls `POST /api/send-payment-qr` with its opaque payment-session refer
 
 Install the locked project dependencies with `npm install`, then run `npm run dev`. On first WhatsApp connection, scan the QR printed in the terminal with WhatsApp on the linked phone. WPPConnect stores its session under the current Windows user's home directory at `.wppconnect-session`, so subsequent local restarts reuse it.
 
-WhatsApp Web automation needs a continuously running Node.js process and persistent session storage. Vercel serverless functions do not guarantee either across requests or deployments; deploy the WhatsApp sender on an always-on host with a persistent home directory before relying on it in production. The Vercel API integration remains suitable for the website routes, but not as the WhatsApp session host.
+WhatsApp Web automation needs a continuously running Node.js process and persistent session storage. Vercel serverless functions do not guarantee either across requests or deployments. Run the sender on an always-on VPS instead:
+
+1. Deploy this repository to the VPS, run `npm install`, and set `WHATSAPP_SERVICE_TOKEN` to a randomly generated secret of at least 32 characters. Set `WHATSAPP_SESSION_DIR` to a directory on persistent storage, then start `node scripts/whatsapp-service.js` under a process manager such as systemd or PM2.
+2. Scan the QR printed by that VPS process once. Keep the session directory mounted and backed up so restarts reuse the linked session.
+3. Expose the VPS service over HTTPS. It listens on `PORT`, `WHATSAPP_SERVICE_PORT`, or port `8787` and accepts only authenticated `POST /send-image` requests.
+4. In Vercel, set `WHATSAPP_SERVICE_URL` to the HTTPS service origin and set the same `WHATSAPP_SERVICE_TOKEN` in the **Preview** environment. Do not put the token in frontend variables or commit it. Production remains unchanged unless those variables are separately configured there.
+
+Vercel forwards authenticated admin notifications and pending-payment QR sends to this VPS service. Local development still sends directly through the local WhatsApp client when `WHATSAPP_SERVICE_URL` is unset.
 
 ## React Compiler
 

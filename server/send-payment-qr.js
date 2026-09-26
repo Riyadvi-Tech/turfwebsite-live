@@ -2,9 +2,11 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { getDb } from './_lib/mongodb.js'
+import { sendWhatsAppImage } from './_lib/whatsapp-delivery.js'
 
 const moduleDirectory = path.dirname(fileURLToPath(import.meta.url))
 const qrPaths = [
+  'qrcodepng.png',
   'QRCode1.jpg',
   'QRCode1.png',
   'QRCode1.jpeg',
@@ -88,8 +90,7 @@ export default async function handler(req, res) {
     if (!/^\d{10,15}$/.test(mobile)) return fail(res, 400, 'A valid customer WhatsApp number is required.')
 
     const imagePath = qrPaths.find((candidate) => fs.existsSync(candidate)) || qrPaths[0]
-    const { sendImage } = await import('./_lib/whatsapp-client.js')
-    await sendImage(mobile, resolveQrImage(imagePath), bookingCaption(session))
+    await sendWhatsAppImage(mobile, resolveQrImage(imagePath), bookingCaption(session))
     await db.collection('payment_sessions').updateOne(
       { _id: session._id, status: 'PAYMENT_PENDING', qrSentAt: { $exists: false } },
       { $set: { qrSentAt: new Date(), updatedAt: new Date() } },

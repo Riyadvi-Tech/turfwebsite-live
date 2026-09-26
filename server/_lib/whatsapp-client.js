@@ -6,7 +6,7 @@ import os from 'node:os'
 import path from 'node:path'
 
 const require = createRequire(import.meta.url)
-const sessionDirectory = path.join(os.homedir(), '.wppconnect-session')
+const sessionDirectory = path.resolve(process.env.WHATSAPP_SESSION_DIR || path.join(os.homedir(), '.wppconnect-session'))
 const qrPath = path.join(sessionDirectory, 'wa-qr.png')
 
 if (!globalThis.__waState) {
