@@ -25,6 +25,7 @@ import adminWhatsappNotify from '../server/admin/whatsapp-notify.js'
 import paymentCreate from '../server/payment/create.js'
 import paymentStatus from '../server/payment/status.js'
 import paymentProof from '../server/payment/proof.js'
+import sendPaymentQr from '../server/send-payment-qr.js'
 
 const handlers = {
   bookings,
@@ -54,6 +55,7 @@ const handlers = {
   'payment/create': paymentCreate,
   'payment/status': paymentStatus,
   'payment/proof': paymentProof,
+  'send-payment-qr': sendPaymentQr,
 }
 
 function getRoute(req) {

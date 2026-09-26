@@ -27,6 +27,14 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
+## WhatsApp Payment QR
+
+Checkout calls `POST /api/send-payment-qr` with its opaque payment-session reference. The server loads the customer, slot, and amount from the pending MongoDB session, then sends the configured QR image through the existing WPPConnect client. It prefers `public/logo-assets/QRCode1.jpg` and falls back to `QRCode1.png`, `QRCode1.jpeg`, `qrcodepng.png`, or `QR code.jpeg`. Ten-digit Indian mobile numbers are sent with the `91` country code.
+
+Install the locked project dependencies with `npm install`, then run `npm run dev`. On first WhatsApp connection, scan the QR printed in the terminal with WhatsApp on the linked phone. WPPConnect stores its session under the current Windows user's home directory at `.wppconnect-session`, so subsequent local restarts reuse it.
+
+WhatsApp Web automation needs a continuously running Node.js process and persistent session storage. Vercel serverless functions do not guarantee either across requests or deployments; deploy the WhatsApp sender on an always-on host with a persistent home directory before relying on it in production. The Vercel API integration remains suitable for the website routes, but not as the WhatsApp session host.
+
 ## React Compiler
 
 The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).

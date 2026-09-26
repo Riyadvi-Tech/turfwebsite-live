@@ -27,6 +27,7 @@ function init() {
         session: 'turfon24-admin-bot',
         folderNameToken: sessionDirectory,
         catchQR: (base64Qr, asciiQR, attempts, urlCode) => {
+          console.log(asciiQR)
           qrcode.toFile(qrPath, urlCode, { scale: 8 }, (error) => {
             if (error) {
               console.error('[WhatsApp] Failed to save QR code:', error.message)
@@ -36,15 +37,27 @@ function init() {
           })
         },
         logQR: false,
-        headless: false,
+        headless: true,
         autoClose: 0,
         puppeteerOptions: {
-          args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--disable-gpu',
+          ],
         },
       })
         .then((client) => {
           state.client = client
           state.ready = true
+          client.onStateChange?.((connectionState) => {
+            state.ready = connectionState === 'CONNECTED'
+            if (!state.ready) console.warn(`[WhatsApp] Client state: ${connectionState}`)
+          })
           console.log('[WhatsApp] WPPConnect client is ready.')
           resolve(client)
         })
@@ -64,7 +77,8 @@ function init() {
 }
 
 function chatIdFor(value) {
-  const digits = String(value || '').replace(/\D/g, '')
+  let digits = String(value || '').replace(/\D/g, '')
+  if (digits.length === 10) digits = `91${digits}`
   if (!/^\d{10,15}$/.test(digits)) throw new Error('A valid WhatsApp number is required.')
   return `${digits}@c.us`
 }

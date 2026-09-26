@@ -2406,6 +2406,21 @@
     }
     return session;
   }
+  async function handleBookingSubmit(reference){
+    const status = document.getElementById('bkPaymentStatus');
+    try {
+      const response = await fetch('/api/send-payment-qr', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({reference})
+      });
+      const result = await response.json().catch(()=>({}));
+      if(!response.ok) throw new Error(result.message || 'Unable to send the payment QR.');
+      if(status) status.textContent = 'Payment QR sent to your WhatsApp. Your slot is held for 15 minutes.';
+    } catch(error) {
+      if(status) status.textContent = `The WhatsApp QR could not be sent: ${error.message} You can still pay using the QR shown here.`;
+    }
+  }
   async function showPayment(session, imageId, statusId, appId){
     paymentSession = session;
     stopPaymentPolling();
@@ -3432,6 +3447,7 @@
       document.getElementById('bkPayTotal').textContent = formatAmount(session.amount);
       console.log('[payment] payment session available', session.reference);
       await showPayment(session, 'bkQrImage', 'bkQrStatus', 'bkPayApp');
+      await handleBookingSubmit(session.reference);
     } catch (error) {
       const status = document.getElementById('bkPaymentStatus');
       if(status){
