@@ -1,18 +1,15 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { getDb } from './_lib/mongodb.js'
 import { sendWhatsAppImage } from './_lib/whatsapp-delivery.js'
 
-const moduleDirectory = path.dirname(fileURLToPath(import.meta.url))
 const qrPaths = [
   'qrcodepng.png',
   'QRCode1.jpg',
   'QRCode1.png',
   'QRCode1.jpeg',
-  'qrcodepng.png',
   'QR code.jpeg',
-].map((filename) => path.resolve(moduleDirectory, '../public/logo-assets', filename))
+].map((filename) => path.resolve(process.cwd(), 'public/logo-assets', filename))
 const mimeTypes = new Map([
   ['.png', 'image/png'],
   ['.jpg', 'image/jpeg'],

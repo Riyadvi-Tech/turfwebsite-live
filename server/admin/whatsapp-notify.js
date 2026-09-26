@@ -1,12 +1,10 @@
 import crypto from 'node:crypto'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { getDb } from '../_lib/mongodb.js'
 import { parseAdminSessionToken } from '../_lib/cookies.js'
 import { sendWhatsAppImage } from '../_lib/whatsapp-delivery.js'
 
-const moduleDirectory = path.dirname(fileURLToPath(import.meta.url))
-const imagePath = path.resolve(moduleDirectory, '../../public/logo-assets/qrcodepng.png')
+const imagePath = path.resolve(process.cwd(), 'public/logo-assets/qrcodepng.png')
 
 function fail(res, status, message) {
   return res.status(status).json({ success: false, message })
@@ -79,7 +77,11 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true, message: 'WhatsApp image notification sent.' })
   } catch (error) {
     console.error('[whatsapp-notify] failed:', error.message)
-    const status = /valid customer|valid WhatsApp/.test(error.message) ? 400 : 503
+    const status = /customer-service window/i.test(error.message)
+      ? 409
+      : /valid customer|valid WhatsApp/.test(error.message)
+        ? 400
+        : 503
     return fail(res, status, error.message || 'Unable to send the WhatsApp notification.')
   }
 }

@@ -29,18 +29,15 @@ Currently, two official plugins are available:
 
 ## WhatsApp Payment QR
 
-Checkout calls `POST /api/send-payment-qr` with its opaque payment-session reference. The server loads the customer, slot, and amount from the pending MongoDB session, then sends the configured QR image through the existing WPPConnect client. It prefers `public/logo-assets/QRCode1.jpg` and falls back to `QRCode1.png`, `QRCode1.jpeg`, `qrcodepng.png`, or `QR code.jpeg`. Ten-digit Indian mobile numbers are sent with the `91` country code.
+The authenticated admin action uploads `public/logo-assets/qrcodepng.png` to Meta WhatsApp Cloud API and sends it as image media. No VPS or WhatsApp Web session is required.
 
-Install the locked project dependencies with `npm install`, then run `npm run dev`. On first WhatsApp connection, scan the QR printed in the terminal with WhatsApp on the linked phone. WPPConnect stores its session under the current Windows user's home directory at `.wppconnect-session`, so subsequent local restarts reuse it.
+Set these server-only variables in Vercel's **Preview** environment:
 
-WhatsApp Web automation needs a continuously running Node.js process and persistent session storage. Vercel serverless functions do not guarantee either across requests or deployments. Run the sender on an always-on VPS instead:
+- `WHATSAPP_ACCESS_TOKEN`: a Meta access token with `whatsapp_business_messaging` permission.
+- `WHATSAPP_PHONE_NUMBER_ID`: the business phone number ID from Meta App Dashboard > WhatsApp > API Setup.
+- `WHATSAPP_GRAPH_API_VERSION`: a Graph API version supported by your Meta app (defaults to `v25.0`).
 
-1. Deploy this repository to the VPS, run `npm install`, and set `WHATSAPP_SERVICE_TOKEN` to a randomly generated secret of at least 32 characters. Set `WHATSAPP_SESSION_DIR` to a directory on persistent storage, then start `node scripts/whatsapp-service.js` under a process manager such as systemd or PM2.
-2. Scan the QR printed by that VPS process once. Keep the session directory mounted and backed up so restarts reuse the linked session.
-3. Expose the VPS service over HTTPS. It listens on `PORT`, `WHATSAPP_SERVICE_PORT`, or port `8787` and accepts only authenticated `POST /send-image` requests.
-4. In Vercel, set `WHATSAPP_SERVICE_URL` to the HTTPS service origin and set the same `WHATSAPP_SERVICE_TOKEN` in the **Preview** environment. Do not put the token in frontend variables or commit it. Production remains unchanged unless those variables are separately configured there.
-
-Vercel forwards authenticated admin notifications and pending-payment QR sends to this VPS service. Local development still sends directly through the local WhatsApp client when `WHATSAPP_SERVICE_URL` is unset.
+Never expose the access token through a `VITE_*` variable or frontend code. Redeploy Preview after adding the variables. The sender uses only free-form image replies, not templates; Meta permits these only during the 24-hour customer-service window after the customer messages your business. If the window is closed, Meta rejects the send and the admin receives a clear error. Ask the customer to message your WhatsApp Business number, then retry within 24 hours. Checkout does not send WhatsApp messages automatically.
 
 ## React Compiler
 
