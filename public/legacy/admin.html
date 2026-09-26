@@ -2379,53 +2379,46 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       : [{ start: booking.time || '—', end: '', hours: booking.duration || 0 }];
     return slotRows.map((slot, index) => `Slot ${index + 1}: ${slot.end ? `${slot.start} - ${slot.end}` : slot.start} (${slot.hours || 0} hr${Number(slot.hours) === 1 ? '' : 's'})`).join(' | ');
   }
-  function openBookingWhatsApp(booking, chatWindow){
-    const customerName = String(booking.name || booking.customerName || '').trim();
-    const mobile = normalizeWhatsAppNumber(booking.mobile);
-    const rawSlotDate = String(booking.date || '').trim();
-    const slotDate = rawSlotDate ? String(bookingDateLabel(booking.date) || '').trim() : '';
-    const slotTime = bookingSlotSummary(booking);
-    const amount = Number(booking.amount);
-    const bookingId = String(booking._id || booking.bookingId || booking.paymentReference || '').trim();
-    if (!mobile || !customerName || !slotDate || !bookingId || !Number.isFinite(amount) || amount <= 0 || !booking.time && !booking.slots?.length) {
-      chatWindow?.close();
-      showToast('This booking is missing a phone number or required payment details.');
-      return false;
-    }
+  async function openBookingWhatsApp(booking){
+    try {
+      const settingsResponse = await fetch('/api/settings', { credentials: 'include' });
+      const settingsData = await settingsResponse.json().catch(() => ({}));
+      const settings = settingsData.settings || {};
+      const customerName = String(booking.name || booking.customerName || '').trim();
+      const mobile = normalizeWhatsAppNumber(booking.mobile);
+      const rawDate = String(booking.date || '').trim();
+      const date = rawDate ? String(bookingDateLabel(booking.date) || '').trim() : '';
+      const amount = Number(booking.amount);
+      const bookingId = String(booking._id || booking.bookingId || booking.paymentReference || '').trim();
+      const slotSummary = bookingSlotSummary(booking);
+      if (!mobile || !customerName || !date || !bookingId || !Number.isFinite(amount) || amount <= 0 || !booking.time && !booking.slots?.length) {
+        throw new Error('This booking is missing a phone number or required payment details.');
+      }
 
-    const qrImageUrl = `${window.location.origin}/logo-assets/QRCode1.jpg`;
-    const message = [
-      '⚽ *TURF BOOKING RESERVATION* ⚽',
-      '------------------------------------',
-      `Hello *${customerName}*,`,
-      'Your slot has been reserved!',
-      '',
-      `📅 *Date:* ${slotDate}`,
-      `⏰ *Time:* ${slotTime}`,
-      `💰 *Total Amount:* ₹${amount.toLocaleString('en-IN')}`,
-      `🆔 *Booking ID:* ${bookingId}`,
-      '------------------------------------',
-      '*Payment QR Code:*',
-      `Open to pay: ${qrImageUrl}`,
-      '',
-      '*Payment Instructions:*',
-      '1. Scan the QR code link above with GPay, PhonePe, or Paytm.',
-      `2. Enter the exact amount: *₹${amount.toLocaleString('en-IN')}*.`,
-      `3. Add Booking ID *${bookingId}* in the remarks.`,
-      '4. Once paid, reply here with the 12-digit UTR/Ref number or screenshot to confirm your slot!',
-      '',
-      '_Slot held for 15 minutes._',
-    ].join('\n');
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=${mobile}&text=${encodeURIComponent(message)}`;
-
-    if (chatWindow && !chatWindow.closed) {
-      chatWindow.location.href = whatsappUrl;
-    } else if (!window.open(whatsappUrl, '_blank')) {
-      showToast('Allow popups to open WhatsApp.');
-      return false;
+      showToast('Sending QR image to WhatsApp...');
+      const response = await fetch('/api/admin/whatsapp-notify', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mobile,
+          name: customerName,
+          businessName: settings.businessName || 'TurfOn24',
+          amount,
+          duration: Number(booking.duration || 0),
+          date,
+          slotSummary,
+          upiId: settings.upi || settings.upiId || '—',
+          bookingId,
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.message || 'Unable to send the WhatsApp QR image.');
+      showToast(result.message || 'WhatsApp QR image sent to the customer.');
+    } catch (error) {
+      console.error('WhatsApp booking confirmation failed', error);
+      showToast(error.message || 'Unable to send the WhatsApp QR image.');
     }
-    showToast('Opening WhatsApp chat...');
-    return true;
   }
   async function loadAdminBookings(){
     const requestId = ++bookingRequestId;
@@ -2472,19 +2465,12 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     await updateBookingStatus(bookingId, 'CONFIRMED');
   }
   async function sendBookingPaymentMessage(bookingId){
-    const chatWindow = window.open('about:blank', '_blank');
-    if (!chatWindow) {
-      showToast('Allow popups to open WhatsApp.');
-      return;
-    }
-    chatWindow.opener = null;
     try {
       const bookingResponse = await fetch('/api/admin/bookings?id=' + encodeURIComponent(bookingId), {credentials:'include'});
       const bookingData = await bookingResponse.json().catch(()=>({}));
       if(!bookingResponse.ok) throw new Error(bookingResponse.status === 401 ? 'Your admin session has expired.' : (bookingData.message || 'Unable to load booking details.'));
-      openBookingWhatsApp(bookingData.booking || {}, chatWindow);
+      await openBookingWhatsApp(bookingData.booking || {});
     } catch(error) {
-      chatWindow.close();
       showToast(error.message);
     }
   }
