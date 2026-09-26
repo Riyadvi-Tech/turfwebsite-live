@@ -2540,7 +2540,11 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   let paymentDateMode = 'all';
   let payments = [];
   let paymentRequestId = 0;
-  function paymentStatusLabel(status){ return {PAYMENT_PENDING:'Pending', PAID:'Paid / Verified', EXPIRED:'Expired', FAILED:'Failed', CANCELLED:'Cancelled'}[status] || status; }
+  function paymentStatusLabel(status, proofStatus){
+    if(status === 'PAYMENT_PENDING' && proofStatus === 'PENDING') return 'UTR submitted';
+    if(status === 'PAYMENT_PENDING' && proofStatus === 'REJECTED') return 'Proof rejected';
+    return {PAYMENT_PENDING:'Pending', PAID:'Paid / Verified', EXPIRED:'Expired', FAILED:'Failed', CANCELLED:'Cancelled'}[status] || status;
+  }
   function paymentBadgeClass(status){ return status === 'PAID' ? 'verified' : status === 'PAYMENT_PENDING' ? 'pending' : status === 'FAILED' ? 'cancelled' : status === 'CANCELLED' ? 'cancelled' : 'confirmed'; }
   function paymentValue(data, keys){
     for(const key of keys){ if(data && data[key] !== undefined && data[key] !== null && data[key] !== '') return data[key]; }
@@ -2580,8 +2584,9 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
         const createdDate = formatDateDDMMYYYY(p.createdAt);
         const date = paymentValue(booking, ['date','dateLabel']);
         const time = paymentValue(booking, ['startTime','time']);
-        const status = paymentStatusLabel(p.status);
-        const action = `<button onclick="viewPaymentDetails('${escapePaymentHtml(p.reference)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>` + (p.status === 'PAYMENT_PENDING' && p.source !== 'booking' ? `<button onclick="markPaymentPaid('${escapePaymentHtml(p.reference)}')" title="Mark paid"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button>` : '');
+        const proofStatus = p.paymentProof?.status || '';
+        const status = paymentStatusLabel(p.status, proofStatus);
+        const action = `<button onclick="viewPaymentDetails('${escapePaymentHtml(p.reference)}')" title="View details and payment proof"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>` + (p.status === 'PAYMENT_PENDING' && p.source !== 'booking' && !proofStatus ? `<button onclick="markPaymentPaid('${escapePaymentHtml(p.reference)}')" title="Mark paid after checking the bank transaction"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button>` : '');
         return `<tr><td class="mono">${escapePaymentHtml(p.bookingId || p.reference)}</td><td>${escapePaymentHtml(name)}</td><td class="mono">${escapePaymentHtml(mobile)}</td><td>${escapePaymentHtml(createdDate)}</td><td>${escapePaymentHtml(date)}</td><td>${escapePaymentHtml(time)}</td><td class="mono">₹${Number(p.amount).toLocaleString('en-IN')}</td><td><span class="badge ${paymentBadgeClass(p.status)}">${status}</span></td><td><div class="row-actions">${action}</div></td></tr>`;
       }).join('') : '<tr><td colspan="9" class="tbl-empty">No payment sessions found</td></tr>';
       const visiblePayments = paymentDateMode === 'today' ? payments.filter(paymentIsToday) : payments;
@@ -2601,9 +2606,31 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const payment = payments.find(item => item.reference === reference);
     if(!payment) return;
     const booking = payment.bookingData || {};
-    const status = paymentStatusLabel(payment.status);
-    document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Booking ID</span><span class="mono">${escapePaymentHtml(payment.bookingId || payment.reference)}</span></div><div class="detail-row"><span>Customer</span><span>${escapePaymentHtml(paymentValue(booking, ['name','customerName']))}</span></div><div class="detail-row"><span>Mobile</span><span class="mono">${escapePaymentHtml(paymentValue(booking, ['mobile','phone']))}</span></div><div class="detail-row"><span>Booking date</span><span>${escapePaymentHtml(paymentValue(booking, ['date','dateLabel']))}</span></div><div class="detail-row"><span>Payment time</span><span>${escapePaymentHtml(paymentValue(booking, ['startTime','time']))}</span></div><div class="detail-row"><span>Amount</span><span class="mono">₹${Number(payment.amount || 0).toLocaleString('en-IN')}</span></div><div class="detail-row"><span>Payment status</span><span class="badge ${paymentBadgeClass(payment.status)}">${escapePaymentHtml(status)}</span></div><div class="detail-row"><span>Payment reference</span><span class="mono">${escapePaymentHtml(payment.reference)}</span></div>`;
+    const proof = payment.paymentProof || {};
+    const status = paymentStatusLabel(payment.status, proof.status);
+    const screenshot = typeof proof.screenshot === 'string'
+      && proof.screenshot.length <= 2500000
+      && /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(proof.screenshot)
+      ? proof.screenshot
+      : '';
+    const proofDetails = proof.utrId ? `<div class="detail-row"><span>UTR / transaction ID</span><span class="mono">${escapePaymentHtml(proof.utrId)}</span></div><div class="detail-row"><span>Proof status</span><span>${escapePaymentHtml(proof.status || 'PENDING')}</span></div><div class="detail-row"><span>Screenshot</span><span>${screenshot ? `<a href="${screenshot}" target="_blank" rel="noopener noreferrer"><img src="${screenshot}" alt="Customer payment screenshot" style="display:block; max-width:220px; max-height:180px; object-fit:contain; border-radius:6px;"></a>` : 'Not attached'}</span></div>` : '';
+    const proofActions = proof.status === 'PENDING' && payment.status === 'PAYMENT_PENDING'
+      ? `<div style="display:flex; gap:8px; margin-top:16px;"><button type="button" class="btn btn-glow" onclick="decidePaymentProof('${escapePaymentHtml(payment.reference)}','APPROVE')">Approve and confirm booking</button><button type="button" class="btn btn-outline" onclick="decidePaymentProof('${escapePaymentHtml(payment.reference)}','REJECT')">Reject proof</button></div>`
+      : '';
+    document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Booking ID</span><span class="mono">${escapePaymentHtml(payment.bookingId || payment.reference)}</span></div><div class="detail-row"><span>Customer</span><span>${escapePaymentHtml(paymentValue(booking, ['name','customerName']))}</span></div><div class="detail-row"><span>Mobile</span><span class="mono">${escapePaymentHtml(paymentValue(booking, ['mobile','phone']))}</span></div><div class="detail-row"><span>Booking date</span><span>${escapePaymentHtml(paymentValue(booking, ['date','dateLabel']))}</span></div><div class="detail-row"><span>Payment time</span><span>${escapePaymentHtml(paymentValue(booking, ['startTime','time']))}</span></div><div class="detail-row"><span>Amount</span><span class="mono">₹${Number(payment.amount || 0).toLocaleString('en-IN')}</span></div><div class="detail-row"><span>Payment status</span><span class="badge ${paymentBadgeClass(payment.status)}">${escapePaymentHtml(status)}</span></div><div class="detail-row"><span>Payment reference</span><span class="mono">${escapePaymentHtml(payment.reference)}</span></div>${proofDetails}${proofActions}`;
     openModal('detailModal');
+  }
+  async function decidePaymentProof(reference, decision){
+    const action = decision === 'APPROVE' ? 'approve' : 'reject';
+    if(!window.confirm(`${action === 'approve' ? 'Approve this payment and confirm the booking' : 'Reject this payment proof'}?`)) return;
+    try {
+      const response = await fetch('/api/admin/payment-verification', {method:'POST', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({reference, decision})});
+      const data = await response.json().catch(()=>({}));
+      if(!response.ok) throw new Error(data.message || `Unable to ${action} payment proof.`);
+      closeModal('detailModal');
+      showToast(decision === 'APPROVE' ? 'Payment verified and booking confirmed.' : 'Payment proof rejected.');
+      await renderPayments();
+    } catch(error) { showToast(error.message); }
   }
   async function markPaymentPaid(reference){
     try {

@@ -12,7 +12,7 @@ export default async function handler(req, res) {
   const screenshot = String(req.body?.screenshot || '').trim()
   if (!REFERENCE_PATTERN.test(reference)) return res.status(400).json({ message: 'Invalid payment reference.' })
   if (!/^[A-Za-z0-9-]{6,32}$/.test(utrId)) return res.status(400).json({ message: 'Enter a valid UTR or transaction ID.' })
-  if (!IMAGE_PATTERN.test(screenshot) || screenshot.length > MAX_SCREENSHOT_LENGTH) {
+  if (screenshot && (!IMAGE_PATTERN.test(screenshot) || screenshot.length > MAX_SCREENSHOT_LENGTH)) {
     return res.status(400).json({ message: 'Upload a JPG, PNG, or WebP payment screenshot under 2 MB.' })
   }
 
@@ -23,7 +23,13 @@ export default async function handler(req, res) {
       { reference, status: 'PAYMENT_PENDING', expiresAt: { $gt: now } },
       {
         $set: {
-          paymentProof: { utrId, screenshot, status: 'PENDING', submittedAt: now, updatedAt: now },
+          paymentProof: {
+            utrId,
+            ...(screenshot ? { screenshot } : {}),
+            status: 'PENDING',
+            submittedAt: now,
+            updatedAt: now,
+          },
           updatedAt: now,
         },
       },
