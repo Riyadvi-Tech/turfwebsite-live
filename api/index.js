@@ -13,7 +13,6 @@ import adminForgotPassword from '../server/admin/forgot-password.js'
 import adminLogin from '../server/admin/login.js'
 import adminLogout from '../server/admin/logout.js'
 import adminPaymentSessions from '../server/admin/payment-sessions.js'
-import adminPaymentVerification from '../server/admin/payment-verification.js'
 import adminProfile from '../server/admin/profile.js'
 import adminReports from '../server/admin/reports.js'
 import adminResetPassword from '../server/admin/reset-password.js'
@@ -24,7 +23,6 @@ import adminWhatsappEnquiries from '../server/admin/whatsapp-enquiries.js'
 import adminWhatsappNotify from '../server/admin/whatsapp-notify.js'
 import paymentCreate from '../server/payment/create.js'
 import paymentStatus from '../server/payment/status.js'
-import paymentProof from '../server/payment/proof.js'
 import sendPaymentQr from '../server/send-payment-qr.js'
 
 const handlers = {
@@ -43,7 +41,6 @@ const handlers = {
   'admin/login': adminLogin,
   'admin/logout': adminLogout,
   'admin/payment-sessions': adminPaymentSessions,
-  'admin/payment-verification': adminPaymentVerification,
   'admin/profile': adminProfile,
   'admin/reports': adminReports,
   'admin/reset-password': adminResetPassword,
@@ -54,7 +51,6 @@ const handlers = {
   'admin/whatsapp-notify': adminWhatsappNotify,
   'payment/create': paymentCreate,
   'payment/status': paymentStatus,
-  'payment/proof': paymentProof,
   'send-payment-qr': sendPaymentQr,
 }
 

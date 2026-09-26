@@ -1696,14 +1696,6 @@
             <button type="button" class="btn btn-glow" id="bkPayApp" onclick="payNow(event)">Pay Now</button>
             <button type="button" class="btn btn-outline" onclick="copyPaymentUpi()">Copy UPI ID</button>
           </div>
-          <div style="text-align:left; margin-top:22px; padding-top:18px; border-top:1px solid var(--border);">
-            <label class="field-label" for="bkUtrId">Confirm your payment</label>
-            <p style="font-size:12px; color:var(--muted); margin:6px 0 10px;">Enter the UTR / transaction ID from your UPI app. Screenshot is optional.</p>
-            <input id="bkUtrId" type="text" maxlength="32" placeholder="Enter UTR / transaction ID" style="width:100%; margin:0 0 10px;">
-            <input id="bkPaymentScreenshot" type="file" accept="image/jpeg,image/png,image/webp" style="width:100%; margin-bottom:10px;">
-            <button type="button" class="btn btn-outline" onclick="submitPaymentProof(this)">Submit UTR</button>
-            <p id="bkProofStatus" class="payment-pending" style="display:none; margin-bottom:0;"></p>
-          </div>
           <div class="bk-payment-details" style="text-align:left; margin-top:22px; padding-top:18px; border-top:1px solid var(--border);">
             <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-bottom:14px;"><span>Date</span><span class="mono" style="color:var(--white);" id="bkPayDate">—</span></div>
             <div id="bkPaySlots"></div>
@@ -2429,7 +2421,7 @@
     document.getElementById(appId).href = session.upiUriFallback || session.upiUri;
     if(paymentStatus){
       paymentStatus.style.display = 'block';
-      paymentStatus.textContent = 'Payment pending. Choose your UPI app to complete the payment. Your booking will be confirmed only after backend verification.';
+      paymentStatus.textContent = 'Complete your payment using the QR. We will verify it and confirm your booking shortly.';
     }
     startPaymentPolling();
   }
@@ -3558,59 +3550,19 @@
       document.querySelectorAll('.payment-pending').forEach(el=>{ el.style.display='block'; el.innerHTML='Payment session expired. Please start payment again. <button class="btn btn-outline" type="button" onclick="restartPaymentSession()">Start payment again</button>'; });
       return;
     }
-    const message = 'Payment pending. No verified payment was found yet.';
+    const message = 'We are checking your payment. Your booking will be confirmed once it is verified.';
     document.querySelectorAll('.payment-pending').forEach(el=>{ el.textContent=message; });
   }
   async function restartPaymentSession(){
     if(!paymentSession || paymentSession.status !== 'EXPIRED') return;
     await bkFillPayment();
   }
-  function resizePaymentScreenshot(file){
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const image = new Image();
-        image.onload = () => {
-          const scale = Math.min(1, 1400 / Math.max(image.width, image.height));
-          const canvas = document.createElement('canvas');
-          canvas.width = Math.max(1, Math.round(image.width * scale));
-          canvas.height = Math.max(1, Math.round(image.height * scale));
-          canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
-          resolve(canvas.toDataURL('image/jpeg', 0.78));
-        };
-        image.onerror = () => reject(new Error('The selected screenshot could not be read.'));
-        image.src = reader.result;
-      };
-      reader.onerror = () => reject(new Error('The selected screenshot could not be read.'));
-      reader.readAsDataURL(file);
-    });
-  }
-  async function submitPaymentProof(button){
-    const status = document.getElementById('bkProofStatus');
-    const utrId = document.getElementById('bkUtrId')?.value.trim();
-    const file = document.getElementById('bkPaymentScreenshot')?.files?.[0];
-    if(!paymentSession?.reference){ if(status){ status.style.display='block'; status.textContent='Please wait for the payment request to load.'; } return; }
-    if(!/^[A-Za-z0-9-]{6,32}$/.test(utrId || '')){ if(status){ status.style.display='block'; status.textContent='Enter the UTR or transaction ID from your UPI app.'; } return; }
-    try {
-      if(button) { button.disabled = true; button.textContent = 'Submitting...'; }
-      if(status){ status.style.display='block'; status.textContent='Submitting payment proof...'; }
-      const screenshot = file ? await resizePaymentScreenshot(file) : '';
-      const response = await fetch('/api/payment/proof', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({reference:paymentSession.reference, utrId, screenshot})});
-      const result = await response.json().catch(()=>({}));
-      if(!response.ok) throw new Error(result.message || 'Unable to submit payment proof.');
-      if(status) status.textContent='UTR submitted. We will verify your payment and update the booking.';
-    } catch(error) {
-      if(status){ status.style.display='block'; status.textContent=error.message; }
-    } finally {
-      if(button) { button.disabled = false; button.textContent = 'Submit UTR'; }
-    }
-  }
   function acknowledgePaymentPending(){
     closeModal('paymentConfirmModal');
     const status = document.getElementById('bkPaymentStatus');
     if(status){
       status.style.display = 'block';
-      status.textContent = 'Payment pending. Our team will verify the UPI transaction before confirming your booking.';
+      status.textContent = 'Thanks. We will verify your payment and confirm the booking shortly.';
     }
     startPaymentPolling();
   }

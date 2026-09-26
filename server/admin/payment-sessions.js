@@ -129,7 +129,7 @@ export default async function handler(req, res) {
 
       const sessions = await db
         .collection('payment_sessions')
-        .find(filter, { projection: { reference: 1, bookingType: 1, amount: 1, currency: 1, status: 1, bookingData: 1, paymentProof: 1, createdAt: 1, expiresAt: 1, paidAt: 1 } })
+        .find(filter, { projection: { reference: 1, bookingType: 1, amount: 1, currency: 1, status: 1, bookingData: 1, createdAt: 1, expiresAt: 1, paidAt: 1 } })
         .sort({ createdAt: -1 })
         .toArray()
 
@@ -208,7 +208,6 @@ export default async function handler(req, res) {
           currency: session.currency,
           status: normalizedStatus,
           bookingData: safeBookingData(session.bookingData),
-          paymentProof: session.paymentProof || null,
           createdAt: session.createdAt,
           expiresAt: session.expiresAt,
           paidAt: session.paidAt || null,
