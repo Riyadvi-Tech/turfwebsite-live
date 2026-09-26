@@ -5,7 +5,7 @@ import { getDb } from '../_lib/mongodb.js'
 import { parseAdminSessionToken } from '../_lib/cookies.js'
 
 const moduleDirectory = path.dirname(fileURLToPath(import.meta.url))
-const imagePath = path.resolve(moduleDirectory, '../../public/logo-assets/QR code.jpeg')
+const imagePath = path.resolve(moduleDirectory, '../../public/logo-assets/qrcodepng.png')
 
 function fail(res, status, message) {
   return res.status(status).json({ success: false, message })
@@ -54,7 +54,7 @@ export default async function handler(req, res) {
     const date = safeText(req.body?.date, 'your selected date', 80)
     const slotSummary = safeText(req.body?.slotSummary, 'your selected time', 500)
     const upiId = safeText(req.body?.upiId, '—', 120)
-    const qrUrl = safeText(req.body?.qrUrl, '', 1000)
+    const bookingId = safeText(req.body?.bookingId, '—', 120)
     const caption = [
       `*${businessName} Booking Notification*`,
       `Hello ${name},`,
@@ -65,11 +65,13 @@ export default async function handler(req, res) {
       `Time: ${slotSummary}`,
       `Duration: ${duration || '—'} hour${duration === 1 ? '' : 's'}`,
       `Amount Due: ₹${amount.toLocaleString('en-IN')}`,
+      `Booking ID: ${bookingId}`,
       '',
       `UPI ID: ${upiId}`,
-      ...(qrUrl ? [`Pay Now: ${qrUrl}`] : []),
+      'Scan the attached QR code with Google Pay, PhonePe, or Paytm.',
+      'Enter the exact amount shown above and add the Booking ID in the payment note.',
       '',
-      'Please complete the payment and share the payment screenshot in this chat for verification.',
+      'Reply with the 12-digit UTR/Ref number or payment screenshot to confirm your booking.',
     ].join('\n')
 
     const { sendImage } = await import('../_lib/whatsapp-client.js')
