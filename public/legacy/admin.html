@@ -2691,11 +2691,17 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     if(!label) return;
     label.textContent = paymentStatus === 'all' && paymentDateMode === 'all' ? 'Total amount received' : 'Amount received';
   }
+  function paymentMatchesStatus(payment){
+    if(paymentStatus === 'all') return true;
+    const status = String(payment.status || '').toUpperCase();
+    if(paymentStatus === 'pending') return status === 'PAYMENT_PENDING' || status === 'PENDING';
+    return status === String(paymentStatus).toUpperCase();
+  }
   async function renderPayments(){
     const requestId = ++paymentRequestId;
     const search = (document.getElementById('paymentSearch').value || '').trim();
     const params = new URLSearchParams();
-    if(paymentStatus !== 'all') params.set('status', paymentStatus === 'paid' ? 'PAID' : paymentStatus.toUpperCase());
+    if(paymentStatus !== 'all') params.set('status', paymentStatus === 'pending' ? 'PAYMENT_PENDING' : paymentStatus === 'paid' ? 'PAID' : paymentStatus.toUpperCase());
     if(search) params.set('search', search);
     try {
       const response = await fetch('/api/admin/payment-sessions?' + params.toString(), {credentials:'include'});
@@ -2703,7 +2709,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       if(!response.ok) throw new Error(data.message || 'Unable to load payment records.');
       if(requestId !== paymentRequestId) return;
       payments = Array.isArray(data.sessions) ? data.sessions.slice().sort((first, second) => (Date.parse(second.createdAt || second.paidAt || '') || 0) - (Date.parse(first.createdAt || first.paidAt || '') || 0)) : [];
-      const rows = paymentDateMode === 'today' ? payments.filter(paymentIsToday) : payments;
+      const rows = payments.filter(payment => paymentMatchesStatus(payment) && (paymentDateMode !== 'today' || paymentIsToday(payment)));
       document.getElementById('paymentsBody').innerHTML = rows.length ? rows.map(p=>{
         const booking = p.bookingData || {};
         const name = paymentValue(booking, ['name','customerName']);
@@ -2715,7 +2721,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
         const action = `<button onclick="viewPaymentDetails('${escapePaymentHtml(p.reference)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>` + (p.status === 'PAYMENT_PENDING' && p.source !== 'booking' ? `<button onclick="markPaymentPaid('${escapePaymentHtml(p.reference)}')" title="Mark paid after verifying the bank transaction"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button>` : '');
         return `<tr><td class="mono">${escapePaymentHtml(p.bookingId || p.reference)}</td><td>${escapePaymentHtml(name)}</td><td class="mono">${escapePaymentHtml(mobile)}</td><td>${escapePaymentHtml(createdDate)}</td><td>${escapePaymentHtml(date)}</td><td class="mono">₹${Number(p.amount).toLocaleString('en-IN')}</td><td><span class="badge ${paymentBadgeClass(p.status)}">${status}</span></td><td><div class="row-actions">${action}</div></td></tr>`;
       }).join('') : '<tr><td colspan="8" class="tbl-empty">No payment sessions found</td></tr>';
-      const visiblePayments = paymentDateMode === 'today' ? payments.filter(paymentIsToday) : payments;
+      const visiblePayments = payments.filter(payment => paymentMatchesStatus(payment) && (paymentDateMode !== 'today' || paymentIsToday(payment)));
       const totalAmount = visiblePayments.reduce((sum,p)=>sum + (String(p.status || '').toUpperCase() === 'PAID' ? Number(p.amount || 0) : 0), 0);
       updatePaymentAmountLabel();
       document.getElementById('paymentsTotalCount').textContent = String(rows.length);
