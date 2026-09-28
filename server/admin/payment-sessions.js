@@ -35,6 +35,13 @@ function cancelledByBooking(booking) {
   return normalizeStatus(booking.bookingStatus) === 'CANCELLED' || normalizeStatus(booking.paymentStatus) === 'CANCELLED'
 }
 
+function bookingConfirmationStatus(booking) {
+  const bookingStatus = normalizeStatus(booking?.bookingStatus)
+  if (bookingStatus === 'CANCELLED') return 'CANCELLED'
+  if (bookingStatus === 'CONFIRMED') return 'CONFIRMED'
+  return 'PAYMENT_PENDING'
+}
+
 function safeBookingData(data) {
   if (!data || typeof data !== 'object') return {}
   const allowed = ['type', 'mobile', 'date', 'dateLabel', 'startTime', 'endTime', 'time', 'duration', 'hours', 'days', 'startDate', 'endDate', 'preferredTimes', 'preferredTime', 'name', 'customerName']
@@ -168,9 +175,7 @@ export default async function handler(req, res) {
       const bookingSessions = bookings
         .filter((booking) => !booking.paymentReference || !sessionReferences.has(booking.paymentReference))
         .map((booking) => {
-          const statusFromBooking = cancelledByBooking(booking)
-            ? 'CANCELLED'
-            : normalizeStatus(booking.paymentStatus) || (normalizeStatus(booking.bookingStatus) === 'CONFIRMED' ? 'PAID' : 'PAYMENT_PENDING')
+          const statusFromBooking = bookingConfirmationStatus(booking)
           return {
             reference: booking.paymentReference || String(booking._id),
             bookingId: String(booking._id),
@@ -196,9 +201,9 @@ export default async function handler(req, res) {
 
       const mergedSessions = [...filteredSessions.map((session) => {
         const booking = bookingByReference.get(session.reference)
-        const normalizedStatus = cancelledByBooking(booking)
-          ? 'CANCELLED'
-          : session.status
+          const normalizedStatus = booking
+            ? bookingConfirmationStatus(booking)
+            : session.status
         return {
           reference: session.reference,
           bookingId: booking?._id ? String(booking._id) : session.reference,
@@ -226,6 +231,11 @@ export default async function handler(req, res) {
         if (status === 'EXPIRED') return row.status === 'EXPIRED'
         if (status === 'FAILED') return row.status === 'FAILED'
         return true
+      })
+      finalSessions.sort((first, second) => {
+        const firstTime = Date.parse(first.createdAt || first.paidAt || '') || 0
+        const secondTime = Date.parse(second.createdAt || second.paidAt || '') || 0
+        return secondTime - firstTime
       })
 
       return res.status(200).json({

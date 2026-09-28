@@ -75,6 +75,7 @@ const projection = {
   requirements: 1,
   summary: 1,
   status: 1,
+  read: 1,
   createdAt: 1,
   updatedAt: 1,
 }
@@ -84,6 +85,7 @@ function publicEnquiry(enquiry) {
   return {
     ...enquiry,
     status: normalized === 'old' ? 'contacted' : normalized || 'new',
+    read: enquiry.read === true,
     _id: String(enquiry._id),
   }
 }
@@ -109,11 +111,15 @@ export default async function handler(req, res) {
         return enquiry ? res.status(200).json({ enquiry: publicEnquiry(enquiry) }) : fail(res, 404, 'Enquiry not found.')
       }
 
-      const status = parseStatus(req.body?.status)
-      if (!status) return fail(res, 400, 'Enquiry status is required.')
+      const status = req.body?.status === undefined ? null : parseStatus(req.body.status)
+      const read = req.body?.read === undefined ? null : req.body.read === true
+      if (!status && read === null) return fail(res, 400, 'Enquiry update is required.')
+      const update = { updatedAt: new Date() }
+      if (status) update.status = status
+      if (read !== null) update.read = read
       const result = await db.collection('extended_enquiries').findOneAndUpdate(
         { _id: id },
-        { $set: { status, updatedAt: new Date() } },
+        { $set: update },
         { returnDocument: 'after', projection },
       )
       return result ? res.status(200).json({ enquiry: publicEnquiry(result) }) : fail(res, 404, 'Enquiry not found.')
@@ -123,6 +129,8 @@ export default async function handler(req, res) {
 
     const { page, limit } = pagination(req.query || {})
     const status = parseStatus(req.query?.status)
+    const readFilter = req.query?.read === undefined ? null : String(req.query.read).toLowerCase()
+    if (readFilter !== null && !['true', 'false'].includes(readFilter)) throw new Error('Invalid read filter.')
     const mobile = req.query?.mobile === undefined ? '' : String(req.query.mobile).trim()
     if (mobile && !/^\d{3,15}$/.test(mobile)) throw new Error('Invalid mobile.')
     const startDate = parseDate(req.query?.startDate, 'start date')
@@ -130,6 +138,8 @@ export default async function handler(req, res) {
     const createdDate = parseDate(req.query?.createdDate, 'enquiry date')
     const filter = {}
     if (status) filter.status = status
+    if (readFilter === 'true') filter.read = true
+    if (readFilter === 'false') filter.$and = [...(filter.$and || []), { $or: [{ read: false }, { read: { $exists: false } }] }]
     if (mobile) filter.mobile = mobile
     if (startDate && endDate) {
       filter.startDate = { $lte: endDate }
@@ -143,9 +153,12 @@ export default async function handler(req, res) {
       const nextDate = new Date(`${createdDate}T00:00:00.000Z`)
       nextDate.setUTCDate(nextDate.getUTCDate() + 1)
       const nextDateKey = nextDate.toISOString().slice(0, 10)
-      filter.$or = [
+      filter.$and = [
+        ...(filter.$and || []),
+        { $or: [
         { createdAt: { $gte: new Date(`${createdDate}T00:00:00.000Z`), $lt: nextDate } },
         { createdAt: { $gte: `${createdDate}T00:00:00.000Z`, $lt: `${nextDateKey}T00:00:00.000Z` } },
+        ] },
       ]
     }
 
