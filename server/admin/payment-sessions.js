@@ -235,6 +235,7 @@ export default async function handler(req, res) {
       }))
 
       const finalSessions = normalizedMergedSessions.filter((row) => {
+        if (status === 'CONFIRMED') return row.status === 'CONFIRMED' || row.status === 'PAID'
         if (status === 'CANCELLED') return row.status === 'CANCELLED'
         if (status === 'PAID') return row.status === 'PAID'
         if (status === 'PAYMENT_PENDING') return row.status === 'PAYMENT_PENDING'
