@@ -687,7 +687,36 @@
     #analyticsDonut{max-width:190px; flex:0 0 190px;}
     .pie-legend{flex:1; max-height:170px;}
     .analytics-page-head h3{font-size:17px;}
-    .range-pill{font-size:11px; padding:7px 11px;}
+    #page-analytics .panel{padding:16px 12px 20px; border-radius:16px;}
+    .range-pills{
+      display:grid;
+      grid-template-columns:repeat(6, 1fr);
+      gap:8px;
+      width:100%;
+      margin:14px 0 10px;
+    }
+    .range-pill{
+      width:100%;
+      height:36px;
+      padding:0 6px;
+      font-size:11px;
+      font-weight:500;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      box-sizing:border-box;
+      white-space:nowrap;
+    }
+    .range-pill:nth-child(1),
+    .range-pill:nth-child(2),
+    .range-pill:nth-child(3){
+      grid-column:span 2;
+    }
+    .range-pill:nth-child(4),
+    .range-pill:nth-child(5){
+      grid-column:span 3;
+    }
     .analytics-daterange{flex-direction:column; align-items:stretch; gap:10px; padding:12px;}
     .analytics-daterange .dr-field{width:100%; justify-content:space-between;}
     .analytics-daterange .date-wrap{flex:1 1 auto !important; min-width:0 !important; max-width:none !important;}
