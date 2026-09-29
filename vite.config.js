@@ -6,24 +6,8 @@ import { pathToFileURL } from 'node:url'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  for (const name of [
-    'MONGODB_URI',
-    'MONGODB_DB',
-    'APP_URL',
-    'MAIL_FROM',
-    'RESET_DEST_EMAIL',
-    'SMTP_HOST',
-    'SMTP_PORT',
-    'SMTP_PASS',
-    'SMTP_USER',
-    'SMTP_PASSWORD',
-    'SMTP_SECURE',
-    'SMTP_FROM',
-    'MSG91_AUTH_KEY',
-    'PAYMENT_UPI_ID',
-    'PAYMENT_UPI_NAME',
-  ]) {
-    if (env[name]) process.env[name] = env[name]
+  for (const [key, value] of Object.entries(env)) {
+    if (value) process.env[key] = value
   }
 
   return {

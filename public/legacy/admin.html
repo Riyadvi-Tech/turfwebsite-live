@@ -154,8 +154,8 @@
   /* Reduced page title text */
   .page-title{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px; white-space:nowrap;}
   /* Reduced global search text */
-  .gsearch{flex:1; max-width:360px; display:flex; align-items:center; gap:9px; background:var(--charcoal); border:1px solid var(--border); border-radius:10px; padding:9px 14px; color:var(--muted); font-size:12px; cursor:pointer;}
-  .gsearch kbd{margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:10px; border:1px solid var(--border); border-radius:5px; padding:2px 6px;}
+  .gsearch{flex:0 1 240px; max-width:240px; height:32px; display:flex; align-items:center; gap:8px; background:var(--charcoal); border:1px solid var(--border); border-radius:8px; padding:6px 12px; color:var(--muted); font-size:11.5px; cursor:pointer;}
+  .gsearch kbd{margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:9.5px; border:1px solid var(--border); border-radius:4px; padding:1px 5px;}
   .topbar-right{display:flex; align-items:center; gap:14px; flex-shrink:0;}
   .icon-btn{width:36px;height:36px;border-radius:10px; border:1px solid var(--border); background:transparent; color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative; transition:all .2s ease;}
   .icon-btn:hover{color:var(--neon); border-color:var(--neon);}
@@ -210,8 +210,8 @@
   /* toolbar */
   .toolbar{display:flex; align-items:center; gap:10px; margin-bottom:18px; flex-wrap:wrap;}
   /* Reduced toolbar input text */
-  .toolbar input[type="text"]{background:var(--charcoal); border:1px solid var(--border); border-radius:10px; padding:9px 14px; color:var(--white); font-size:12.5px; min-width:200px; flex:1 1 200px; box-sizing:border-box;}
-  #page-enquiries #enquirySearch{flex:0 1 480px; max-width:480px;}
+  .toolbar input[type="text"]{background:var(--charcoal); border:1px solid var(--border); border-radius:8px; padding:6px 12px; color:var(--white); font-size:11.5px; height:32px; min-height:32px; max-height:32px; min-width:140px; max-width:200px; flex:0 1 200px; box-sizing:border-box; text-overflow:ellipsis;}
+  #page-enquiries #enquirySearch{flex:0 1 200px; max-width:200px;}
   /* Reduced date filter text */
   .date-wrap{position:relative; display:inline-flex; align-items:center; min-width:170px; max-width:100%; flex:0 1 auto; box-sizing:border-box; background:var(--charcoal); border:1px solid var(--border); border-radius:10px; color:var(--white); font-size:12.5px; cursor:pointer;}
   .date-wrap .date-ph{display:block; position:relative; z-index:1; left:0; top:0; transform:none; width:100%; box-sizing:border-box; color:var(--white); font-size:inherit; pointer-events:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:9px 40px 9px 12px; font-family:'Inter',sans-serif;}
@@ -518,7 +518,7 @@
   .analytics-dropdown.open .analytics-dropdown-menu{display:block;}
   .analytics-dropdown-menu .analytics-option{display:block; width:100%; text-align:left; padding:10px 12px; border:none; border-radius:8px; background:transparent; color:var(--white); font-family:'Inter',sans-serif; font-size:12.5px; cursor:pointer; transition:background .15s ease, color .15s ease;}
   .analytics-dropdown-menu .analytics-option:hover{background:rgba(57,255,122,0.10); color:var(--neon);}
-  .analytics-dropdown-menu .analytics-option.sel{background:rgba(57,255,122,0.14); color:var(--neon); font-weight:600;}
+
   @media(max-width:1000px){
     .analytics-dropdown{width:100%;}
     .analytics-dropdown .analytics-select{padding:13px 14px; font-size:14.5px; min-height:46px;}
@@ -551,16 +551,43 @@
     .login-card{position:relative; z-index:2; margin-top:0;}
     .login-brand-wrap{display:none;}
     .login-brand-wrap img{max-width:220px;width:auto;height:auto;display:block;filter:drop-shadow(0 0 12px rgba(57,255,122,0.2));}
-    .login-card .login-brand-wrap{display:flex;justify-content:center;margin:-10px auto 12px;}
-    .table-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
+    .page{padding:14px 6px;}
+    .topbar{padding:0 12px;}
+    .table-wrap{
+      width:100%;
+      border-radius:14px;
+      overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:thin;
+      scrollbar-color:rgba(57,255,122,0.3) transparent;
+      box-shadow:0 8px 24px rgba(0,0,0,0.35);
+    }
+    .table-wrap::-webkit-scrollbar{height:6px;}
+    .table-wrap::-webkit-scrollbar-thumb{background:rgba(57,255,122,0.3); border-radius:6px;}
+    .table-wrap::-webkit-scrollbar-track{background:rgba(255,255,255,0.02);}
+    table{min-width:640px;}
+    #page-bookings table{min-width:1100px;}
+    #page-payments table{min-width:920px;}
+    #page-bookings th, #page-bookings td, #page-payments th, #page-payments td{padding:11px 12px;}
+
+    /* Mobile Responsive Modal Overrides */
+    .modal-overlay{padding:12px; align-items:center;}
+    .modal-box{padding:22px 18px 20px; border-radius:22px; max-width:min(500px, 100%); width:100%; max-height:88vh; box-shadow:0 18px 48px rgba(0,0,0,0.6);}
+    .modal-box h3{font-size:18px; margin-bottom:14px;}
+    .modal-header-line{display:flex; align-items:center; gap:10px; margin-bottom:16px;}
+    .modal-header-icon{width:36px; height:36px; border-radius:10px; background:rgba(57,255,122,0.12); color:var(--neon); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+    .detail-row{padding:11px 0; font-size:13px; align-items:flex-start; gap:10px;}
+    .detail-row span:first-child{font-size:12px; flex-shrink:0; min-width:96px;}
+    .detail-row span:last-child{word-break:break-word;}
+    .detail-row span.mono{word-break:break-all; font-size:12px;}
     table{min-width:640px;}
     .date-wrap{width:auto !important; flex:0 0 auto !important; min-width:120px !important; max-width:160px !important; height:32px !important; max-height:32px !important; min-height:32px !important; overflow:hidden !important; align-items:center !important;}
     .date-wrap .date-ph{display:flex; align-items:center; height:32px !important; max-height:32px !important; min-height:32px !important; padding:0 22px 0 10px !important; font-size:12px !important; line-height:32px !important;}
     .date-wrap .date-filter{font-size:16px !important; height:32px !important; max-height:32px !important; min-height:32px !important;}
     .date-wrap::after{width:12px !important; height:12px !important; top:50% !important; transform:translateY(-50%) !important; right:8px !important;}
-    .toolbar{gap:8px;}
-    .toolbar input[type="text"]{width:100%; min-width:0; flex:1 1 100%; height:36px !important; min-height:36px !important; max-height:36px !important; box-sizing:border-box; font-size:12.8px !important;}
-    #page-enquiries #enquirySearch{width:100%; max-width:none; flex:1 1 100%;}
+    .toolbar{gap:8px; margin-bottom:14px;}
+    .toolbar input[type="text"]{width:200px !important; min-width:0 !important; max-width:200px !important; flex:0 1 200px !important; height:31px !important; min-height:31px !important; max-height:31px !important; padding:4px 10px !important; font-size:11px !important; border-radius:8px !important; box-sizing:border-box; text-overflow:ellipsis;}
+    #page-enquiries #enquirySearch{width:200px !important; max-width:200px !important; flex:0 1 200px !important;}
     .filt-pill{font-size:10.5px; padding:6px 10px;}
     .booking-status-filters{gap:6px; overflow-x:auto; max-width:100%; scrollbar-width:none;}
     .booking-status-filters::-webkit-scrollbar{display:none;}
@@ -789,12 +816,12 @@
         <div class="spacer"></div>
         <button class="btn btn-ghost" id="bookingExport"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
       </div>
-      <div class="table-wrap">
+      <div class="table-wrap" id="bookingsTableWrap">
         <table>
           <thead><tr><th>Booking ID</th><th>Customer</th><th>Booked On</th><th>Mobile</th><th>Play Date</th><th>Slot</th><th>Time</th><th>Duration</th><th>Amount</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="bookingsBody"></tbody>
         </table>
-        <div class="table-foot"><span>Showing all bookings</span></div>
+        <div class="table-foot"><span id="bookingsTableFoot">Showing all bookings</span></div>
       </div>
     </div>
 
@@ -819,7 +846,7 @@
         <div class="spacer"></div>
         <button class="btn btn-ghost" id="paymentExport"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Download CSV</button>
       </div>
-      <div class="table-wrap">
+      <div class="table-wrap" id="paymentsTableWrap">
         <table>
           <thead><tr><th>Booking ID</th><th>Customer</th><th>Mobile</th><th>Booking Date</th><th>Date</th><th>Amount received</th><th>Payment status</th><th>Actions</th></tr></thead>
           <tbody id="paymentsBody"></tbody>
@@ -887,6 +914,7 @@
       <div class="toolbar">
         <input type="text" id="chatSearch" placeholder="Search by name, mobile...">
         <span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input class="date-filter" type="text" readonly id="chatDate" aria-label="Choose chatbot date" title="Choose chatbot date"><input id="chatDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span><div class="filt-pill sel" data-chat-filter="all">All</div>
+        <button class="btn btn-ghost" id="chatbotExport" style="margin-left:auto;" title="Download chatbot conversations as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Download CSV</button>
       </div>
       <div class="table-wrap">
         <table>
@@ -960,8 +988,13 @@
 <!-- BOOKING DETAIL MODAL -->
 <div class="modal-overlay" id="detailModal">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
-    <h3 style="margin-bottom:16px;">Booking details</h3>
+    <button class="modal-close" onclick="closeModal('detailModal')" aria-label="Close modal">✕</button>
+    <div class="modal-header-line">
+      <div class="modal-header-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
+      </div>
+      <h3 id="detailModalTitle" style="margin:0;">Booking details</h3>
+    </div>
     <div id="detailBody"></div>
   </div>
 </div>
@@ -2375,6 +2408,30 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     renderChatbot();
   }));
   syncChatbotFilters();
+  const chatbotExportBtn = document.getElementById('chatbotExport');
+  if (chatbotExportBtn) {
+    chatbotExportBtn.addEventListener('click', ()=>{
+      const rows = chatRows();
+      if(!rows.length){ showToast('No data available to export'); return; }
+      exportCsv(`turfon24-chatbot-conversations-${new Date().toISOString().slice(0,10)}.csv`, [
+        {key:'name', label:'Customer'},
+        {key:'phone', label:'Mobile'},
+        {key:'email', label:'Email'},
+        {key:'message', label:'Questions asked'},
+        {key:'enquiryDate', label:'Enquiry date'},
+        {key:'updatedAt', label:'Date'},
+        {key:'status', label:'Status'}
+      ], rows.map(c=>({
+        name: c.name || '—',
+        phone: c.mobile || '—',
+        email: c.email || '—',
+        message: chatMessage(c),
+        enquiryDate: formatDateDDMMYYYY(c.createdAt),
+        updatedAt: formatDateDDMMYYYY(c.updatedAt),
+        status: displayEnquiryStatus(c.status)
+      })));
+    });
+  }
   if(adminSessionReady) loadAdminChatbot();
 
   // ---- customers table ----
@@ -2469,11 +2526,19 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const slotDurations = slotRows.map(item => `${item.hours || 0} hr${Number(item.hours) === 1 ? '' : 's'}`).join('<br>');
     const duration = escapeBookingHtml(`${booking.duration || 0} hr${Number(booking.duration) === 1 ? '' : 's'}`);
     const amount = `₹${Number(booking.amount || 0).toLocaleString('en-IN')}`;
-    return `<tr><td class="mono">${id}</td><td>${customer}</td><td>${escapeBookingHtml(bookingCreatedDate)}</td><td class="mono">${mobile}</td><td>${date}</td><td>${slot}</td><td>${time}</td><td>${slotDurations || duration}</td><td class="mono">${amount}</td><td><span class="badge ${payment === 'CONFIRMED' ? 'confirmed' : payment === 'CANCELLED' ? 'cancelled' : 'pending'}">${paymentStatusLabels[payment] || escapeBookingHtml(payment)}</span></td><td><span class="badge ${status.toLowerCase()}">${bookingStatusLabels[status] || escapeBookingHtml(status)}</span></td><td><div class="row-actions"><button onclick="confirmBookingStatus('${id}')" title="Confirm booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button><button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="danger" onclick="deleteBooking('${id}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td></tr>`;
+    return `<tr onclick="openBookingDetail('${id}')" style="cursor:pointer;"><td class="mono">${id}</td><td>${customer}</td><td>${escapeBookingHtml(bookingCreatedDate)}</td><td class="mono">${mobile}</td><td>${date}</td><td>${slot}</td><td>${time}</td><td>${slotDurations || duration}</td><td class="mono">${amount}</td><td><span class="badge ${payment === 'CONFIRMED' ? 'confirmed' : payment === 'CANCELLED' ? 'cancelled' : 'pending'}">${paymentStatusLabels[payment] || escapeBookingHtml(payment)}</span></td><td><span class="badge ${status.toLowerCase()}">${bookingStatusLabels[status] || escapeBookingHtml(status)}</span></td><td><div class="row-actions" onclick="event.stopPropagation()"><button onclick="confirmBookingStatus('${id}')" title="Confirm booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button><button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="danger" onclick="deleteBooking('${id}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td></tr>`;
   }
+
   function renderBookings(message){
     const rows = bookingRows();
-    document.getElementById('bookingsBody').innerHTML = rows.length ? rows.map(bookingRowHtml).join('') : `<tr><td colspan="12" class="tbl-empty">${escapeBookingHtml(message || 'No bookings found')}</td></tr>`;
+    const countText = rows.length ? `Showing ${rows.length} booking${rows.length === 1 ? '' : 's'}` : (message ? escapeBookingHtml(message) : 'Showing all bookings');
+    
+    const tableBody = document.getElementById('bookingsBody');
+    if (tableBody) {
+      tableBody.innerHTML = rows.length ? rows.map(bookingRowHtml).join('') : `<tr><td colspan="12" class="tbl-empty">${escapeBookingHtml(message || 'No bookings found')}</td></tr>`;
+    }
+    const tableFoot = document.getElementById('bookingsTableFoot');
+    if (tableFoot) tableFoot.textContent = countText;
   }
   function normalizeWhatsAppNumber(value){
     const digits = String(value || '').replace(/\D/g, '');
@@ -2574,7 +2639,14 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       const paymentStatus = status === 'CONFIRMED' ? 'CONFIRMED' : status === 'CANCELLED' ? 'CANCELLED' : 'PAYMENT_PENDING';
       const detailSlots = Array.isArray(booking.slots) && booking.slots.length ? booking.slots : [{start: booking.time || '—', end: '', hours: booking.duration || 0}];
       const detailSlotHtml = detailSlots.map((slot, index) => `<div>Slot ${index + 1}: ${escapeBookingHtml(slot.end ? `${slot.start} - ${slot.end}` : slot.start)} (${escapeBookingHtml(slot.hours || 0)} hr${Number(slot.hours) === 1 ? '' : 's'})</div>`).join('');
-      document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Booking ID</span><span class="mono">${escapeBookingHtml(booking._id)}</span></div><div class="detail-row"><span>Customer</span><span>${escapeBookingHtml(booking.name || booking.customerName || '—')}</span></div><div class="detail-row"><span>Mobile</span><span class="mono">${escapeBookingHtml(booking.mobile)}</span></div><div class="detail-row"><span>Date</span><span>${escapeBookingHtml(bookingDateLabel(booking.date))}</span></div><div class="detail-row"><span>Slots</span><span>${detailSlotHtml}</span></div><div class="detail-row"><span>Time slot</span><span>${escapeBookingHtml(booking.time)}</span></div><div class="detail-row"><span>Duration</span><span>${escapeBookingHtml(booking.duration)} hrs</span></div><div class="detail-row"><span>Amount</span><span class="mono">₹${Number(booking.amount || 0).toLocaleString('en-IN')}</span></div><div class="detail-row"><span>Payment status</span><span class="badge verified">${escapeBookingHtml(paymentStatusLabels[paymentStatus] || paymentStatus)}</span></div><div class="detail-row"><span>Payment reference</span><span class="mono">${escapeBookingHtml(booking.paymentReference)}</span></div><div class="detail-row"><span>Booking status</span><span class="badge ${status.toLowerCase()}">${escapeBookingHtml(bookingStatusLabels[status] || status)}</span></div><div class="detail-row"><span>Total bookings</span><span>${escapeBookingHtml(customer.totalBookings ?? '—')}</span></div><div class="detail-row"><span>Total spent</span><span>₹${Number(customer.totalSpent || 0).toLocaleString('en-IN')}</span></div><div class="detail-row"><span>Payment method</span><span>${escapeBookingHtml(payment.method || '—')}</span></div>`;
+      const modalTitle = document.getElementById('detailModalTitle');
+      if (modalTitle) modalTitle.textContent = 'Booking details';
+      document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Booking ID</span><span class="mono">${escapeBookingHtml(booking._id)}</span></div><div class="detail-row"><span>Customer</span><span>${escapeBookingHtml(booking.name || booking.customerName || '—')}</span></div><div class="detail-row"><span>Mobile</span><span class="mono"><a href="tel:${escapeBookingHtml(booking.mobile)}" style="color:var(--neon); text-decoration:none;">${escapeBookingHtml(booking.mobile)}</a></span></div><div class="detail-row"><span>Date</span><span>${escapeBookingHtml(bookingDateLabel(booking.date))}</span></div><div class="detail-row"><span>Slots</span><span>${detailSlotHtml}</span></div><div class="detail-row"><span>Time slot</span><span>${escapeBookingHtml(booking.time)}</span></div><div class="detail-row"><span>Duration</span><span>${escapeBookingHtml(booking.duration)} hrs</span></div><div class="detail-row"><span>Amount</span><span class="mono" style="color:var(--neon); font-size:15px; font-weight:700;">₹${Number(booking.amount || 0).toLocaleString('en-IN')}</span></div><div class="detail-row"><span>Payment status</span><span class="badge verified">${escapeBookingHtml(paymentStatusLabels[paymentStatus] || paymentStatus)}</span></div><div class="detail-row"><span>Payment reference</span><span class="mono">${escapeBookingHtml(booking.paymentReference)}</span></div><div class="detail-row"><span>Booking status</span><span class="badge ${status.toLowerCase()}">${escapeBookingHtml(bookingStatusLabels[status] || status)}</span></div><div class="detail-row"><span>Total bookings</span><span>${escapeBookingHtml(customer.totalBookings ?? '—')}</span></div><div class="detail-row"><span>Total spent</span><span>₹${Number(customer.totalSpent || 0).toLocaleString('en-IN')}</span></div><div class="detail-row"><span>Payment method</span><span>${escapeBookingHtml(payment.method || '—')}</span></div>
+      <div class="detail-modal-actions" style="margin-top:20px; display:flex; gap:8px; flex-wrap:wrap; border-top:1px solid rgba(255,255,255,0.08); padding-top:16px;">
+        <button type="button" class="btn btn-glow" style="flex:1; min-width:105px; padding:10px 14px; font-size:12.5px;" onclick="confirmBookingStatus('${escapeBookingHtml(booking._id)}'); closeModal('detailModal');">Confirm</button>
+        <button type="button" class="btn btn-ghost" style="flex:1; min-width:95px; padding:10px 14px; font-size:12.5px; color:var(--red); border-color:rgba(255,107,107,0.4);" onclick="updateBookingStatus('${escapeBookingHtml(booking._id)}','CANCELLED'); closeModal('detailModal');">Cancel</button>
+        <button type="button" class="btn btn-ghost" style="padding:10px 16px; font-size:12.5px;" onclick="closeModal('detailModal')">Close</button>
+      </div>`;
       openModal('detailModal');
     } catch(error) { showToast(error.message); }
   }
@@ -2719,8 +2791,9 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
         const time = paymentValue(booking, ['startTime','time']);
         const status = paymentStatusLabel(p.status);
         const action = `<button onclick="viewPaymentDetails('${escapePaymentHtml(p.reference)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>` + (p.status === 'PAYMENT_PENDING' && p.source !== 'booking' ? `<button onclick="markPaymentPaid('${escapePaymentHtml(p.reference)}')" title="Mark paid after verifying the bank transaction"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button>` : '');
-        return `<tr><td class="mono">${escapePaymentHtml(p.bookingId || p.reference)}</td><td>${escapePaymentHtml(name)}</td><td class="mono">${escapePaymentHtml(mobile)}</td><td>${escapePaymentHtml(createdDate)}</td><td>${escapePaymentHtml(date)}</td><td class="mono">₹${Number(p.amount).toLocaleString('en-IN')}</td><td><span class="badge ${paymentBadgeClass(p.status)}">${status}</span></td><td><div class="row-actions">${action}</div></td></tr>`;
+        return `<tr onclick="viewPaymentDetails('${escapePaymentHtml(p.reference)}')" style="cursor:pointer;"><td class="mono">${escapePaymentHtml(p.bookingId || p.reference)}</td><td>${escapePaymentHtml(name)}</td><td class="mono">${escapePaymentHtml(mobile)}</td><td>${escapePaymentHtml(createdDate)}</td><td>${escapePaymentHtml(date)}</td><td class="mono">₹${Number(p.amount).toLocaleString('en-IN')}</td><td><span class="badge ${paymentBadgeClass(p.status)}">${status}</span></td><td><div class="row-actions" onclick="event.stopPropagation()">${action}</div></td></tr>`;
       }).join('') : '<tr><td colspan="8" class="tbl-empty">No payment sessions found</td></tr>';
+
       const visiblePayments = payments.filter(payment => paymentMatchesStatus(payment) && (paymentDateMode !== 'today' || paymentIsToday(payment)));
       const totalAmount = visiblePayments.reduce((sum,p)=>sum + (String(p.status || '').toUpperCase() === 'PAID' ? Number(p.amount || 0) : 0), 0);
       updatePaymentAmountLabel();
@@ -2739,7 +2812,13 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     if(!payment) return;
     const booking = payment.bookingData || {};
     const status = paymentStatusLabel(payment.status);
-    document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Booking ID</span><span class="mono">${escapePaymentHtml(payment.bookingId || payment.reference)}</span></div><div class="detail-row"><span>Customer</span><span>${escapePaymentHtml(paymentValue(booking, ['name','customerName']))}</span></div><div class="detail-row"><span>Mobile</span><span class="mono">${escapePaymentHtml(paymentValue(booking, ['mobile','phone']))}</span></div><div class="detail-row"><span>Booking date</span><span>${escapePaymentHtml(paymentValue(booking, ['date','dateLabel']))}</span></div><div class="detail-row"><span>Payment time</span><span>${escapePaymentHtml(paymentValue(booking, ['startTime','time']))}</span></div><div class="detail-row"><span>Amount</span><span class="mono">₹${Number(payment.amount || 0).toLocaleString('en-IN')}</span></div><div class="detail-row"><span>Payment status</span><span class="badge ${paymentBadgeClass(payment.status)}">${escapePaymentHtml(status)}</span></div><div class="detail-row"><span>Payment reference</span><span class="mono">${escapePaymentHtml(payment.reference)}</span></div>`;
+    const modalTitle = document.getElementById('detailModalTitle');
+    if (modalTitle) modalTitle.textContent = 'Payment details';
+    document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Booking ID</span><span class="mono">${escapePaymentHtml(payment.bookingId || payment.reference)}</span></div><div class="detail-row"><span>Customer</span><span>${escapePaymentHtml(paymentValue(booking, ['name','customerName']))}</span></div><div class="detail-row"><span>Mobile</span><span class="mono"><a href="tel:${escapePaymentHtml(paymentValue(booking, ['mobile','phone']))}" style="color:var(--neon); text-decoration:none;">${escapePaymentHtml(paymentValue(booking, ['mobile','phone']))}</a></span></div><div class="detail-row"><span>Booking date</span><span>${escapePaymentHtml(paymentValue(booking, ['date','dateLabel']))}</span></div><div class="detail-row"><span>Payment time</span><span>${escapePaymentHtml(paymentValue(booking, ['startTime','time']))}</span></div><div class="detail-row"><span>Amount</span><span class="mono" style="color:var(--neon); font-size:15px; font-weight:700;">₹${Number(payment.amount || 0).toLocaleString('en-IN')}</span></div><div class="detail-row"><span>Payment status</span><span class="badge ${paymentBadgeClass(payment.status)}">${escapePaymentHtml(status)}</span></div><div class="detail-row"><span>Payment reference</span><span class="mono">${escapePaymentHtml(payment.reference)}</span></div>
+    <div class="detail-modal-actions" style="margin-top:20px; display:flex; gap:8px; flex-wrap:wrap; border-top:1px solid rgba(255,255,255,0.08); padding-top:16px;">
+      ${payment.status === 'PAYMENT_PENDING' && payment.source !== 'booking' ? `<button type="button" class="btn btn-glow" style="flex:1; min-width:120px; padding:10px 14px; font-size:12.5px;" onclick="markPaymentPaid('${escapePaymentHtml(payment.reference)}'); closeModal('detailModal');">Verify & Confirm</button>` : ''}
+      <button type="button" class="btn btn-ghost" style="flex:1; padding:10px 16px; font-size:12.5px;" onclick="closeModal('detailModal')">Close</button>
+    </div>`;
     openModal('detailModal');
   }
   async function markPaymentPaid(reference){
@@ -3559,7 +3638,9 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   if(canvas){
     const ctx = canvas.getContext('2d');
     let w,h;
-    function resize(){ w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; }
+    function resize(){
+      w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight;
+    }
     window.addEventListener('resize', resize); resize();
     function draw(){
       ctx.clearRect(0,0,w,h);
