@@ -37,8 +37,9 @@ function cancelledByBooking(booking) {
 
 function bookingConfirmationStatus(booking) {
   const bookingStatus = normalizeStatus(booking?.bookingStatus)
-  if (bookingStatus === 'CANCELLED') return 'CANCELLED'
-  if (bookingStatus === 'CONFIRMED') return 'CONFIRMED'
+  const paymentStatus = normalizeStatus(booking?.paymentStatus)
+  if (bookingStatus === 'CANCELLED' || paymentStatus === 'CANCELLED') return 'CANCELLED'
+  if (bookingStatus === 'CONFIRMED' || paymentStatus === 'CONFIRMED' || paymentStatus === 'PAID') return 'CONFIRMED'
   return 'PAYMENT_PENDING'
 }
 
