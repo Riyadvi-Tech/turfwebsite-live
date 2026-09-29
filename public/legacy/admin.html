@@ -238,58 +238,120 @@
   .payment-status-filters{display:flex; align-items:center; gap:8px; flex:0 0 auto; white-space:nowrap;}
   .payment-status-filters .status-filter-btn{padding:8px 14px; border:1px solid var(--border); border-radius:100px; background:transparent; color:var(--muted); font:11.5px 'Inter',sans-serif; cursor:pointer; transition:all .2s ease;}
   .payment-status-filters .status-filter-btn.sel, .payment-status-filters .status-filter-btn:hover{border-color:var(--neon); color:var(--neon); background:rgba(57,255,122,0.06);}
-  .booking-status-menu{position:relative;}
-  .booking-status-menu button{display:inline-flex; align-items:center; gap:6px;}
-  .booking-status-menu svg{transition:transform .2s ease;}
-  .booking-status-menu.open svg{transform:rotate(180deg);}
-  .booking-status-menu-list{display:none; position:absolute; z-index:20; top:calc(100% + 7px); right:0; min-width:130px; padding:5px; border:1px solid var(--border); border-radius:10px; background:var(--charcoal-2); box-shadow:0 12px 30px rgba(0,0,0,.32);}
-  .booking-status-menu.open .booking-status-menu-list{display:grid; gap:2px;}
-  .booking-status-menu-list button{width:100%; padding:8px 10px; border:0; border-radius:6px; background:transparent; color:var(--muted); font:11.5px 'Inter',sans-serif; text-align:left; cursor:pointer;}
-  .booking-status-menu-list button:hover{background:rgba(57,255,122,.08); color:var(--neon);}
-  .booking-status-menu-list button.sel{background:rgba(57,255,122,.14); color:var(--neon);}
-  .nav-item .booking-status-menu{margin-left:auto; flex:0 0 auto;}
+  .nav-item{position:relative; width:100%; box-sizing:border-box;}
+  .nav-item .nav-label{flex:1 1 auto; min-width:0; max-width:calc(100% - 38px); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-right:4px;}
+  .nav-item .nav-notice{position:absolute !important; right:36px !important; top:50% !important; transform:translateY(-50%) !important; margin:0 !important; z-index:4 !important;}
+  .nav-item .booking-status-menu{display:contents;}
+  .sidebar.collapsed .booking-status-menu, .sidebar.collapsed .nav-dropdown-trigger{display:none !important;}
+
   .nav-item[data-page="bookings"]{z-index:2;}
   .nav-item[data-page="bookings"]:has(.booking-status-menu.open){margin-bottom:92px;}
   .nav-item[data-page="payments"]{z-index:2;}
   .nav-item[data-page="payments"]:has(.booking-status-menu.open){margin-bottom:64px;}
-  .nav-item[data-page="payments"] .booking-status-menu{display:contents;}
-  .nav-item[data-page="bookings"] .booking-status-menu{display:contents;}
-  .nav-item .booking-status-menu > #bookingStatusMenuButton{width:30px; height:30px; justify-content:center; padding:0; border:1px solid rgba(57,255,122,.18); border-radius:7px; background:rgba(57,255,122,.08); color:var(--neon); appearance:none; -webkit-appearance:none;}
-  .nav-item .booking-status-menu > #bookingStatusMenuButton:hover, .nav-item .booking-status-menu.open > #bookingStatusMenuButton{background:rgba(57,255,122,.16); border-color:rgba(57,255,122,.35); color:var(--neon);}
-  .nav-item[data-page="bookings"] .booking-status-menu > #bookingStatusMenuButton,
-  .nav-item[data-page="payments"] .booking-status-menu > #paymentStatusMenuButton{width:30px; height:30px; border-radius:7px; background:rgba(57,255,122,.08); color:var(--neon);}
-  .nav-item[data-page="bookings"] .booking-status-menu > #bookingStatusMenuButton{width:20px; min-width:20px; flex:0 0 20px; height:30px;}
-  .nav-item[data-page="bookings"] .booking-status-menu > #bookingStatusMenuButton{margin-left:auto;}
-  .nav-item[data-page="bookings"] .booking-status-menu-list{position:absolute; top:calc(100% + 2px); left:28px; width:calc(100% - 36px); min-width:0; box-sizing:border-box; margin:0; padding:0 0 0 2px; border:0; border-radius:0; background:transparent; box-shadow:none;}
-  .nav-item[data-page="bookings"] .booking-status-menu-list button{padding:6px 8px; border-radius:6px;}
-  .nav-item[data-page="payments"] .booking-status-menu{margin-left:auto; flex:0 0 auto;}
-  .nav-item[data-page="payments"] .booking-status-menu > #paymentStatusMenuButton{width:30px; height:30px; justify-content:center; padding:0; border:1px solid rgba(57,255,122,.18); border-radius:7px; background:rgba(57,255,122,.08); color:var(--neon); appearance:none; -webkit-appearance:none;}
-  .nav-item[data-page="payments"] .booking-status-menu > #paymentStatusMenuButton:hover, .nav-item[data-page="payments"] .booking-status-menu.open > #paymentStatusMenuButton{background:rgba(57,255,122,.16); border-color:rgba(57,255,122,.35); color:var(--neon);}
-  .nav-item[data-page="payments"] .booking-status-menu > #paymentStatusMenuButton{margin-left:auto;}
-  .nav-item[data-page="payments"] .booking-status-menu-list{position:absolute; top:calc(100% + 2px); left:28px; width:calc(100% - 36px); min-width:0; box-sizing:border-box; margin:0; padding:0 0 0 2px; border:0; border-radius:0; background:transparent; box-shadow:none;}
-  .nav-item[data-page="payments"] .booking-status-menu-list button{padding:6px 8px; border-radius:6px;}
-  .nav-item[data-page="payments"] .booking-status-menu.open .booking-status-menu-list{display:grid; z-index:30;}
   .nav-item[data-page="enquiries"]{z-index:2;}
   .nav-item[data-page="enquiries"]:has(.booking-status-menu.open){margin-bottom:124px;}
-  .nav-item[data-page="enquiries"] .booking-status-menu{display:contents;}
-  .nav-item[data-page="enquiries"] .booking-status-menu > #enquiryStatusMenuButton{width:20px; min-width:20px; flex:0 0 20px; height:30px; margin-left:auto; padding:0; border:1px solid rgba(57,255,122,.18); border-radius:7px; background:rgba(57,255,122,.08); color:var(--neon); appearance:none; -webkit-appearance:none;}
-  .nav-item[data-page="enquiries"] .booking-status-menu > #enquiryStatusMenuButton:hover, .nav-item[data-page="enquiries"] .booking-status-menu.open > #enquiryStatusMenuButton{background:rgba(57,255,122,.16); border-color:rgba(57,255,122,.35);}
-  .nav-item[data-page="enquiries"] .booking-status-menu-list{position:absolute; top:calc(100% + 2px); left:28px; width:calc(100% - 36px); min-width:0; box-sizing:border-box; margin:0; padding:0 0 0 2px; border:0; border-radius:0; background:transparent; box-shadow:none;}
-  .nav-item[data-page="enquiries"] .booking-status-menu-list button{padding:6px 8px; border-radius:6px;}
-  .nav-item[data-page="enquiries"] .booking-status-menu.open .booking-status-menu-list{display:grid; z-index:30;}
   .nav-item[data-page="whatsapp"], .nav-item[data-page="chatbot"]{z-index:2;}
   .nav-item[data-page="whatsapp"]:has(.booking-status-menu.open){margin-bottom:124px;}
   .nav-item[data-page="chatbot"]:has(.booking-status-menu.open){margin-bottom:124px;}
-  .nav-item[data-page="whatsapp"] .booking-status-menu, .nav-item[data-page="chatbot"] .booking-status-menu{display:contents;}
-  .nav-item[data-page="whatsapp"] .booking-status-menu > button, .nav-item[data-page="chatbot"] .booking-status-menu > button{width:20px; min-width:20px; flex:0 0 20px; height:30px; margin-left:auto; padding:0; border:1px solid rgba(57,255,122,.18); border-radius:7px; background:rgba(57,255,122,.08); color:var(--neon);}
-  .nav-item[data-page="whatsapp"] .booking-status-menu-list, .nav-item[data-page="chatbot"] .booking-status-menu-list{position:absolute; top:calc(100% + 2px); left:28px; width:calc(100% - 36px); min-width:0; box-sizing:border-box; margin:0; padding:0 0 0 2px; border:0; border-radius:0; background:transparent; box-shadow:none;}
-  .nav-item[data-page="whatsapp"] .booking-status-menu.open .booking-status-menu-list, .nav-item[data-page="chatbot"] .booking-status-menu.open .booking-status-menu-list{display:grid; z-index:30;}
-  .nav-item[data-page="whatsapp"] .booking-status-menu-list button, .nav-item[data-page="chatbot"] .booking-status-menu-list button{padding:6px 8px; border-radius:6px;}
-  .nav-item[data-page="bookings"], .nav-item[data-page="enquiries"], .nav-item[data-page="payments"], .nav-item[data-page="whatsapp"], .nav-item[data-page="chatbot"]{width:100%; box-sizing:border-box;}
-  .nav-item[data-page="bookings"] .booking-status-menu > button, .nav-item[data-page="enquiries"] .booking-status-menu > button, .nav-item[data-page="payments"] .booking-status-menu > button, .nav-item[data-page="whatsapp"] .booking-status-menu > button, .nav-item[data-page="chatbot"] .booking-status-menu > button{width:20px !important; min-width:20px !important; max-width:20px !important; height:30px !important; min-height:30px !important; max-height:30px !important; flex:0 0 20px !important; box-sizing:border-box; margin-left:auto; padding:0; display:inline-flex; align-items:center; justify-content:center;}
-  .nav-item[data-page="bookings"] .booking-status-menu > button, .nav-item[data-page="enquiries"] .booking-status-menu > button, .nav-item[data-page="payments"] .booking-status-menu > button, .nav-item[data-page="whatsapp"] .booking-status-menu > button, .nav-item[data-page="chatbot"] .booking-status-menu > button{position:absolute; right:8px; top:50%; transform:translateY(-50%); margin:0;}
-  .nav-item[data-page="bookings"] .nav-label, .nav-item[data-page="enquiries"] .nav-label, .nav-item[data-page="payments"] .nav-label, .nav-item[data-page="whatsapp"] .nav-label, .nav-item[data-page="chatbot"] .nav-label{padding-right:26px;}
-  .nav-item[data-page="bookings"] .booking-status-menu > button, .nav-item[data-page="enquiries"] .booking-status-menu > button, .nav-item[data-page="payments"] .booking-status-menu > button, .nav-item[data-page="whatsapp"] .booking-status-menu > button, .nav-item[data-page="chatbot"] .booking-status-menu > button{right:2px;}
+
+  /* Dropdown Chevron Trigger Buttons - Unified Straight Vertical Alignment & Exact Same Size */
+  .nav-item .booking-status-menu > button,
+  .nav-dropdown-trigger,
+  #bookingStatusMenuButton,
+  #enquiryStatusMenuButton,
+  #paymentStatusMenuButton,
+  #whatsappStatusMenuButton,
+  #chatbotStatusMenuButton{
+    position:absolute !important;
+    right:8px !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    margin:0 !important;
+    width:22px !important;
+    min-width:22px !important;
+    max-width:22px !important;
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    flex:0 0 22px !important;
+    padding:0 !important;
+    border:1px solid rgba(57,255,122,0.22) !important;
+    border-radius:7px !important;
+    background:rgba(57,255,122,0.08) !important;
+    color:var(--neon) !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    cursor:pointer !important;
+    appearance:none !important;
+    -webkit-appearance:none !important;
+    box-sizing:border-box !important;
+    z-index:5 !important;
+    transition:background .2s ease, border-color .2s ease, box-shadow .2s ease !important;
+  }
+  .nav-item .booking-status-menu > button:hover,
+  .nav-dropdown-trigger:hover,
+  .nav-item .booking-status-menu.open > button,
+  .nav-item .booking-status-menu.open .nav-dropdown-trigger{
+    background:rgba(57,255,122,0.18) !important;
+    border-color:rgba(57,255,122,0.45) !important;
+    color:var(--neon) !important;
+    box-shadow:0 0 8px rgba(57,255,122,0.2) !important;
+  }
+  .nav-item .booking-status-menu > button svg,
+  .nav-dropdown-trigger svg{
+    width:12px !important;
+    height:12px !important;
+    flex-shrink:0 !important;
+    transition:transform .2s ease !important;
+    pointer-events:none !important;
+  }
+  .nav-item .booking-status-menu.open > button svg,
+  .nav-item .booking-status-menu.open .nav-dropdown-trigger svg{
+    transform:rotate(180deg) !important;
+  }
+
+  /* Submenu lists */
+  .nav-item .booking-status-menu-list{
+    display:none;
+    position:absolute;
+    top:calc(100% + 2px);
+    left:28px;
+    width:calc(100% - 36px);
+    min-width:0;
+    box-sizing:border-box;
+    margin:0;
+    padding:0 0 0 2px;
+    border:0;
+    border-radius:0;
+    background:transparent;
+    box-shadow:none;
+    z-index:30;
+  }
+  .nav-item .booking-status-menu.open .booking-status-menu-list{
+    display:grid;
+    gap:2px;
+  }
+  .nav-item .booking-status-menu-list button{
+    width:100%;
+    padding:6px 8px;
+    border:0;
+    border-radius:6px;
+    background:transparent;
+    color:var(--muted);
+    font:11.5px 'Inter',sans-serif;
+    text-align:left;
+    cursor:pointer;
+    transition:background .15s ease, color .15s ease;
+  }
+  .nav-item .booking-status-menu-list button:hover{
+    background:rgba(57,255,122,.08);
+    color:var(--neon);
+  }
+  .nav-item .booking-status-menu-list button.sel{
+    background:rgba(57,255,122,.14);
+    color:var(--neon);
+  }
   .date-wrap[hidden]{display:none !important;}
   .history-switch{display:inline-flex; gap:4px; padding:4px; background:var(--charcoal); border:1px solid var(--border); border-radius:10px;}
   .history-switch .filt-pill{border:0; padding:7px 14px; background:transparent; color:var(--muted);}
@@ -698,12 +760,12 @@
     <div class="side-nav" id="sideNav">
       <div class="nav-item active" data-page="dashboard"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg><span class="nav-label">Dashboard</span></div>
       <div class="nav-item" data-page="analytics"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><span class="nav-label">Analytics</span></div>
-      <div class="nav-item" data-page="bookings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg><span class="nav-label">Hourly Booking</span><span class="nav-notice" title="New booking"></span><div class="booking-status-menu" id="bookingStatusMenu"><button type="button" class="status-filter-btn" id="bookingStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open booking filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="bookingStatusMenuList" role="menu"></div></div></div>
-      <div class="nav-item" data-page="enquiries"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg><span class="nav-label">Extended Enquiries</span><div class="booking-status-menu" id="enquiryStatusMenu"><button type="button" class="status-filter-btn" id="enquiryStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open enquiry filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="enquiryStatusMenuList" role="menu"></div></div></div>
+      <div class="nav-item" data-page="bookings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg><span class="nav-label">Hourly Booking</span><span class="nav-notice" title="New booking"></span><div class="booking-status-menu" id="bookingStatusMenu"><button type="button" class="nav-dropdown-trigger" id="bookingStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open booking filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="bookingStatusMenuList" role="menu"></div></div></div>
+      <div class="nav-item" data-page="enquiries"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg><span class="nav-label">Extended Enquiries</span><div class="booking-status-menu" id="enquiryStatusMenu"><button type="button" class="nav-dropdown-trigger" id="enquiryStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open enquiry filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="enquiryStatusMenuList" role="menu"></div></div></div>
       <div class="nav-item" data-page="calendar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="nav-label">Calendar</span></div>
-      <div class="nav-item" data-page="payments"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M16 12h.01"/><path d="M2 9h5M17 9h5"/></svg><span class="nav-label">Payment Confirmation</span><div class="booking-status-menu" id="paymentStatusMenu"><button type="button" class="status-filter-btn" id="paymentStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open payment filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="paymentStatusMenuList" role="menu"></div></div></div>
-      <div class="nav-item" data-page="whatsapp"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg><span class="nav-label">WhatsApp Enquiries</span><div class="booking-status-menu" id="whatsappStatusMenu"><button type="button" id="whatsappStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open WhatsApp filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="whatsappStatusMenuList" role="menu"></div></div></div>
-      <div class="nav-item" data-page="chatbot"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg><span class="nav-label">Chatbot Conversations</span><span class="nav-notice" title="New chat conversation"></span><div class="booking-status-menu" id="chatbotStatusMenu"><button type="button" id="chatbotStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open chatbot filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="chatbotStatusMenuList" role="menu"></div></div></div>
+      <div class="nav-item" data-page="payments"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M16 12h.01"/><path d="M2 9h5M17 9h5"/></svg><span class="nav-label">Payment Confirmation</span><div class="booking-status-menu" id="paymentStatusMenu"><button type="button" class="nav-dropdown-trigger" id="paymentStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open payment filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="paymentStatusMenuList" role="menu"></div></div></div>
+      <div class="nav-item" data-page="whatsapp"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg><span class="nav-label">WhatsApp Enquiries</span><div class="booking-status-menu" id="whatsappStatusMenu"><button type="button" class="nav-dropdown-trigger" id="whatsappStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open WhatsApp filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="whatsappStatusMenuList" role="menu"></div></div></div>
+      <div class="nav-item" data-page="chatbot"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg><span class="nav-label">Chatbot Conversations</span><span class="nav-notice" title="New chat conversation"></span><div class="booking-status-menu" id="chatbotStatusMenu"><button type="button" class="nav-dropdown-trigger" id="chatbotStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open chatbot filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="chatbotStatusMenuList" role="menu"></div></div></div>
       <div class="nav-divider"></div>
       <div class="nav-item" data-page="settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V19a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H4a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.5V4a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V10a1.7 1.7 0 0 0 1.5 1H20a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg><span class="nav-label">Website Settings</span></div>
       <div class="nav-item" data-page="profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg><span class="nav-label">Profile</span></div>
