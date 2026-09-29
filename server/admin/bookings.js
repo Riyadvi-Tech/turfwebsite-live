@@ -87,7 +87,7 @@ export async function deleteBookingRecord(db, idValue) {
 
 export async function syncPaymentStatusForBooking(db, paymentReference, paymentStatus, updatedAt = new Date()) {
   const ref = typeof paymentReference === 'string' ? paymentReference.trim() : ''
-  const normalizedStatus = paymentStatus === 'PAID' || paymentStatus === 'CANCELLED' ? paymentStatus : null
+  const normalizedStatus = paymentStatus === 'PAID' || paymentStatus === 'CANCELLED' || paymentStatus === 'PAYMENT_PENDING' ? paymentStatus : null
 
   if (!ref || !normalizedStatus) {
     return { paymentSessionsUpdated: 0, paymentsUpdated: 0 }
@@ -199,7 +199,7 @@ export default async function handler(req, res) {
       if (!currentBooking) return errorResponse(res, 404, 'Booking not found.')
 
       const now = new Date()
-      const nextPaymentStatus = requestedStatus === 'CONFIRMED' ? 'PAID' : requestedStatus === 'CANCELLED' ? 'CANCELLED' : null
+      const nextPaymentStatus = requestedStatus === 'CONFIRMED' ? 'PAID' : requestedStatus === 'CANCELLED' ? 'CANCELLED' : requestedStatus === 'PENDING' ? 'PAYMENT_PENDING' : null
       const nextBookingValues = { bookingStatus: requestedStatus, updatedAt: now }
       if (nextPaymentStatus) {
         nextBookingValues.paymentStatus = nextPaymentStatus

@@ -2085,7 +2085,7 @@
     });
     const menu = document.getElementById('bookingStatusMenuList');
     if(!menu) return;
-    const menuOptions = ['today','confirmed','cancelled'];
+    const menuOptions = ['today','pending','confirmed','cancelled'];
     menu.innerHTML = menuOptions.map(value => `<button type="button" role="menuitem" class="${value === selected ? 'sel' : ''}" data-booking-filter="${value}">${value.charAt(0).toUpperCase() + value.slice(1)}</button>`).join('');
     syncMenuMargin(document.getElementById('bookingStatusMenu'));
   }
@@ -2684,7 +2684,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const status = String(booking.bookingStatus || '').toUpperCase();
     if(status === 'CANCELLED' || status === 'NO_SHOW' || status === 'COMPLETED') return status;
     const end = bookingEndTime(booking);
-    return end && end <= new Date() && String(booking.paymentStatus || '').toUpperCase() === 'PAID' ? 'COMPLETED' : status;
+    return end && end <= new Date() && status === 'CONFIRMED' && String(booking.paymentStatus || '').toUpperCase() === 'PAID' ? 'COMPLETED' : status;
   }
   function effectiveCalendarPaymentStatus(booking){
     const bookingStatus = String(booking?.bookingStatus || '').toUpperCase();

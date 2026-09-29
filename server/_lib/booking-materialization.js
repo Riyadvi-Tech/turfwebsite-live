@@ -38,7 +38,7 @@ function assertBookingCompatibility(booking, normalized) {
     booking.time !== normalized.time ||
     booking.duration !== normalized.duration ||
     Number(booking.amount) !== normalized.amount ||
-    booking.bookingStatus !== 'CONFIRMED' ||
+    !['CONFIRMED', 'PENDING'].includes(booking.bookingStatus) ||
     booking.paymentStatus !== 'PAID'
   ) {
     throw new MaterializationError('BOOKING_CONFLICT', 'The existing booking does not match the payment.')
@@ -122,7 +122,7 @@ export async function materializeHourlyPayment(db, reference, { transitionToPaid
         if (pendingBooking) {
           await bookings.updateOne(
             { _id: existingBooking._id, paymentStatus: 'PAYMENT_PENDING', bookingStatus: 'PENDING' },
-            { $set: { paymentStatus: 'PAID', bookingStatus: 'CONFIRMED', updatedAt: now } },
+            { $set: { paymentStatus: 'PAID', bookingStatus: 'PENDING', updatedAt: now } },
             { session },
           )
         }
@@ -152,8 +152,8 @@ export async function materializeHourlyPayment(db, reference, { transitionToPaid
           )
         }
         result = responseFor(existingBooking, false)
-        result.booking = { ...existingBooking, paymentStatus: 'PAID', bookingStatus: 'CONFIRMED', updatedAt: now }
-        result.bookingStatus = 'CONFIRMED'
+        result.booking = { ...existingBooking, paymentStatus: 'PAID', bookingStatus: 'PENDING', updatedAt: now }
+        result.bookingStatus = 'PENDING'
         return
       }
 
@@ -188,7 +188,7 @@ export async function materializeHourlyPayment(db, reference, { transitionToPaid
         amount: normalized.amount,
         paymentReference: reference,
         paymentStatus: 'PAID',
-        bookingStatus: 'CONFIRMED',
+        bookingStatus: 'PENDING',
         slots: normalized.slots,
         slotKeys: [...requestedKeys],
         createdAt: now,
