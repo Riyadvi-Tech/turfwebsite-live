@@ -360,6 +360,23 @@
   .history-switch .filt-pill{border:0; padding:7px 14px; background:transparent; color:var(--muted);}
   .toolbar .spacer{display:none;}
   .toolbar-actions{display:inline-flex; align-items:center; gap:6px; flex-wrap:nowrap; flex:0 0 auto;}
+  .toolbar-actions .status-filter-btn,
+  .toolbar-actions .filt-pill,
+  .toolbar-actions .btn-ghost{
+    min-width:82px;
+    height:34px;
+    padding:0 10px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    box-sizing:border-box;
+    border-radius:100px;
+    font-size:11.5px;
+    white-space:nowrap;
+    gap:4px;
+  }
+  .toolbar-actions .btn-ghost svg{width:13px; height:13px; flex-shrink:0;}
   .toolbar #enquiryExport, .toolbar #whatsappExport, .toolbar #chatbotExport, .toolbar #bookingExport, .toolbar #paymentExport{margin-left:0 !important;}
 
   /* table */
@@ -657,9 +674,35 @@
     .toolbar-actions{display:inline-flex; align-items:center; gap:5px; flex-wrap:nowrap; flex:0 0 auto;}
     .booking-status-filters, .payment-status-filters{display:inline-flex; align-items:center; gap:5px; flex-wrap:nowrap; flex:0 0 auto; overflow:visible;}
     .booking-status-filters::-webkit-scrollbar, .payment-status-filters::-webkit-scrollbar{display:none;}
-    .filt-pill, .booking-status-filters .status-filter-btn, .payment-status-filters .status-filter-btn{font-size:10.5px; padding:5px 9px; height:31px; min-height:31px; max-height:31px; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; white-space:nowrap; flex:0 0 auto;}
-    .toolbar .btn-ghost{font-size:10.5px; padding:5px 9px; height:31px; min-height:31px; max-height:31px; display:inline-flex; align-items:center; justify-content:center; gap:4px; margin:0 !important; box-sizing:border-box; white-space:nowrap; flex:0 0 auto;}
-    .toolbar .btn-ghost svg{width:13px; height:13px; flex-shrink:0;}
+    .toolbar-actions .status-filter-btn,
+    .toolbar-actions .filt-pill,
+    .toolbar-actions .btn-ghost{
+      width:68px !important;
+      min-width:68px !important;
+      max-width:68px !important;
+      height:31px !important;
+      min-height:31px !important;
+      max-height:31px !important;
+      padding:0 4px !important;
+      font-size:10px !important;
+      font-weight:500 !important;
+      display:inline-flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      text-align:center !important;
+      box-sizing:border-box !important;
+      border-radius:100px !important;
+      white-space:nowrap !important;
+      flex:0 0 68px !important;
+      gap:3px !important;
+      margin:0 !important;
+    }
+    .toolbar-actions .btn-ghost svg{
+      width:12px !important;
+      height:12px !important;
+      flex-shrink:0 !important;
+      margin:0 !important;
+    }
     .history-switch{width:100%;}
     .history-switch .filt-pill{flex:1; text-align:center; font-size:11px; padding:8px 6px;}
     /* Admin Calendar — use the available mobile width for medium square tiles */
