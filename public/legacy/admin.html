@@ -359,6 +359,7 @@
   .history-switch{display:inline-flex; gap:4px; padding:4px; background:var(--charcoal); border:1px solid var(--border); border-radius:10px;}
   .history-switch .filt-pill{border:0; padding:7px 14px; background:transparent; color:var(--muted);}
   .toolbar .spacer{display:none;}
+  .toolbar-actions{display:inline-flex; align-items:center; gap:6px; flex-wrap:nowrap; flex:0 0 auto;}
   .toolbar #enquiryExport, .toolbar #whatsappExport, .toolbar #chatbotExport, .toolbar #bookingExport, .toolbar #paymentExport{margin-left:0 !important;}
 
   /* table */
@@ -650,14 +651,15 @@
     .date-wrap .date-ph{display:flex; align-items:center; height:32px !important; max-height:32px !important; min-height:32px !important; padding:0 22px 0 10px !important; font-size:12px !important; line-height:32px !important;}
     .date-wrap .date-filter{font-size:16px !important; height:32px !important; max-height:32px !important; min-height:32px !important;}
     .date-wrap::after{width:12px !important; height:12px !important; top:50% !important; transform:translateY(-50%) !important; right:8px !important;}
-    .toolbar{gap:8px; margin-bottom:14px;}
-    .toolbar input[type="text"]{width:200px !important; min-width:0 !important; max-width:200px !important; flex:0 1 200px !important; height:31px !important; min-height:31px !important; max-height:31px !important; padding:4px 10px !important; font-size:11px !important; border-radius:8px !important; box-sizing:border-box; text-overflow:ellipsis;}
-    #page-enquiries #enquirySearch{width:200px !important; max-width:200px !important; flex:0 1 200px !important;}
-    .filt-pill{font-size:10.5px; padding:6px 10px;}
-    .booking-status-filters{gap:6px; overflow-x:auto; max-width:100%; scrollbar-width:none;}
-    .booking-status-filters::-webkit-scrollbar{display:none;}
-    .booking-status-filters .filt-pill{flex:0 0 auto;}
-    .toolbar .btn-ghost{font-size:11px; padding:8px 12px;}
+    .toolbar{gap:6px; margin-bottom:14px; flex-wrap:wrap;}
+    .toolbar input[type="text"]{width:auto !important; min-width:96px !important; max-width:170px !important; flex:1 1 120px !important; height:31px !important; min-height:31px !important; max-height:31px !important; padding:4px 8px !important; font-size:11px !important; border-radius:8px !important; box-sizing:border-box; text-overflow:ellipsis;}
+    #page-enquiries #enquirySearch{width:auto !important; min-width:96px !important; max-width:170px !important; flex:1 1 120px !important;}
+    .toolbar-actions{display:inline-flex; align-items:center; gap:5px; flex-wrap:nowrap; flex:0 0 auto;}
+    .booking-status-filters, .payment-status-filters{display:inline-flex; align-items:center; gap:5px; flex-wrap:nowrap; flex:0 0 auto; overflow:visible;}
+    .booking-status-filters::-webkit-scrollbar, .payment-status-filters::-webkit-scrollbar{display:none;}
+    .filt-pill, .booking-status-filters .status-filter-btn, .payment-status-filters .status-filter-btn{font-size:10.5px; padding:5px 9px; height:31px; min-height:31px; max-height:31px; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; white-space:nowrap; flex:0 0 auto;}
+    .toolbar .btn-ghost{font-size:10.5px; padding:5px 9px; height:31px; min-height:31px; max-height:31px; display:inline-flex; align-items:center; justify-content:center; gap:4px; margin:0 !important; box-sizing:border-box; white-space:nowrap; flex:0 0 auto;}
+    .toolbar .btn-ghost svg{width:13px; height:13px; flex-shrink:0;}
     .history-switch{width:100%;}
     .history-switch .filt-pill{flex:1; text-align:center; font-size:11px; padding:8px 6px;}
     /* Admin Calendar — use the available mobile width for medium square tiles */
@@ -902,11 +904,13 @@
       <div class="toolbar">
         <input id="bookingSearch" type="text" placeholder="Search by name, mobile, booking ID...">
         <span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input id="bookingDate" class="date-filter" type="text" readonly aria-label="Choose booking date" title="Choose booking date"><input id="bookingDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
-        <div class="booking-status-filters" id="bookingStatusFilters" aria-label="Booking status filter">
-          <button type="button" class="status-filter-btn" data-booking-filter="all">All</button>
-          <button type="button" class="status-filter-btn" data-booking-filter="pending">Pending</button>
+        <div class="toolbar-actions">
+          <div class="booking-status-filters" id="bookingStatusFilters" aria-label="Booking status filter">
+            <button type="button" class="status-filter-btn" data-booking-filter="all">All</button>
+            <button type="button" class="status-filter-btn" data-booking-filter="pending">Pending</button>
+          </div>
+          <button class="btn btn-ghost" id="bookingExport" title="Export hourly bookings as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         </div>
-        <button class="btn btn-ghost" id="bookingExport"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
       </div>
       <div class="table-wrap" id="bookingsTableWrap">
         <table>
@@ -931,11 +935,13 @@
       </div>
       <div class="toolbar">
         <input id="paymentSearch" type="text" placeholder="Search by name, mobile, booking ID...">
-        <div class="payment-status-filters" id="paymentStatusFilters" aria-label="Payment confirmation filter">
-          <button type="button" class="status-filter-btn" data-payment-filter="all">All</button>
-          <button type="button" class="status-filter-btn" data-payment-filter="pending">Pending</button>
+        <div class="toolbar-actions">
+          <div class="payment-status-filters" id="paymentStatusFilters" aria-label="Payment confirmation filter">
+            <button type="button" class="status-filter-btn" data-payment-filter="all">All</button>
+            <button type="button" class="status-filter-btn" data-payment-filter="pending">Pending</button>
+          </div>
+          <button class="btn btn-ghost" id="paymentExport" title="Export payment confirmations as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         </div>
-        <button class="btn btn-ghost" id="paymentExport"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Download CSV</button>
       </div>
       <div class="table-wrap" id="paymentsTableWrap">
         <table>
@@ -951,8 +957,10 @@
       <div class="toolbar">
         <input id="enquirySearch" type="text" placeholder="Search by name, mobile, booking ID...">
         <span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input id="enquiryDate" class="date-filter" type="text" readonly aria-label="Choose enquiry date" title="Choose enquiry date"><input id="enquiryDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
-        <div class="filt-pill sel" data-enquiry-filter="all">All</div>
-        <button class="btn btn-ghost" id="enquiryExport"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
+        <div class="toolbar-actions">
+          <div class="filt-pill sel" data-enquiry-filter="all">All</div>
+          <button class="btn btn-ghost" id="enquiryExport" title="Export enquiries as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
+        </div>
       </div>
       <div class="table-wrap">
         <table>
@@ -988,8 +996,11 @@
     <div class="page" id="page-whatsapp">
       <div class="toolbar">
         <input type="text" id="whatsappSearch" placeholder="Search by name, mobile...">
-        <span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input class="date-filter" type="text" readonly id="whatsappDate" aria-label="Choose WhatsApp enquiry date" title="Choose WhatsApp enquiry date"><input id="whatsappDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span><div class="filt-pill sel" data-wa-filter="all">All</div>
-        <button class="btn btn-ghost" id="whatsappExport" title="Download WhatsApp enquiries as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Download CSV</button>
+        <span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input class="date-filter" type="text" readonly id="whatsappDate" aria-label="Choose WhatsApp enquiry date" title="Choose WhatsApp enquiry date"><input id="whatsappDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
+        <div class="toolbar-actions">
+          <div class="filt-pill sel" data-wa-filter="all">All</div>
+          <button class="btn btn-ghost" id="whatsappExport" title="Export WhatsApp enquiries as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
+        </div>
       </div>
       <div class="table-wrap">
         <table>
@@ -1004,8 +1015,11 @@
     <div class="page" id="page-chatbot">
       <div class="toolbar">
         <input type="text" id="chatSearch" placeholder="Search by name, mobile...">
-        <span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input class="date-filter" type="text" readonly id="chatDate" aria-label="Choose chatbot date" title="Choose chatbot date"><input id="chatDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span><div class="filt-pill sel" data-chat-filter="all">All</div>
-        <button class="btn btn-ghost" id="chatbotExport" title="Download chatbot conversations as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Download CSV</button>
+        <span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input class="date-filter" type="text" readonly id="chatDate" aria-label="Choose chatbot date" title="Choose chatbot date"><input id="chatDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
+        <div class="toolbar-actions">
+          <div class="filt-pill sel" data-chat-filter="all">All</div>
+          <button class="btn btn-ghost" id="chatbotExport" title="Export chatbot conversations as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
+        </div>
       </div>
       <div class="table-wrap">
         <table>
