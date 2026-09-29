@@ -427,6 +427,18 @@
   #page-payments table{min-width:1040px;}
   #page-payments th:last-child, #page-payments td:last-child{min-width:98px; padding-right:20px;}
   #page-payments .row-actions{min-width:40px; white-space:nowrap;}
+  #page-whatsapp .table-wrap{overflow-x:auto; overflow-y:hidden;}
+  #page-whatsapp table{min-width:1080px;}
+  #page-whatsapp th:last-child, #page-whatsapp td:last-child{min-width:98px; padding-right:20px;}
+  #page-whatsapp td:nth-child(3){max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  #page-whatsapp th:nth-child(4), #page-whatsapp td:nth-child(4){min-width:280px; max-width:440px; white-space:normal; word-break:break-word; line-height:1.45;}
+  #page-whatsapp .row-actions{min-width:90px; white-space:nowrap;}
+  #page-chatbot .table-wrap{overflow-x:auto; overflow-y:hidden;}
+  #page-chatbot table{min-width:1080px;}
+  #page-chatbot th:last-child, #page-chatbot td:last-child{min-width:98px; padding-right:20px;}
+  #page-chatbot td:nth-child(3){max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  #page-chatbot th:nth-child(4), #page-chatbot td:nth-child(4){min-width:280px; max-width:440px; white-space:normal; word-break:break-word; line-height:1.45;}
+  #page-chatbot .row-actions{min-width:90px; white-space:nowrap;}
   /* Reduced table footer text */
   .table-foot{display:flex; justify-content:space-between; align-items:center; padding:14px 18px; font-size:11.5px; color:var(--muted); border-top:1px solid var(--border);}
 
@@ -656,8 +668,14 @@
     .table-wrap::-webkit-scrollbar-track{background:rgba(255,255,255,0.02);}
     table{min-width:640px;}
     #page-bookings table{min-width:1100px;}
+    #page-enquiries table{min-width:1180px;}
     #page-payments table{min-width:920px;}
-    #page-bookings th, #page-bookings td, #page-payments th, #page-payments td{padding:11px 12px;}
+    #page-whatsapp table{min-width:1020px;}
+    #page-chatbot table{min-width:1020px;}
+    #page-whatsapp th:nth-child(4), #page-whatsapp td:nth-child(4),
+    #page-chatbot th:nth-child(4), #page-chatbot td:nth-child(4){min-width:280px; max-width:400px; white-space:normal; word-break:break-word; line-height:1.45; font-size:12px;}
+    #page-whatsapp td:nth-child(3), #page-chatbot td:nth-child(3){max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+    #page-bookings th, #page-bookings td, #page-payments th, #page-payments td, #page-enquiries th, #page-enquiries td, #page-whatsapp th, #page-whatsapp td, #page-chatbot th, #page-chatbot td{padding:11px 12px;}
 
     /* Mobile Responsive Modal Overrides */
     .modal-overlay{padding:12px; align-items:center;}
@@ -2309,12 +2327,27 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   }
   function renderWhatsApp(message){
     const rows = waRows();
-    document.getElementById('whatsappBody').innerHTML = rows.length ? rows.map(enquiry=>{ const isRead = enquiry.read === true || locallyReadWhatsApp.has(String(enquiry._id)); const readAction = isRead ? '' : `<button onclick="markWhatsAppRead('${escapeWhatsAppHtml(enquiry._id)}')" title="Mark as read"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18v12H3z"/><path d="m4 7 8 6 8-6"/></svg></button>`; const status = normalizeStatus(enquiry.status); const displayStatus = isRead && status === 'contacted' ? 'Read / Contacted' : isRead ? 'Read' : displayEnquiryStatus(enquiry.status); return `<tr><td>${escapeWhatsAppHtml(enquiry.name)}</td><td class="mono">${escapeWhatsAppHtml(enquiry.mobile)}</td><td>${escapeWhatsAppHtml(enquiry.email)}</td><td style="white-space:normal; max-width:240px;">${escapeWhatsAppHtml(enquiry.message)}</td><td>${escapeWhatsAppHtml(formatDateDDMMYYYY(enquiry.createdAt))}</td><td>${escapeWhatsAppHtml(formatDateDDMMYYYY(enquiry.createdAt))}</td><td><span class="badge ${isRead ? 'confirmed' : statusBadgeClass(enquiry.status)}">${escapeWhatsAppHtml(displayStatus)}</span></td><td><div class="row-actions"><button onclick="viewWhatsAppDetails('${escapeWhatsAppHtml(enquiry._id)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>${readAction}<button onclick="markWhatsAppContacted('${escapeWhatsAppHtml(enquiry._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 10h8"/></svg></button></div></td></tr>`;}).join('') : `<tr><td colspan="8" class="tbl-empty">${escapeWhatsAppHtml(message || 'No WhatsApp enquiries found')}</td></tr>`;
+    document.getElementById('whatsappBody').innerHTML = rows.length ? rows.map(enquiry=>{
+      const isRead = enquiry.read === true || locallyReadWhatsApp.has(String(enquiry._id));
+      const readAction = isRead ? '' : `<button onclick="markWhatsAppRead('${escapeWhatsAppHtml(enquiry._id)}')" title="Mark as read"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18v12H3z"/><path d="m4 7 8 6 8-6"/></svg></button>`;
+      const status = normalizeStatus(enquiry.status);
+      const displayStatus = isRead && status === 'contacted' ? 'Read / Contacted' : isRead ? 'Read' : displayEnquiryStatus(enquiry.status);
+      return `<tr onclick="viewWhatsAppDetails('${escapeWhatsAppHtml(enquiry._id)}')" style="cursor:pointer;">
+        <td>${escapeWhatsAppHtml(enquiry.name)}</td>
+        <td class="mono">${escapeWhatsAppHtml(enquiry.mobile)}</td>
+        <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeWhatsAppHtml(enquiry.email)}">${escapeWhatsAppHtml(enquiry.email)}</td>
+        <td style="min-width:280px; max-width:420px; white-space:normal; word-break:break-word; line-height:1.45; font-size:12px;">${escapeWhatsAppHtml(enquiry.message)}</td>
+        <td>${escapeWhatsAppHtml(formatDateDDMMYYYY(enquiry.createdAt))}</td>
+        <td>${escapeWhatsAppHtml(formatDateDDMMYYYY(enquiry.createdAt))}</td>
+        <td><span class="badge ${isRead ? 'confirmed' : statusBadgeClass(enquiry.status)}">${escapeWhatsAppHtml(displayStatus)}</span></td>
+        <td><div class="row-actions" onclick="event.stopPropagation()"><button onclick="viewWhatsAppDetails('${escapeWhatsAppHtml(enquiry._id)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>${readAction}<button onclick="markWhatsAppContacted('${escapeWhatsAppHtml(enquiry._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 10h8"/></svg></button></div></td>
+      </tr>`;
+    }).join('') : `<tr><td colspan="8" class="tbl-empty">${escapeWhatsAppHtml(message || 'No WhatsApp enquiries found')}</td></tr>`;
   }
   function viewWhatsAppDetails(id){
     const enquiry = liveWhatsApp.find(item => item._id === id);
     if(!enquiry) return;
-    document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Customer</span><span>${escapeWhatsAppHtml(enquiry.name)}</span></div><div class="detail-row"><span>Mobile</span><span class="mono">${escapeWhatsAppHtml(enquiry.mobile)}</span></div><div class="detail-row"><span>Email</span><span>${escapeWhatsAppHtml(enquiry.email)}</span></div><div class="detail-row"><span>Enquiry date</span><span>${escapeWhatsAppHtml(formatDateDDMMYYYY(enquiry.createdAt))}</span></div><div class="detail-row"><span>Message</span><span>${escapeWhatsAppHtml(enquiry.message)}</span></div><div class="detail-row"><span>Status</span><span>${escapeWhatsAppHtml(displayEnquiryStatus(enquiry.status))}</span></div>`;
+    document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Customer</span><span>${escapeWhatsAppHtml(enquiry.name)}</span></div><div class="detail-row"><span>Mobile</span><span class="mono"><a href="tel:${escapeWhatsAppHtml(enquiry.mobile)}" style="color:var(--neon); text-decoration:none;">${escapeWhatsAppHtml(enquiry.mobile)}</a></span></div><div class="detail-row"><span>Email</span><span>${escapeWhatsAppHtml(enquiry.email)}</span></div><div class="detail-row"><span>Enquiry date</span><span>${escapeWhatsAppHtml(formatDateDDMMYYYY(enquiry.createdAt))}</span></div><div class="detail-row"><span>Message</span><span style="white-space:pre-wrap; word-break:break-word; line-height:1.5; color:var(--white);">${escapeWhatsAppHtml(enquiry.message)}</span></div><div class="detail-row"><span>Status</span><span>${escapeWhatsAppHtml(displayEnquiryStatus(enquiry.status))}</span></div>`;
     openModal('detailModal');
   }
   async function markWhatsAppContacted(id){
@@ -2552,14 +2585,22 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       const readAction = isRead ? '' : `<button onclick="markChatbotRead('${escapeBookingHtml(c._id)}')" title="Mark as read"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18v12H3z"/><path d="m4 7 8 6 8-6"/></svg></button>`;
       const displayStatus = isRead && canonicalEnquiryStatus(c.status) === 'contacted' ? 'Read / Contacted' : isRead ? 'Read' : displayEnquiryStatus(c.status);
       return `
-    <tr data-date="${escapeBookingHtml(isoDay(c.createdAt))}"><td>${escapeBookingHtml(c.name)}</td><td class="mono">${escapeBookingHtml(c.mobile)}</td><td>${escapeBookingHtml(c.email)}</td><td style="white-space:normal; max-width:200px;">${escapeBookingHtml(message)}</td><td>${escapeBookingHtml(formatDateDDMMYYYY(c.createdAt))}</td><td>${escapeBookingHtml(formatDateDDMMYYYY(c.updatedAt))}</td>
-    <td><span class="badge ${isRead ? 'confirmed' : statusBadgeClass(c.status)}">${escapeBookingHtml(displayStatus)}</span></td><td><div class="row-actions"><button onclick="viewChatbotDetails('${escapeBookingHtml(c._id)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>${readAction}<button onclick="markChatbotContacted('${escapeBookingHtml(c._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 10h8"/></svg></button></div></td></tr>`;
+    <tr data-date="${escapeBookingHtml(isoDay(c.createdAt))}" onclick="viewChatbotDetails('${escapeBookingHtml(c._id)}')" style="cursor:pointer;">
+      <td>${escapeBookingHtml(c.name)}</td>
+      <td class="mono">${escapeBookingHtml(c.mobile)}</td>
+      <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeBookingHtml(c.email)}">${escapeBookingHtml(c.email)}</td>
+      <td style="min-width:280px; max-width:420px; white-space:normal; word-break:break-word; line-height:1.45; font-size:12px;">${escapeBookingHtml(message)}</td>
+      <td>${escapeBookingHtml(formatDateDDMMYYYY(c.createdAt))}</td>
+      <td>${escapeBookingHtml(formatDateDDMMYYYY(c.updatedAt))}</td>
+      <td><span class="badge ${isRead ? 'confirmed' : statusBadgeClass(c.status)}">${escapeBookingHtml(displayStatus)}</span></td>
+      <td><div class="row-actions" onclick="event.stopPropagation()"><button onclick="viewChatbotDetails('${escapeBookingHtml(c._id)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>${readAction}<button onclick="markChatbotContacted('${escapeBookingHtml(c._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 10h8"/></svg></button></div></td>
+    </tr>`;
     }).join('') : `<tr><td colspan="8" class="tbl-empty">${chatStatus === 'all' ? 'No chatbot conversations found' : 'No ' + (chatStatus === 'new' ? 'New' : chatStatus === 'contacted' ? 'Contacted' : 'Resolved') + ' conversations found'}</td></tr>`;
   }
   function viewChatbotDetails(id){
     const conversation = liveChatbot.find(item => String(item._id) === String(id));
     if(!conversation){ showToast('Chatbot conversation not found'); return; }
-    document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Customer</span><span>${escapeBookingHtml(conversation.name)}</span></div><div class="detail-row"><span>Mobile</span><span class="mono">${escapeBookingHtml(conversation.mobile)}</span></div><div class="detail-row"><span>Email</span><span>${escapeBookingHtml(conversation.email)}</span></div><div class="detail-row"><span>Enquiry date</span><span>${escapeBookingHtml(formatDateDDMMYYYY(conversation.createdAt))}</span></div><div class="detail-row"><span>Last message</span><span>${escapeBookingHtml(chatMessage(conversation))}</span></div><div class="detail-row"><span>Status</span><span>${escapeBookingHtml(displayEnquiryStatus(conversation.status))}</span></div>`;
+    document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Customer</span><span>${escapeBookingHtml(conversation.name)}</span></div><div class="detail-row"><span>Mobile</span><span class="mono"><a href="tel:${escapeBookingHtml(conversation.mobile)}" style="color:var(--neon); text-decoration:none;">${escapeBookingHtml(conversation.mobile)}</a></span></div><div class="detail-row"><span>Email</span><span>${escapeBookingHtml(conversation.email)}</span></div><div class="detail-row"><span>Enquiry date</span><span>${escapeBookingHtml(formatDateDDMMYYYY(conversation.createdAt))}</span></div><div class="detail-row"><span>Last message</span><span style="white-space:pre-wrap; word-break:break-word; line-height:1.5; color:var(--white);">${escapeBookingHtml(chatMessage(conversation))}</span></div><div class="detail-row"><span>Status</span><span>${escapeBookingHtml(displayEnquiryStatus(conversation.status))}</span></div>`;
     openModal('detailModal');
   }
   async function markChatbotContacted(id){
