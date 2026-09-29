@@ -1355,29 +1355,16 @@
   }
 
   // ---- activity ----
-  const activity = [
-    ['New booking from Rahul Verma — Aug 27, 07:00 AM', '2 min ago'],
-    ['Payment verified for booking #BK1042', '18 min ago'],
-    ['Extended enquiry received from Priya Nair', '1 hr ago'],
-    ['Booking #BK1039 cancelled by customer', '3 hrs ago'],
-    ['New customer registered — Aditya Rao', '5 hrs ago'],
-  ];
-  document.getElementById('activityList').innerHTML = activity.map(a=>`<div class="activity-row"><span class="adot"></span>${a[0]}<span class="atime">${a[1]}</span></div>`).join('');
+  const activity = [];
+  document.getElementById('activityList').innerHTML = activity.length
+    ? activity.map(a=>`<div class="activity-row"><span class="adot"></span>${a[0]}<span class="atime">${a[1]}</span></div>`).join('')
+    : '<div class="tbl-empty">No recent activity</div>';
 
   // ---- bookings table ----
-  const bookings = [
-    ['BK1042','Rahul Verma','98765 43210','Aug 27','07:00 AM','2 hrs','₹1,400','verified','confirmed','2026-08-27'],
-    ['BK1041','Sana Sheikh','91234 56780','Aug 27','06:00 PM','1 hr','₹800','pending','pending','2026-08-27'],
-    ['BK1040','Aditya Rao','99887 66554','Aug 26','08:00 PM','3 hrs','₹2,100','verified','confirmed','2026-08-26'],
-    ['BK1039','Priya Nair','90011 22334','Aug 26','07:00 PM','2 hrs','₹1,400','pending','cancelled','2026-08-26'],
-    ['BK1038','Karan Mehta','98123 45670','Aug 25','06:00 AM','1 hr','₹800','verified','confirmed','2026-08-25'],
-    ['BK1037','Neha Joshi','97865 43120','Aug 25','09:00 PM','2 hrs','₹1,400','pending','pending','2026-08-25'],
-    ['BK1036','Vikram Singh','96543 21098','Aug 24','07:00 PM','4 hrs','₹2,800','verified','confirmed','2026-08-24'],
-    ['BK1035','Ayesha Khan','95432 10987','Aug 24','06:00 PM','1 hr','₹800','verified','confirmed','2026-08-24'],
-  ];
+  const bookings = [];
   const bstatusLbl = {confirmed:'Confirmed', pending:'Pending', cancelled:'Cancelled'};
   const pstatusLbl = {verified:'Verified', pending:'Pending'};
-  document.getElementById('bookingsBody').innerHTML = bookings.map(b=>`
+  document.getElementById('bookingsBody').innerHTML = bookings.length ? bookings.map(b=>`
     <tr data-date="${b[9]}" data-booking-id="${b[0]}">
       <td class="mono">${b[0]}</td><td>${b[1]}</td><td class="mono">${b[2]}</td><td>${b[3]}</td><td>${b[4]}</td><td>${b[5]}</td><td class="mono">${b[6]}</td>
       <td><span class="badge ${b[7]}">${pstatusLbl[b[7]]}</span></td>
@@ -1388,7 +1375,7 @@
         <button class="danger" onclick="showToast('Booking ${b[0]} cancelled')" title="Cancel"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
         <button class="danger" onclick="deleteBookingFromTable('${b[0]}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button>
       </div></td>
-    </tr>`).join('');
+    </tr>`).join('') : '<tr><td colspan="10" class="tbl-empty">No bookings found</td></tr>';
 
   function deleteBookingFromTable(bookingId){
     const confirmed = window.confirm('Delete this booking permanently from the dashboard?');
@@ -1413,31 +1400,20 @@
   }
 
   // ---- enquiries table ----
-  const enquiries = [
-    ['EQ204','Priya Nair','90011 22334','Aug 29','Aug 30','2','Evening','New','2026-08-29','2026-08-30'],
-    ['EQ203','Corporate — Zynta Ltd','98700 11223','Sep 2','Sep 3','2','Morning','Contacted','2026-09-02','2026-09-03'],
-    ['EQ202','Manav Iyer','97654 33221','Sep 5','Sep 6','2','Night','Quotation Sent','2026-09-05','2026-09-06'],
-    ['EQ201','Weekend Warriors Club','96500 44332','Aug 22','Aug 24','3','Evening','Confirmed','2026-08-22','2026-08-24'],
-    ['EQ200','Riya Kapoor','95400 55667','Aug 15','Aug 16','2','Morning','Closed','2026-08-15','2026-08-16'],
-  ];
+  const enquiries = [];
   const enqBadge = {'New':'verified','Contacted':'pending','Quotation Sent':'pending','Confirmed':'confirmed','Closed':'cancelled'};
-  document.getElementById('enquiriesBody').innerHTML = enquiries.map(e=>`
+  document.getElementById('enquiriesBody').innerHTML = enquiries.length ? enquiries.map(e=>`
     <tr data-start="${e[8]}" data-end="${e[9]}"><td class="mono">${e[0]}</td><td>${e[1]}</td><td class="mono">${e[2]}</td><td>${e[3]}</td><td>${e[4]}</td><td>${e[5]}</td><td>${e[6]}</td>
     <td><span class="badge ${enqBadge[e[7]]}">${e[7]}</span></td>
     <td><div class="row-actions">
       <button title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
       <button onclick="showToast('Calling ${e[1]}...')" title="Call"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11 11 0 0 0 3.4.55 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11 11 0 0 0 .55 3.4 1 1 0 0 1-.25 1Z"/></svg></button>
-    </div></td></tr>`).join('');
+    </div></td></tr>`).join('') : '<tr><td colspan="9" class="tbl-empty">No enquiries found</td></tr>';
 
   // ---- WhatsApp enquiries table ----
-  const waEnquiries = [
-    ['Rahul Verma','98765 43210','rahul.v@example.com','Do you have a slot free this Saturday evening?','2 min ago','new','2026-08-27'],
-    ['Sana Sheikh','91234 56780','sana.s@example.com','Can I get a group discount for 10+ people?','1 hr ago','pending','2026-08-26'],
-    ['Aditya Rao','99887 66554','aditya.r@example.com','Is the turf covered in case of rain?','4 hrs ago','confirmed','2026-08-25'],
-    ['Priya Nair','90011 22334','priya.n@example.com','Looking to book for a corporate tournament.','Yesterday','cancelled','2026-08-24'],
-  ];
+  const waEnquiries = [];
   const waStatusLbl = {new:'New', pending:'Contacted', confirmed:'Resolved', cancelled:'Archived'};
-  document.getElementById('whatsappBody').innerHTML = waEnquiries.map(w=>`
+  document.getElementById('whatsappBody').innerHTML = waEnquiries.length ? waEnquiries.map(w=>`
     <tr data-date="${w[6]}"><td>${w[0]}</td><td class="mono">${w[1]}</td><td>${w[2]}</td><td style="white-space:normal; max-width:220px;">${w[3]}</td><td>${w[4]}</td>
     <td><span class="badge ${w[5]}">${waStatusLbl[w[5]]}</span></td>
     <td><div class="row-actions">
@@ -1445,23 +1421,18 @@
       <button onclick="showToast('Marked as contacted')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button>
       <button onclick="showToast('Opening reply...')" title="Reply"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg></button>
       <button class="danger" onclick="showToast('Enquiry archived')" title="Archive"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9M10 13h4"/></svg></button>
-    </div></td></tr>`).join('');
+    </div></td></tr>`).join('') : '<tr><td colspan="7" class="tbl-empty">No WhatsApp enquiries found</td></tr>';
 
   // ---- Chatbot conversations table ----
-  const chatConvos = [
-    ['Karan Mehta','98123 45670','karan.m@example.com','Pricing, Booking steps','10 min ago','new','2026-08-27'],
-    ['Neha Joshi','97865 43120','neha.j@example.com','Operating hours, OTP','3 hrs ago','new','2026-08-26'],
-    ['Vikram Singh','96543 21098','vikram.s@example.com','Multi-day booking, Location','Yesterday','contacted','2026-08-25'],
-    ['Ayesha Khan','95432 10987','ayesha.k@example.com','Payment methods','2 days ago','contacted','2026-08-24'],
-  ];
-  document.getElementById('chatbotBody').innerHTML = chatConvos.map(c=>`
+  const chatConvos = [];
+  document.getElementById('chatbotBody').innerHTML = chatConvos.length ? chatConvos.map(c=>`
     <tr data-date="${c[6]}"><td>${c[0]}</td><td class="mono">${c[1]}</td><td>${c[2]}</td><td style="white-space:normal; max-width:200px;">${c[3]}</td><td>${c[4]}</td>
     <td><span class="badge ${c[5]==='new'?'confirmed':'pending'}">${c[5]==='new'?'New':'Contacted'}</span></td>
     <td><div class="row-actions">
       <button onclick="showToast('Opening conversation...')" title="Continue"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v13H8l-4 4Z"/></svg></button>
       <button onclick="showToast('Marked as contacted')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button>
       <button onclick="showToast('Conversation exported')" title="Export"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></button>
-    </div></td></tr>`).join('');
+    </div></td></tr>`).join('') : '<tr><td colspan="7" class="tbl-empty">No chatbot conversations found</td></tr>';
 
   function formatDisplayDate(value){
     if(!value) return 'dd-mm-yyyy';
@@ -1524,33 +1495,23 @@
 
   // ---- customers table ----
   const customerHistory = {
-    hourly: [
-      ['Rahul Verma','98765 43210','2026-08-27','07:00 PM','2 hrs','₹1,400','Confirmed'],
-      ['Sana Sheikh','91234 56780','2026-08-27','06:00 PM','1 hr','₹800','Pending'],
-      ['Aditya Rao','99887 66554','2026-08-26','08:00 PM','3 hrs','₹2,100','Confirmed'],
-      ['Priya Nair','90011 22334','2026-08-26','07:00 PM','2 hrs','₹1,400','Cancelled'],
-      ['Karan Mehta','98123 45670','2026-08-25','06:00 AM','1 hr','₹800','Confirmed'],
-    ],
-    extended: [
-      ['Weekend Warriors Club','96500 44332','2026-08-22','2026-08-24','3 days','₹18,900','Confirmed'],
-      ['Corporate — Zynta Ltd','98700 11223','2026-09-02','2026-09-03','2 days','₹12,600','Contacted'],
-      ['Manav Iyer','97654 33221','2026-09-05','2026-09-06','2 days','₹12,600','Quotation Sent'],
-      ['Priya Nair','90011 22334','2026-08-29','2026-08-30','2 days','₹12,600','New'],
-    ],
+    hourly: [],
+    extended: [],
   };
   let activeHistoryType = 'hourly';
   const historyHead = document.getElementById('customerHistoryHead');
   const historyBody = document.getElementById('customerHistoryBody');
   const historyDate = document.getElementById('customerHistoryDate');
   function renderCustomerHistory(){
-    const rows = customerHistory[activeHistoryType];
+    const rows = customerHistory[activeHistoryType] || [];
     const selectedDate = historyDate.value;
     historyHead.innerHTML = activeHistoryType === 'hourly'
       ? '<tr><th>Customer</th><th>Mobile</th><th>Booking date</th><th>Time</th><th>Duration</th><th>Amount</th><th>Status</th></tr>'
       : '<tr><th>Customer</th><th>Mobile</th><th>Start date</th><th>End date</th><th>Duration</th><th>Amount</th><th>Status</th></tr>';
-    historyBody.innerHTML = rows.filter(row => !selectedDate || (activeHistoryType === 'hourly' ? row[2] === selectedDate : selectedDate >= row[2] && selectedDate <= row[3])).map(row=>`
-      <tr><td>${row[0]}</td><td class="mono">${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td>${row[4]}</td><td class="mono">${row[5]}</td><td><span class="badge ${row[6] === 'Confirmed' ? 'confirmed' : row[6] === 'Cancelled' ? 'cancelled' : 'pending'}">${row[6]}</span></td></tr>`).join('');
-    document.getElementById('customerHistoryCount').textContent = `Showing ${activeHistoryType} booking history${selectedDate ? ` for ${selectedDate}` : ''}`;
+    const filteredRows = rows.filter(row => !selectedDate || (activeHistoryType === 'hourly' ? row[2] === selectedDate : selectedDate >= row[2] && selectedDate <= row[3]));
+    historyBody.innerHTML = filteredRows.length ? filteredRows.map(row=>`
+      <tr><td>${row[0]}</td><td class="mono">${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td><td>${row[4]}</td><td class="mono">${row[5]}</td><td><span class="badge ${row[6] === 'Confirmed' ? 'confirmed' : row[6] === 'Cancelled' ? 'cancelled' : 'pending'}">${row[6]}</span></td></tr>`).join('') : '<tr><td colspan="7" class="tbl-empty">No customer history found</td></tr>';
+    document.getElementById('customerHistoryCount').textContent = `Showing ${filteredRows.length} ${activeHistoryType} booking history${selectedDate ? ` for ${selectedDate}` : ''}`;
   }
   document.querySelectorAll('[data-history]').forEach(button=>button.addEventListener('click', ()=>{
     activeHistoryType = button.dataset.history;

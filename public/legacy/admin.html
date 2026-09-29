@@ -2243,18 +2243,7 @@
   }
 
   // ---- activity ----
-  const activity = [
-    ['New booking from Rahul Verma — Aug 27, 07:00 AM', '2 min ago'],
-    ['Payment verified for booking #BK1042', '18 min ago'],
-    ['Extended enquiry received from Priya Nair', '1 hr ago'],
-    ['Booking #BK1039 cancelled by customer', '3 hrs ago'],
-    ['New customer registered — Aditya Rao', '5 hrs ago'],
-    ['WhatsApp enquiry from Kabir Nair about tournament hosting', '7 hrs ago'],
-    ['Payment of ₹2,100 verified for booking #BK1040', '9 hrs ago'],
-    ['New chatbot conversation — Karan Mehta asked about pricing', '11 hrs ago'],
-    ['Booking #BK1038 confirmed by admin', 'Yesterday, 06:00 AM'],
-    ['Extended enquiry from Sunrise FC Academy confirmed', 'Yesterday, 02:00 PM'],
-  ];
+  const activity = [];
   document.getElementById('activityList').innerHTML = '<div class="tbl-empty">Loading dashboard...</div>';
 
   const bstatusLbl = {confirmed:'Confirmed', pending:'Pending', cancelled:'Cancelled'};
@@ -2262,23 +2251,7 @@
   function openBookingDetail(bookingId){ loadBookingDetail(bookingId); }
 
   // ---- enquiries table ----
-  const enquiries = [
-    ['EQ204','Priya Nair','90011 22334','Aug 29','Aug 30','2','Evening','New','2026-08-29','2026-08-30'],
-    ['EQ203','Corporate — Zynta Ltd','98700 11223','Sep 2','Sep 3','2','Morning','Contacted','2026-09-02','2026-09-03'],
-    ['EQ202','Manav Iyer','97654 33221','Sep 5','Sep 6','2','Night','Quotation Sent','2026-09-05','2026-09-06'],
-    ['EQ201','Weekend Warriors Club','96500 44332','Aug 22','Aug 24','3','Evening','Confirmed','2026-08-22','2026-08-24'],
-    ['EQ200','Riya Kapoor','95400 55667','Aug 15','Aug 16','2','Morning','Closed','2026-08-15','2026-08-16'],
-    ['EQ199','Kabir Nair','94300 22110','Sep 10','Sep 11','2','Evening','New','2026-09-10','2026-09-11'],
-    ['EQ198','St. Mary\'s College','93200 99887','Sep 12','Sep 14','3','Morning','Contacted','2026-09-12','2026-09-14'],
-    ['EQ197','Nisha Joshi','92100 44332','Sep 15','Sep 16','2','Night','New','2026-09-15','2026-09-16'],
-    ['EQ196','Sunrise FC Academy','96500 44321','Sep 18','Sep 20','3','Evening','Quotation Sent','2026-09-18','2026-09-20'],
-    ['EQ195','Rohit Malhotra','91000 11223','Aug 10','Aug 11','2','Morning','Confirmed','2026-08-10','2026-08-11'],
-    ['EQ194','City Youth Club','90800 55664','Jul 28','Jul 29','2','Night','Closed','2026-07-28','2026-07-29'],
-    ['EQ193','Ananya Iyer','90700 33221','Jul 18','Jul 19','2','Evening','Confirmed','2026-07-18','2026-07-19'],
-    ['EQ192','IIM Sports Society','90600 99887','Jul 05','Jul 07','3','Morning','Contacted','2026-07-05','2026-07-07'],
-    ['EQ191','Zara Khan','90500 44332','Jun 26','Jun 27','2','Night','Closed','2026-06-26','2026-06-27'],
-    ['EQ190','Aakash Jain','90400 22331','Jun 14','Jun 15','2','Evening','Confirmed','2026-06-14','2026-06-15'],
-  ];
+  const enquiries = [];
   const enqBadge = {'New':'verified','Contacted':'pending','Quotation Sent':'pending','Confirmed':'confirmed','Closed':'cancelled'};
 document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class="tbl-empty">Loading enquiries...</td></tr>';
 
@@ -3141,59 +3114,8 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   if(adminSessionReady) renderPayments();
 
   const customerHistory = {
-    hourly: [
-      ['Rahul Verma','98765 43210','2026-08-27','07:00 PM','2 hrs','₹1,400','Confirmed'],
-      ['Sana Sheikh','91234 56780','2026-08-27','06:00 PM','1 hr','₹800','Pending'],
-      ['Aditya Rao','99887 66554','2026-08-26','08:00 PM','3 hrs','₹2,100','Confirmed'],
-      ['Priya Nair','90011 22334','2026-08-26','07:00 PM','2 hrs','₹1,400','Cancelled'],
-      ['Karan Mehta','98123 45670','2026-08-25','06:00 AM','1 hr','₹800','Confirmed'],
-      ['Rahul Verma','98765 43210','2026-08-24','06:00 PM','2 hrs','₹1,400','Confirmed'],
-      ['Sana Sheikh','91234 56780','2026-08-24','07:00 PM','1 hr','₹800','Cancelled'],
-      ['Aarav Sharma','98765 54321','2026-08-23','05:00 PM','2 hrs','₹1,400','Confirmed'],
-      ['Ishita Gupta','91234 56789','2026-08-22','08:00 PM','1 hr','₹800','Confirmed'],
-      ['Aditya Rao','99887 66554','2026-08-21','06:00 AM','2 hrs','₹1,400','Confirmed'],
-      ['Rohan Malhotra','96500 22331','2026-08-20','07:00 PM','3 hrs','₹2,100','Confirmed'],
-      ['Priya Nair','90011 22334','2026-08-19','06:00 PM','1 hr','₹800','Confirmed'],
-      ['Karan Mehta','98123 45670','2026-08-18','07:00 PM','2 hrs','₹1,400','Pending'],
-      ['Sana Sheikh','91234 56780','2026-08-17','08:00 PM','2 hrs','₹1,400','Confirmed'],
-      ['Rahul Verma','98765 43210','2026-08-16','06:00 AM','1 hr','₹800','Confirmed'],
-      ['Ishita Gupta','91234 56789','2026-08-15','07:00 PM','2 hrs','₹1,400','Confirmed'],
-      ['Vikram Singh','96543 21098','2026-08-14','08:00 PM','3 hrs','₹2,100','Pending'],
-      ['Ayesha Khan','95432 10987','2026-08-13','06:00 PM','1 hr','₹800','Confirmed'],
-      ['Sana Sheikh','91234 56780','2026-08-12','07:00 PM','2 hrs','₹1,400','Confirmed'],
-      ['Rahul Verma','98765 43210','2026-08-11','06:00 AM','2 hrs','₹1,400','Confirmed'],
-      ['Kabir Nair','94300 22110','2026-08-10','09:00 PM','2 hrs','₹1,400','Confirmed'],
-      ['Nisha Joshi','93200 99887','2026-08-09','07:00 PM','1 hr','₹800','Confirmed'],
-      ['Aditya Rao','99887 66554','2026-08-08','06:00 AM','3 hrs','₹2,100','Cancelled'],
-      ['Priya Nair','90011 22334','2026-08-07','08:00 PM','2 hrs','₹1,400','Confirmed'],
-      ['Karan Mehta','98123 45670','2026-08-06','06:00 PM','1 hr','₹800','Confirmed'],
-      ['Ravi Kumar','92100 44332','2026-08-05','07:00 PM','4 hrs','₹2,800','Confirmed'],
-      ['Tanya Menon','91000 11223','2026-08-04','06:00 AM','2 hrs','₹1,400','Pending'],
-      ['Sana Sheikh','91234 56780','2026-08-03','09:00 PM','1 hr','₹800','Confirmed'],
-      ['Rahul Verma','98765 43210','2026-08-02','07:00 PM','2 hrs','₹1,400','Confirmed'],
-      ['Ishita Gupta','91234 56789','2026-08-01','06:00 PM','2 hrs','₹1,400','Confirmed'],
-      ['Vikram Singh','96543 21098','2026-07-31','08:00 PM','2 hrs','₹1,400','Confirmed'],
-      ['Ayesha Khan','95432 10987','2026-07-30','06:00 AM','1 hr','₹800','Confirmed'],
-    ],
-    extended: [
-      ['Weekend Warriors Club','96500 44332','2026-08-22','2026-08-24','3 days','₹18,900','Confirmed'],
-      ['Corporate — Zynta Ltd','98700 11223','2026-09-02','2026-09-03','2 days','₹12,600','Contacted'],
-      ['Manav Iyer','97654 33221','2026-09-05','2026-09-06','2 days','₹12,600','Quotation Sent'],
-      ['Priya Nair','90011 22334','2026-08-29','2026-08-30','2 days','₹12,600','New'],
-      ['Sunrise FC Academy','96500 44321','2026-08-15','2026-08-17','3 days','₹18,900','Confirmed'],
-      ['Corporate — Zynta Ltd','98700 11223','2026-08-08','2026-08-09','2 days','₹12,600','Confirmed'],
-      ['Weekend Warriors Club','96500 44332','2026-08-01','2026-08-02','2 days','₹12,600','Confirmed'],
-      ['Manav Iyer','97654 33221','2026-07-25','2026-07-26','2 days','₹12,600','Confirmed'],
-      ['St. Mary\'s College','91200 11223','2026-07-18','2026-07-20','3 days','₹18,900','Contacted'],
-      ['Rahul Verma','98765 43210','2026-07-10','2026-07-12','3 days','₹18,900','Confirmed'],
-      ['Sunrise FC Academy','96500 44321','2026-07-03','2026-07-04','2 days','₹12,600','Quotation Sent'],
-      ['Priya Nair','90011 22334','2026-06-27','2026-06-28','2 days','₹12,600','Confirmed'],
-      ['St. Mary\'s College','91200 11223','2026-06-12','2026-06-14','3 days','₹18,900','Confirmed'],
-      ['Kabir Nair','94300 22110','2026-05-29','2026-05-30','2 days','₹12,600','Quotation Sent'],
-      ['Rohit Malhotra','91000 11223','2026-05-15','2026-05-17','3 days','₹18,900','Contacted'],
-      ['Weekend Warriors Club','96500 44332','2026-05-02','2026-05-03','2 days','₹12,600','Confirmed'],
-      ['Sunrise FC Academy','96500 44321','2026-04-20','2026-04-22','3 days','₹18,900','Confirmed'],
-    ],
+    hourly: [],
+    extended: [],
   };
   let activeHistoryType = 'hourly';
   let liveCustomers = [];
