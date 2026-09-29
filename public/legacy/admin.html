@@ -2473,7 +2473,11 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   document.getElementById('enquiryStatusMenuList').addEventListener('click', event => {
     event.stopPropagation();
     const filterButton = event.target.closest('[data-enquiry-filter]');
-    if(filterButton) applyEnquiryFilter(filterButton.dataset.enquiryFilter);
+    if(filterButton) {
+      openAdminPage('enquiries');
+      applyEnquiryFilter(filterButton.dataset.enquiryFilter);
+      if(window.innerWidth <= 1000) closeMobileSidebar();
+    }
   });
   document.getElementById('enquirySearch').addEventListener('input', loadAdminEnquiries);
   document.getElementById('enquiryDate').addEventListener('change', ()=>{ enquiryDateMode = 'custom'; syncEnquiryFilters(); loadAdminEnquiries(); });
@@ -2491,7 +2495,15 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   function applyWhatsAppFilter(value){ waFilter = value; waStatus = value === 'contacted' ? 'contacted' : 'all'; waReadMode = value === 'read' || value === 'unread' ? value : 'all'; waDateMode = value === 'today' ? 'today' : 'all'; if(value === 'today') document.getElementById('whatsappDate').value = ''; syncWhatsAppFilters(); renderWhatsApp(); }
   document.getElementById('page-whatsapp').addEventListener('click', event=>{ const button = event.target.closest('[data-wa-filter]'); if(button) applyWhatsAppFilter(button.dataset.waFilter); });
   document.getElementById('whatsappStatusMenuButton').addEventListener('click', event=>{ event.stopPropagation(); const menu=document.getElementById('whatsappStatusMenu'); const button=document.getElementById('whatsappStatusMenuButton'); const open=menu.classList.toggle('open'); button.setAttribute('aria-expanded', String(open)); syncMenuMargin(menu); });
-  document.getElementById('whatsappStatusMenuList').addEventListener('click', event=>{ event.stopPropagation(); const button=event.target.closest('[data-wa-filter]'); if(button) applyWhatsAppFilter(button.dataset.waFilter); });
+  document.getElementById('whatsappStatusMenuList').addEventListener('click', event=>{
+    event.stopPropagation();
+    const button = event.target.closest('[data-wa-filter]');
+    if(button) {
+      openAdminPage('whatsapp');
+      applyWhatsAppFilter(button.dataset.waFilter);
+      if(window.innerWidth <= 1000) closeMobileSidebar();
+    }
+  });
   ['whatsappSearch','whatsappDate'].forEach(id=>document.getElementById(id).addEventListener(id === 'whatsappDate' ? 'change' : 'input', ()=>{
     if(id === 'whatsappDate') waDateMode = 'custom';
     syncWhatsAppFilters();
@@ -2577,7 +2589,15 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   function applyChatbotFilter(value){ chatFilter = value; chatStatus = value === 'contacted' ? 'contacted' : 'all'; chatReadMode = value === 'read' || value === 'unread' ? value : 'all'; chatDateMode = value === 'today' ? 'today' : 'all'; if(value === 'today') document.getElementById('chatDate').value = ''; syncChatbotFilters(); renderChatbot(); }
   document.getElementById('page-chatbot').addEventListener('click', event=>{ const button = event.target.closest('[data-chat-filter]'); if(button) applyChatbotFilter(button.dataset.chatFilter); });
   document.getElementById('chatbotStatusMenuButton').addEventListener('click', event=>{ event.stopPropagation(); const menu=document.getElementById('chatbotStatusMenu'); const button=document.getElementById('chatbotStatusMenuButton'); const open=menu.classList.toggle('open'); button.setAttribute('aria-expanded', String(open)); syncMenuMargin(menu); });
-  document.getElementById('chatbotStatusMenuList').addEventListener('click', event=>{ event.stopPropagation(); const button=event.target.closest('[data-chat-filter]'); if(button) applyChatbotFilter(button.dataset.chatFilter); });
+  document.getElementById('chatbotStatusMenuList').addEventListener('click', event => {
+    event.stopPropagation();
+    const button = event.target.closest('[data-chat-filter]');
+    if(button) {
+      openAdminPage('chatbot');
+      applyChatbotFilter(button.dataset.chatFilter);
+      if(window.innerWidth <= 1000) closeMobileSidebar();
+    }
+  });
   ['chatSearch','chatDate'].forEach(id=>document.getElementById(id).addEventListener(id === 'chatDate' ? 'change' : 'input', ()=>{
     if(id === 'chatDate') chatDateMode = 'custom';
     syncChatbotFilters();
@@ -2887,7 +2907,11 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   document.getElementById('bookingStatusMenuList').addEventListener('click', (event) => {
     event.stopPropagation();
     const filterButton = event.target.closest('[data-booking-filter]');
-    if(filterButton) applyBookingFilter(filterButton.dataset.bookingFilter);
+    if(filterButton) {
+      openAdminPage('bookings');
+      applyBookingFilter(filterButton.dataset.bookingFilter);
+      if(window.innerWidth <= 1000) closeMobileSidebar();
+    }
   });
   document.getElementById('bookingStatusMenuButton').addEventListener('click', (event) => {
     event.stopPropagation();
@@ -3052,7 +3076,11 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   document.getElementById('paymentStatusMenuList').addEventListener('click', (event) => {
     event.stopPropagation();
     const filterButton = event.target.closest('[data-payment-filter]');
-    if(filterButton) applyPaymentFilter(filterButton.dataset.paymentFilter);
+    if(filterButton) {
+      openAdminPage('payments');
+      applyPaymentFilter(filterButton.dataset.paymentFilter);
+      if(window.innerWidth <= 1000) closeMobileSidebar();
+    }
   });
   document.getElementById('paymentStatusMenuButton').addEventListener('click', (event) => {
     event.stopPropagation();
