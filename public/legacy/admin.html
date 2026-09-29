@@ -123,23 +123,23 @@
   /* ===== APP SHELL ===== */
   #app{display:none; position:relative; z-index:1; min-height:100vh;}
   #app.active{display:flex;}
-  .sidebar{width:236px; flex-shrink:0; background:rgba(10,15,13,0.85); border-right:1px solid var(--border); backdrop-filter:blur(10px); display:flex; flex-direction:column; overflow:hidden; transition:width .3s cubic-bezier(.2,.8,.2,1); position:sticky; top:0; height:100vh; z-index:10;}
+  .sidebar{width:260px; flex-shrink:0; background:rgba(10,15,13,0.85); border-right:1px solid var(--border); backdrop-filter:blur(10px); display:flex; flex-direction:column; overflow:hidden; transition:width .3s cubic-bezier(.2,.8,.2,1); position:sticky; top:0; height:100vh; z-index:10;}
   .sidebar.collapsed{width:74px;}
   .side-head{display:flex; align-items:center; gap:10px; padding:22px 20px; border-bottom:1px solid var(--border); white-space:nowrap; overflow:hidden;}
   .side-head .mark{width:30px;height:30px;border-radius:8px; background:linear-gradient(135deg,var(--emerald),var(--neon)); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
   /* Reduced sidebar brand text */
   .side-head span{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px;}
   .sidebar.collapsed .side-head span, .sidebar.collapsed .nav-label, .sidebar.collapsed .side-foot span{display:none;}
-  .side-nav{flex:1; display:flex; flex-direction:column; justify-content:space-between; gap:0; min-height:0; padding:14px 12px; overflow:visible;}
-  /* Reduced sidebar navigation text for compact layout */
-  .nav-item{display:flex; align-items:center; gap:10px; min-height:36px; min-width:0; padding:5px 8px; border-radius:10px; color:var(--muted); cursor:pointer; font-size:13.5px; position:relative; white-space:nowrap; transition:background .2s ease, color .2s ease;}
+  .side-nav{flex:1; display:flex; flex-direction:column; justify-content:space-between; gap:0; min-height:0; padding:14px 10px; overflow:visible;}
+  /* Reduced sidebar navigation text for compact layout with comfortable icon clearance */
+  .nav-item{display:flex; align-items:center; gap:9px; min-height:36px; min-width:0; padding:6px 10px; border-radius:10px; color:var(--muted); cursor:pointer; font-size:13px; position:relative; white-space:nowrap; transition:background .2s ease, color .2s ease;}
   .nav-item:hover{background:rgba(255,255,255,0.04); color:var(--white);}
   .nav-item.active{background:rgba(57,255,122,0.1); color:var(--neon);}
-  .nav-item.active::before{content:""; position:absolute; left:-12px; top:8px; bottom:8px; width:3px; background:var(--neon); border-radius:0 3px 3px 0; box-shadow:0 0 8px var(--neon);}
+  .nav-item.active::before{content:""; position:absolute; left:-10px; top:8px; bottom:8px; width:3px; background:var(--neon); border-radius:0 3px 3px 0; box-shadow:0 0 8px var(--neon);}
   .nav-item svg{flex-shrink:0;}
   .nav-notice{display:none; width:6px; height:6px; margin-left:auto; border-radius:50%; background:var(--neon); box-shadow:0 0 7px var(--neon); flex-shrink:0;}
   .nav-notice.show{display:block;}
-  .nav-divider{height:1px; flex-shrink:0; background:var(--border); margin:12px 8px 12px;}
+  .nav-divider{height:1px; flex-shrink:0; background:var(--border); margin:12px 6px 12px;}
   .side-foot{padding:16px 20px; border-top:1px solid var(--border); display:flex; align-items:center; gap:10px; white-space:nowrap; overflow:hidden;}
   .side-foot .avatar{width:32px;height:32px;border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--emerald)); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;}
   /* Reduced sidebar footer admin name */
@@ -239,8 +239,8 @@
   .payment-status-filters .status-filter-btn{padding:8px 14px; border:1px solid var(--border); border-radius:100px; background:transparent; color:var(--muted); font:11.5px 'Inter',sans-serif; cursor:pointer; transition:all .2s ease;}
   .payment-status-filters .status-filter-btn.sel, .payment-status-filters .status-filter-btn:hover{border-color:var(--neon); color:var(--neon); background:rgba(57,255,122,0.06);}
   .nav-item{position:relative; width:100%; box-sizing:border-box;}
-  .nav-item .nav-label{flex:1 1 auto; min-width:0; max-width:calc(100% - 38px); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-right:4px;}
-  .nav-item .nav-notice{position:absolute !important; right:36px !important; top:50% !important; transform:translateY(-50%) !important; margin:0 !important; z-index:4 !important;}
+  .nav-item .nav-label{flex:1 1 auto; min-width:0; max-width:calc(100% - 42px); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-right:32px;}
+  .nav-item .nav-notice{position:absolute !important; right:38px !important; top:50% !important; transform:translateY(-50%) !important; margin:0 !important; z-index:4 !important;}
   .nav-item .booking-status-menu{display:contents;}
   .sidebar.collapsed .booking-status-menu, .sidebar.collapsed .nav-dropdown-trigger{display:none !important;}
 
@@ -588,7 +588,7 @@
   }
 
   @media(max-width:1000px){
-    .sidebar{position:fixed; left:0; height:100vh; transform:translateX(-100%); transition:transform .3s ease; z-index:100;}
+    .sidebar{position:fixed; left:0; width:260px; max-width:85vw; height:100vh; transform:translateX(-100%); transition:transform .3s ease; z-index:100;}
     .sidebar.mobile-open{transform:translateX(0);}
     .sidebar-backdrop{position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:99; opacity:0; pointer-events:none; transition:opacity .3s ease;}
     .sidebar-backdrop.show{opacity:1; pointer-events:all;}
