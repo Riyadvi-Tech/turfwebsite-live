@@ -95,7 +95,7 @@ function fail(res, status, message) {
 }
 
 export default async function handler(req, res) {
-  if (!['GET', 'PATCH'].includes(req.method)) return fail(res, 405, 'Method not allowed')
+  if (!['GET', 'PATCH', 'DELETE'].includes(req.method)) return fail(res, 405, 'Method not allowed')
 
   try {
     const db = await getDb()
@@ -105,6 +105,11 @@ export default async function handler(req, res) {
     if (idValue) {
       const id = parseObjectId(idValue)
       if (!id) return fail(res, 400, 'Invalid enquiry id.')
+
+      if (req.method === 'DELETE') {
+        const result = await db.collection('extended_enquiries').deleteOne({ _id: id })
+        return result.deletedCount ? res.status(200).json({ success: true, deleted: true, enquiryId: idValue }) : fail(res, 404, 'Enquiry not found.')
+      }
 
       if (req.method === 'GET') {
         const enquiry = await db.collection('extended_enquiries').findOne({ _id: id }, { projection })

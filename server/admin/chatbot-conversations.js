@@ -18,12 +18,17 @@ async function requireAdmin(req, db) {
 }
 
 export default async function handler(req, res) {
-  if (!['GET', 'PATCH'].includes(req.method)) return res.status(405).json({ message: 'Method not allowed' })
+  if (!['GET', 'PATCH', 'DELETE'].includes(req.method)) return res.status(405).json({ message: 'Method not allowed' })
   try {
     const db = await getDb()
     if (!await requireAdmin(req, db)) return res.status(401).json({ message: 'Admin authentication required.' })
     const collection = db.collection('chatbot_conversations')
     const id = Array.isArray(req.query?.id) ? req.query.id[0] : req.query?.id
+    if (req.method === 'DELETE') {
+      if (!ObjectId.isValid(String(id || ''))) return res.status(400).json({ message: 'Invalid conversation id.' })
+      const result = await collection.deleteOne({ _id: new ObjectId(String(id)) })
+      return result.deletedCount ? res.status(200).json({ success: true, deleted: true, conversationId: String(id) }) : res.status(404).json({ message: 'Conversation not found.' })
+    }
     if (req.method === 'PATCH') {
       if (!ObjectId.isValid(String(id || ''))) return res.status(400).json({ message: 'Invalid conversation id.' })
       const requested = String(req.body?.status || '').trim().toLowerCase()
