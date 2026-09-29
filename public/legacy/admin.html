@@ -123,9 +123,9 @@
   /* ===== APP SHELL ===== */
   #app{display:none; position:relative; z-index:1; min-height:100vh;}
   #app.active{display:flex;}
-  .sidebar{width:260px; flex-shrink:0; background:rgba(10,15,13,0.85); border-right:1px solid var(--border); backdrop-filter:blur(10px); display:flex; flex-direction:column; overflow:hidden; transition:width .3s cubic-bezier(.2,.8,.2,1); position:sticky; top:0; height:100vh; z-index:10;}
+  .sidebar{width:260px; flex-shrink:0; background:rgba(10,15,13,0.85); border-right:1px solid var(--border); backdrop-filter:blur(10px); display:flex; flex-direction:column; overflow:hidden; transition:width .3s cubic-bezier(.2,.8,.2,1); position:sticky; top:0; height:100vh; height:100dvh; max-height:100vh; max-height:100dvh; z-index:10;}
   .sidebar.collapsed{width:74px;}
-  .side-head{display:flex; align-items:center; justify-content:center; padding:22px 16px; border-bottom:1px solid var(--border); white-space:nowrap; overflow:hidden; text-align:center;}
+  .side-head{display:flex; align-items:center; justify-content:center; padding:22px 16px; border-bottom:1px solid var(--border); white-space:nowrap; overflow:hidden; text-align:center; flex-shrink:0;}
   .side-head img{display:block; margin:0 auto; max-width:176px; height:auto; filter:drop-shadow(0 0 10px rgba(57,255,122,0.18));}
   .side-head .mark{width:30px;height:30px;border-radius:8px; background:linear-gradient(135deg,var(--emerald),var(--neon)); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
   /* Reduced sidebar brand text */
@@ -133,17 +133,21 @@
   .sidebar.collapsed .side-head span, .sidebar.collapsed .nav-label, .sidebar.collapsed .side-foot span{display:none;}
   .sidebar.collapsed .side-head{padding:16px 8px; justify-content:center;}
   .sidebar.collapsed .side-head img{max-width:48px;}
-  .side-nav{flex:1; display:flex; flex-direction:column; justify-content:space-between; gap:0; min-height:0; padding:14px 10px; overflow:visible;}
+  .side-nav{flex:1 1 auto; min-height:0; display:flex; flex-direction:column; gap:3px; padding:14px 10px 20px; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; scrollbar-width:thin; scrollbar-color:rgba(57,255,122,0.25) transparent;}
+  .side-nav::-webkit-scrollbar{width:4px;}
+  .side-nav::-webkit-scrollbar-track{background:transparent;}
+  .side-nav::-webkit-scrollbar-thumb{background:rgba(57,255,122,0.25); border-radius:4px;}
+  .side-nav::-webkit-scrollbar-thumb:hover{background:rgba(57,255,122,0.45);}
   /* Reduced sidebar navigation text for compact layout with comfortable icon clearance */
-  .nav-item{display:flex; align-items:center; gap:9px; min-height:36px; min-width:0; padding:6px 10px; border-radius:10px; color:var(--muted); cursor:pointer; font-size:13px; position:relative; white-space:nowrap; transition:background .2s ease, color .2s ease;}
+  .nav-item{display:flex; align-items:center; gap:9px; min-height:36px; min-width:0; padding:6px 10px; border-radius:10px; color:var(--muted); cursor:pointer; font-size:13px; position:relative; white-space:nowrap; transition:background .2s ease, color .2s ease, margin-bottom .2s ease;}
   .nav-item:hover{background:rgba(255,255,255,0.04); color:var(--white);}
   .nav-item.active{background:rgba(57,255,122,0.1); color:var(--neon);}
   .nav-item.active::before{content:""; position:absolute; left:-10px; top:8px; bottom:8px; width:3px; background:var(--neon); border-radius:0 3px 3px 0; box-shadow:0 0 8px var(--neon);}
   .nav-item svg{flex-shrink:0;}
   .nav-notice{display:none; width:6px; height:6px; margin-left:auto; border-radius:50%; background:var(--neon); box-shadow:0 0 7px var(--neon); flex-shrink:0;}
   .nav-notice.show{display:block;}
-  .nav-divider{height:1px; flex-shrink:0; background:var(--border); margin:12px 6px 12px;}
-  .side-foot{padding:16px 20px; border-top:1px solid var(--border); display:flex; align-items:center; gap:10px; white-space:nowrap; overflow:hidden;}
+  .nav-divider{height:1px; flex-shrink:0; background:var(--border); margin:12px 6px 12px; margin-top:auto;}
+  .side-foot{padding:16px 20px; border-top:1px solid var(--border); background:rgba(10,15,13,0.95); display:flex; align-items:center; gap:10px; white-space:nowrap; overflow:hidden; flex-shrink:0;}
   .side-foot .avatar{width:32px;height:32px;border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--emerald)); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;}
   /* Reduced sidebar footer admin name */
   .side-foot span{font-size:12px;}
@@ -250,12 +254,13 @@
   .nav-item[data-page="bookings"]{z-index:2;}
   .nav-item[data-page="bookings"]:has(.booking-status-menu.open){margin-bottom:92px;}
   .nav-item[data-page="payments"]{z-index:2;}
-  .nav-item[data-page="payments"]:has(.booking-status-menu.open){margin-bottom:64px;}
+  .nav-item[data-page="payments"]:has(.booking-status-menu.open){margin-bottom:124px;}
   .nav-item[data-page="enquiries"]{z-index:2;}
   .nav-item[data-page="enquiries"]:has(.booking-status-menu.open){margin-bottom:124px;}
   .nav-item[data-page="whatsapp"], .nav-item[data-page="chatbot"]{z-index:2;}
   .nav-item[data-page="whatsapp"]:has(.booking-status-menu.open){margin-bottom:124px;}
   .nav-item[data-page="chatbot"]:has(.booking-status-menu.open){margin-bottom:124px;}
+  .sidebar.collapsed .nav-item{margin-bottom:0 !important;}
 
   /* Dropdown Chevron Trigger Buttons - Unified Straight Vertical Alignment & Exact Same Size */
   .nav-item .booking-status-menu > button,
@@ -609,10 +614,12 @@
   }
 
   @media(max-width:1000px){
-    .sidebar{position:fixed; left:0; width:260px; max-width:85vw; height:100vh; transform:translateX(-100%); transition:transform .3s ease; z-index:100;}
+    .sidebar{position:fixed; left:0; width:260px; max-width:85vw; height:100vh; height:100dvh; max-height:100vh; max-height:100dvh; transform:translateX(-100%); transition:transform .3s ease; z-index:100; display:flex; flex-direction:column; overflow:hidden;}
     .sidebar.mobile-open{transform:translateX(0);}
     .sidebar-backdrop{position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:99; opacity:0; pointer-events:none; transition:opacity .3s ease;}
     .sidebar-backdrop.show{opacity:1; pointer-events:all;}
+    .sidebar .side-nav{flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;}
+    .sidebar .side-foot{flex-shrink:0;}
     .stat-grid{grid-template-columns:1fr 1fr;}
     .chart-row{grid-template-columns:1fr;}
     .form-grid{grid-template-columns:1fr;}
@@ -1615,6 +1622,18 @@
       openAdminPage(p, cardMode);
     });
   });
+  function syncMenuMargin(menu){
+    if(!menu) return;
+    const navItem = menu.closest('.nav-item');
+    if(!navItem) return;
+    const list = menu.querySelector('.booking-status-menu-list');
+    if(menu.classList.contains('open') && list){
+      const h = list.scrollHeight;
+      if(h > 0) navItem.style.marginBottom = (h + 10) + 'px';
+    } else {
+      navItem.style.marginBottom = '';
+    }
+  }
   function toggleSidebar(){
     if(window.innerWidth <= 1000){
       document.getElementById('sidebar').classList.toggle('mobile-open');
@@ -2069,6 +2088,7 @@
     if(!menu) return;
     const menuOptions = ['today','confirmed','cancelled'];
     menu.innerHTML = menuOptions.map(value => `<button type="button" role="menuitem" class="${value === selected ? 'sel' : ''}" data-booking-filter="${value}">${value.charAt(0).toUpperCase() + value.slice(1)}</button>`).join('');
+    syncMenuMargin(document.getElementById('bookingStatusMenu'));
   }
 
   function syncPaymentStatusOptions(){
@@ -2080,6 +2100,7 @@
     if(!menu) return;
     const menuOptions = ['today','pending','confirmed','cancelled'];
     menu.innerHTML = menuOptions.map(value => `<button type="button" role="menuitem" class="${value === selected ? 'sel' : ''}" data-payment-filter="${value}">${value.charAt(0).toUpperCase() + value.slice(1)}</button>`).join('');
+    syncMenuMargin(document.getElementById('paymentStatusMenu'));
   }
 
   function applyDashboardCardFilterPills(metric, page){
@@ -2427,6 +2448,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     if(!menu) return;
     const options = ['today','contacted','read','unread'];
     menu.innerHTML = options.map(value => `<button type="button" role="menuitem" class="${value === selected ? 'sel' : ''}" data-enquiry-filter="${value}">${value.charAt(0).toUpperCase() + value.slice(1)}</button>`).join('');
+    syncMenuMargin(document.getElementById('enquiryStatusMenu'));
   }
   function applyEnquiryFilter(value){
     enquiryFilter = value;
@@ -2447,6 +2469,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const button = document.getElementById('enquiryStatusMenuButton');
     const isOpen = menu.classList.toggle('open');
     button.setAttribute('aria-expanded', String(isOpen));
+    syncMenuMargin(menu);
   });
   document.getElementById('enquiryStatusMenuList').addEventListener('click', event => {
     event.stopPropagation();
@@ -2461,11 +2484,14 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   function syncWhatsAppFilters(){
     document.querySelectorAll('[data-wa-filter]').forEach(item=>item.classList.toggle('sel', item.dataset.waFilter === waFilter));
     const menu = document.getElementById('whatsappStatusMenuList');
-    if(menu) menu.innerHTML = ['today','contacted','read','unread'].map(value=>`<button type="button" role="menuitem" class="${value === waFilter ? 'sel' : ''}" data-wa-filter="${value}">${value.charAt(0).toUpperCase() + value.slice(1)}</button>`).join('');
+    if(menu) {
+      menu.innerHTML = ['today','contacted','read','unread'].map(value=>`<button type="button" role="menuitem" class="${value === waFilter ? 'sel' : ''}" data-wa-filter="${value}">${value.charAt(0).toUpperCase() + value.slice(1)}</button>`).join('');
+      syncMenuMargin(document.getElementById('whatsappStatusMenu'));
+    }
   }
   function applyWhatsAppFilter(value){ waFilter = value; waStatus = value === 'contacted' ? 'contacted' : 'all'; waReadMode = value === 'read' || value === 'unread' ? value : 'all'; waDateMode = value === 'today' ? 'today' : 'all'; if(value === 'today') document.getElementById('whatsappDate').value = ''; syncWhatsAppFilters(); renderWhatsApp(); }
   document.getElementById('page-whatsapp').addEventListener('click', event=>{ const button = event.target.closest('[data-wa-filter]'); if(button) applyWhatsAppFilter(button.dataset.waFilter); });
-  document.getElementById('whatsappStatusMenuButton').addEventListener('click', event=>{ event.stopPropagation(); const menu=document.getElementById('whatsappStatusMenu'); const button=document.getElementById('whatsappStatusMenuButton'); const open=menu.classList.toggle('open'); button.setAttribute('aria-expanded', String(open)); });
+  document.getElementById('whatsappStatusMenuButton').addEventListener('click', event=>{ event.stopPropagation(); const menu=document.getElementById('whatsappStatusMenu'); const button=document.getElementById('whatsappStatusMenuButton'); const open=menu.classList.toggle('open'); button.setAttribute('aria-expanded', String(open)); syncMenuMargin(menu); });
   document.getElementById('whatsappStatusMenuList').addEventListener('click', event=>{ event.stopPropagation(); const button=event.target.closest('[data-wa-filter]'); if(button) applyWhatsAppFilter(button.dataset.waFilter); });
   ['whatsappSearch','whatsappDate'].forEach(id=>document.getElementById(id).addEventListener(id === 'whatsappDate' ? 'change' : 'input', ()=>{
     if(id === 'whatsappDate') waDateMode = 'custom';
@@ -2544,11 +2570,14 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   function syncChatbotFilters(){
     document.querySelectorAll('[data-chat-filter]').forEach(item=>item.classList.toggle('sel', item.dataset.chatFilter === chatFilter));
     const menu = document.getElementById('chatbotStatusMenuList');
-    if(menu) menu.innerHTML = ['today','contacted','read','unread'].map(value=>`<button type="button" role="menuitem" class="${value === chatFilter ? 'sel' : ''}" data-chat-filter="${value}">${value.charAt(0).toUpperCase() + value.slice(1)}</button>`).join('');
+    if(menu) {
+      menu.innerHTML = ['today','contacted','read','unread'].map(value=>`<button type="button" role="menuitem" class="${value === chatFilter ? 'sel' : ''}" data-chat-filter="${value}">${value.charAt(0).toUpperCase() + value.slice(1)}</button>`).join('');
+      syncMenuMargin(document.getElementById('chatbotStatusMenu'));
+    }
   }
   function applyChatbotFilter(value){ chatFilter = value; chatStatus = value === 'contacted' ? 'contacted' : 'all'; chatReadMode = value === 'read' || value === 'unread' ? value : 'all'; chatDateMode = value === 'today' ? 'today' : 'all'; if(value === 'today') document.getElementById('chatDate').value = ''; syncChatbotFilters(); renderChatbot(); }
   document.getElementById('page-chatbot').addEventListener('click', event=>{ const button = event.target.closest('[data-chat-filter]'); if(button) applyChatbotFilter(button.dataset.chatFilter); });
-  document.getElementById('chatbotStatusMenuButton').addEventListener('click', event=>{ event.stopPropagation(); const menu=document.getElementById('chatbotStatusMenu'); const button=document.getElementById('chatbotStatusMenuButton'); const open=menu.classList.toggle('open'); button.setAttribute('aria-expanded', String(open)); });
+  document.getElementById('chatbotStatusMenuButton').addEventListener('click', event=>{ event.stopPropagation(); const menu=document.getElementById('chatbotStatusMenu'); const button=document.getElementById('chatbotStatusMenuButton'); const open=menu.classList.toggle('open'); button.setAttribute('aria-expanded', String(open)); syncMenuMargin(menu); });
   document.getElementById('chatbotStatusMenuList').addEventListener('click', event=>{ event.stopPropagation(); const button=event.target.closest('[data-chat-filter]'); if(button) applyChatbotFilter(button.dataset.chatFilter); });
   ['chatSearch','chatDate'].forEach(id=>document.getElementById(id).addEventListener(id === 'chatDate' ? 'change' : 'input', ()=>{
     if(id === 'chatDate') chatDateMode = 'custom';
@@ -2867,12 +2896,14 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const button = document.getElementById('bookingStatusMenuButton');
     const isOpen = menu.classList.toggle('open');
     button.setAttribute('aria-expanded', String(isOpen));
+    syncMenuMargin(menu);
   });
   document.addEventListener('click', (event) => {
     [['bookingStatusMenu', 'bookingStatusMenuButton'], ['paymentStatusMenu', 'paymentStatusMenuButton'], ['enquiryStatusMenu', 'enquiryStatusMenuButton'], ['whatsappStatusMenu', 'whatsappStatusMenuButton'], ['chatbotStatusMenu', 'chatbotStatusMenuButton']].forEach(([menuId, buttonId]) => {
       const menu = document.getElementById(menuId);
       if(!menu || menu.contains(event.target)) return;
       menu.classList.remove('open');
+      syncMenuMargin(menu);
       document.getElementById(buttonId)?.setAttribute('aria-expanded', 'false');
     });
   });
@@ -3030,6 +3061,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const button = document.getElementById('paymentStatusMenuButton');
     const isOpen = menu.classList.toggle('open');
     button.setAttribute('aria-expanded', String(isOpen));
+    syncMenuMargin(menu);
   });
   syncPaymentStatusOptions();
   document.getElementById('paymentSearch').addEventListener('input', renderPayments);
