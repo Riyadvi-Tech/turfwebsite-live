@@ -99,6 +99,7 @@ export default async function handler(req, res) {
       const allowedStatuses = new Set([
         'PAYMENT_PENDING',
         'PAID',
+        'CONFIRMED',
         'EXPIRED',
         'FAILED',
         'CANCELLED',
@@ -107,7 +108,11 @@ export default async function handler(req, res) {
       const filter = {}
 
       if (allowedStatuses.has(status) && status !== 'CANCELLED') {
-        filter.status = status
+        if (status === 'CONFIRMED') {
+          filter.status = { $in: ['CONFIRMED', 'PAID'] }
+        } else {
+          filter.status = status
+        }
       }
 
       if (search) {
@@ -144,6 +149,11 @@ export default async function handler(req, res) {
       if (allowedStatuses.has(status)) {
         if (status === 'CANCELLED') {
           bookingFilter.bookingStatus = 'CANCELLED'
+        } else if (status === 'CONFIRMED') {
+          bookingFilter.$or = [
+            { bookingStatus: 'CONFIRMED' },
+            { paymentStatus: { $in: ['CONFIRMED', 'PAID'] } },
+          ]
         } else {
           bookingFilter.paymentStatus = status
         }

@@ -2911,17 +2911,29 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     if(!label) return;
     label.textContent = paymentStatus === 'all' && paymentDateMode === 'all' ? 'Total amount received' : 'Amount received';
   }
+  function parsePaymentAmount(val){
+    if(typeof val === 'number') return Number.isFinite(val) ? val : 0;
+    if(!val) return 0;
+    const cleaned = String(val).replace(/[^\d.-]/g, '');
+    const num = parseFloat(cleaned);
+    return Number.isFinite(num) ? num : 0;
+  }
+  function isPaymentReceivedStatus(status){
+    const s = String(status || '').trim().toUpperCase();
+    return s === 'CONFIRMED' || s === 'PAID' || s === 'VERIFIED';
+  }
   function paymentMatchesStatus(payment){
     if(paymentStatus === 'all') return true;
     const status = String(payment.status || '').toUpperCase();
     if(paymentStatus === 'pending') return status === 'PAYMENT_PENDING' || status === 'PENDING';
+    if(paymentStatus === 'confirmed') return isPaymentReceivedStatus(status);
     return status === String(paymentStatus).toUpperCase();
   }
   async function renderPayments(){
     const requestId = ++paymentRequestId;
     const search = (document.getElementById('paymentSearch').value || '').trim();
     const params = new URLSearchParams();
-    if(paymentStatus !== 'all') params.set('status', paymentStatus === 'pending' ? 'PAYMENT_PENDING' : paymentStatus === 'paid' ? 'PAID' : paymentStatus.toUpperCase());
+    if(paymentStatus !== 'all') params.set('status', paymentStatus === 'pending' ? 'PAYMENT_PENDING' : paymentStatus === 'confirmed' ? 'CONFIRMED' : paymentStatus === 'paid' ? 'PAID' : paymentStatus.toUpperCase());
     if(search) params.set('search', search);
     try {
       const response = await fetch('/api/admin/payment-sessions?' + params.toString(), {credentials:'include'});
@@ -2943,7 +2955,11 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       }).join('') : '<tr><td colspan="8" class="tbl-empty">No payment sessions found</td></tr>';
 
       const visiblePayments = payments.filter(payment => paymentMatchesStatus(payment) && (paymentDateMode !== 'today' || paymentIsToday(payment)));
-      const totalAmount = visiblePayments.reduce((sum,p)=>sum + (String(p.status || '').toUpperCase() === 'PAID' ? Number(p.amount || 0) : 0), 0);
+      const totalAmount = visiblePayments.reduce((sum, p) => {
+        const isConfirmed = isPaymentReceivedStatus(p.status) || isPaymentReceivedStatus(p.bookingData?.paymentStatus) || isPaymentReceivedStatus(p.bookingData?.bookingStatus);
+        const amt = parsePaymentAmount(p.amount);
+        return sum + (isConfirmed ? amt : 0);
+      }, 0);
       updatePaymentAmountLabel();
       document.getElementById('paymentsTotalCount').textContent = String(rows.length);
       document.getElementById('paymentsTotalAmount').textContent = '₹' + totalAmount.toLocaleString('en-IN');
