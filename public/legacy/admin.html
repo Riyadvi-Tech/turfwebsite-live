@@ -386,7 +386,19 @@
   .toolbar #enquiryExport, .toolbar #whatsappExport, .toolbar #chatbotExport, .toolbar #bookingExport, .toolbar #paymentExport{margin-left:0 !important;}
 
   /* table */
-  .table-wrap{background:var(--glass); border:1px solid var(--border); border-radius:16px; overflow:hidden;}
+  .table-wrap{
+    background:var(--glass);
+    border:1px solid var(--border);
+    border-radius:16px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(57,255,122,0.3) rgba(255,255,255,0.02);
+  }
+  .table-wrap::-webkit-scrollbar{height:7px;}
+  .table-wrap::-webkit-scrollbar-thumb{background:rgba(57,255,122,0.3); border-radius:6px;}
+  .table-wrap::-webkit-scrollbar-thumb:hover{background:rgba(57,255,122,0.5);}
+  .table-wrap::-webkit-scrollbar-track{background:rgba(255,255,255,0.02); border-radius:6px;}
   /* Reduced table base text */
   table{width:100%; border-collapse:collapse; font-size:12px;}
   /* Reduced table header text */
@@ -419,8 +431,26 @@
   #page-bookings th:last-child, #page-bookings td:last-child{min-width:112px; padding-right:20px;}
   #page-bookings .row-actions{min-width:100px; white-space:nowrap;}
   #page-enquiries .table-wrap{overflow-x:auto; overflow-y:hidden;}
+  #page-enquiries table{min-width:1440px;}
+  #page-enquiries th:nth-child(1), #page-enquiries td:nth-child(1){min-width:110px;}
+  #page-enquiries th:nth-child(2), #page-enquiries td:nth-child(2){min-width:125px;}
+  #page-enquiries th:nth-child(3), #page-enquiries td:nth-child(3){min-width:110px;}
+  #page-enquiries th:nth-child(4), #page-enquiries td:nth-child(4){min-width:110px;}
+  #page-enquiries th:nth-child(5), #page-enquiries td:nth-child(5){min-width:110px;}
+  #page-enquiries th:nth-child(6), #page-enquiries td:nth-child(6){min-width:105px;}
+  #page-enquiries th:nth-child(7), #page-enquiries td:nth-child(7){min-width:105px;}
+  #page-enquiries th:nth-child(8), #page-enquiries td:nth-child(8){min-width:60px;}
+  #page-enquiries th:nth-child(9), #page-enquiries td:nth-child(9){min-width:120px;}
+  #page-enquiries th:nth-child(10), #page-enquiries td:nth-child(10), #page-enquiries .enquiry-message-cell{
+    min-width:320px;
+    max-width:500px;
+    width:380px;
+    white-space:normal;
+    word-break:break-word;
+    line-height:1.55;
+  }
+  #page-enquiries th:nth-child(11), #page-enquiries td:nth-child(11){min-width:100px;}
   #page-enquiries th:last-child, #page-enquiries td:last-child{min-width:128px; padding-right:20px;}
-  #page-enquiries td:nth-child(10){max-width:260px; white-space:normal;}
   #page-enquiries .row-actions{min-width:120px; white-space:nowrap;}
   #page-enquiries .row-actions button[title^="View"], #page-whatsapp .row-actions button[title^="View"], #page-chatbot .row-actions button[title^="View"]{order:4;}
   #page-payments .table-wrap{overflow-x:auto; overflow-y:hidden;}
@@ -704,6 +734,37 @@
   .analytics-dropdown-menu .analytics-option{display:block; width:100%; text-align:left; padding:10px 12px; border:none; border-radius:8px; background:transparent; color:var(--white); font-family:'Inter',sans-serif; font-size:12.5px; cursor:pointer; transition:background .15s ease, color .15s ease;}
   .analytics-dropdown-menu .analytics-option:hover{background:rgba(57,255,122,0.10); color:var(--neon);}
 
+  /* Desktop Only Message Section Refinements */
+  @media (min-width: 1001px) {
+    #page-enquiries table{min-width:1440px;}
+    #page-enquiries th:nth-child(10),
+    #page-enquiries td:nth-child(10),
+    #page-enquiries .enquiry-message-cell{
+      min-width:320px !important;
+      max-width:520px !important;
+      width:380px !important;
+      white-space:normal !important;
+      word-break:break-word !important;
+      line-height:1.55 !important;
+    }
+    #page-whatsapp th:nth-child(4),
+    #page-whatsapp td:nth-child(4){
+      min-width:320px !important;
+      max-width:500px !important;
+      white-space:normal !important;
+      word-break:break-word !important;
+      line-height:1.5 !important;
+    }
+    #page-chatbot th:nth-child(4),
+    #page-chatbot td:nth-child(4){
+      min-width:320px !important;
+      max-width:500px !important;
+      white-space:normal !important;
+      word-break:break-word !important;
+      line-height:1.5 !important;
+    }
+  }
+
   @media(max-width:1000px){
     .analytics-dropdown{width:100%;}
     .analytics-dropdown .analytics-select{padding:13px 14px; font-size:14.5px; min-height:46px;}
@@ -758,7 +819,9 @@
     #page-whatsapp table{min-width:1060px;}
     #page-chatbot table{min-width:1060px;}
     #page-whatsapp th:nth-child(4), #page-whatsapp td:nth-child(4),
-    #page-chatbot th:nth-child(4), #page-chatbot td:nth-child(4){min-width:280px; max-width:400px; white-space:normal; word-break:break-word; line-height:1.45; font-size:12px;}
+    #page-chatbot th:nth-child(4), #page-chatbot td:nth-child(4),
+    #page-enquiries th:nth-child(10), #page-enquiries td:nth-child(10),
+    #page-enquiries .enquiry-message-cell{min-width:240px; max-width:360px; white-space:normal; word-break:break-word; line-height:1.45; font-size:12px;}
     #page-whatsapp td:nth-child(3), #page-chatbot td:nth-child(3){max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
     #page-bookings th, #page-bookings td, #page-payments th, #page-payments td, #page-enquiries th, #page-enquiries td, #page-whatsapp th, #page-whatsapp td, #page-chatbot th, #page-chatbot td{padding:11px 12px;}
     #page-enquiries th:last-child, #page-enquiries td:last-child, #page-whatsapp th:last-child, #page-whatsapp td:last-child, #page-chatbot th:last-child, #page-chatbot td:last-child{min-width:128px; padding-right:16px;}
@@ -2713,7 +2776,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       const isRead = enquiry.read === true || locallyReadEnquiries.has(String(enquiry._id));
       const readAction = isRead ? '' : `<button onclick="markEnquiryRead('${escapeEnquiryHtml(enquiry._id)}')" title="Mark as read"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18v12H3z"/><path d="m4 7 8 6 8-6"/><path d="m8 15 2 2 5-5"/></svg></button>`;
       const displayStatus = isRead && status === 'contacted' ? 'Read / Contacted' : isRead ? 'Read' : (enquiryStatusLabels[status] || displayEnquiryStatus(status));
-      return `<tr><td class="mono">${escapeEnquiryHtml(enquiry._id)}</td><td>${escapeEnquiryHtml(enquiryDate)}</td><td>${escapeEnquiryHtml(name)}</td><td class="mono">${escapeEnquiryHtml(enquiry.mobile)}</td><td>${escapeEnquiryHtml(createdDisplay)}</td><td>${escapeEnquiryHtml(enquiry.startDate)}</td><td>${escapeEnquiryHtml(enquiry.endDate)}</td><td>${escapeEnquiryHtml(enquiryDays(enquiry.startDate, enquiry.endDate))}</td><td>${escapeEnquiryHtml(enquiry.preferredTime)}</td><td style="white-space:normal;max-width:240px;">${requirements}</td><td><span class="badge ${isRead ? 'confirmed' : statusBadgeClass(status)}">${escapeEnquiryHtml(displayStatus)}</span></td><td><div class="row-actions"><button onclick="loadEnquiryDetail('${escapeEnquiryHtml(enquiry._id)}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>${readAction}<button onclick="markEnquiryContacted('${escapeEnquiryHtml(enquiry._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 10h8"/></svg></button><button class="danger" onclick="deleteEnquiry('${escapeEnquiryHtml(enquiry._id)}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button></div></td></tr>`;
+      return `<tr><td class="mono">${escapeEnquiryHtml(enquiry._id)}</td><td>${escapeEnquiryHtml(enquiryDate)}</td><td>${escapeEnquiryHtml(name)}</td><td class="mono">${escapeEnquiryHtml(enquiry.mobile)}</td><td>${escapeEnquiryHtml(createdDisplay)}</td><td>${escapeEnquiryHtml(enquiry.startDate)}</td><td>${escapeEnquiryHtml(enquiry.endDate)}</td><td>${escapeEnquiryHtml(enquiryDays(enquiry.startDate, enquiry.endDate))}</td><td>${escapeEnquiryHtml(enquiry.preferredTime)}</td><td class="enquiry-message-cell">${requirements}</td><td><span class="badge ${isRead ? 'confirmed' : statusBadgeClass(status)}">${escapeEnquiryHtml(displayStatus)}</span></td><td><div class="row-actions"><button onclick="loadEnquiryDetail('${escapeEnquiryHtml(enquiry._id)}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>${readAction}<button onclick="markEnquiryContacted('${escapeEnquiryHtml(enquiry._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 10h8"/></svg></button><button class="danger" onclick="deleteEnquiry('${escapeEnquiryHtml(enquiry._id)}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button></div></td></tr>`;
     }).join('') : `<tr><td colspan="12" class="tbl-empty">${escapeEnquiryHtml(message || 'No enquiries found')}</td></tr>`;
   }
   async function loadAdminEnquiries(){
@@ -2750,7 +2813,8 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       const enquiry = data.enquiry || {};
       const status = canonicalEnquiryStatus(enquiry.status);
       const isClosed = status === 'closed';
-      document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Enquiry ID</span><span class="mono">${escapeEnquiryHtml(enquiry._id)}</span></div><div class="detail-row"><span>Mobile</span><span class="mono">${escapeEnquiryHtml(enquiry.mobile)}</span></div><div class="detail-row"><span>Start date</span><span>${escapeEnquiryHtml(enquiry.startDate)}</span></div><div class="detail-row"><span>End date</span><span>${escapeEnquiryHtml(enquiry.endDate)}</span></div><div class="detail-row"><span>Preferred time</span><span>${escapeEnquiryHtml(enquiry.preferredTime)}</span></div><div class="detail-row"><span>Requirements</span><span>${escapeEnquiryHtml(enquiry.requirements)}</span></div><div class="detail-row"><span>Summary</span><span>${escapeEnquiryHtml(enquiry.summary)}</span></div><div class="detail-row"><span>Status</span><span class="badge ${statusBadgeClass(status)}">${escapeEnquiryHtml(enquiryStatusLabels[status] || displayEnquiryStatus(status))}</span></div><div class="detail-row"><span>Created</span><span>${escapeEnquiryHtml(formatDateDDMMYYYY(enquiry.createdAt))}</span></div><div class="detail-row"><span>Updated</span><span>${escapeEnquiryHtml(formatDateDDMMYYYY(enquiry.updatedAt))}</span></div>
+      const name = enquiry.name || String(enquiry.summary || '').split(' extended booking enquiry for ')[0] || '—';
+      document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Enquiry ID</span><span class="mono">${escapeEnquiryHtml(enquiry._id)}</span></div><div class="detail-row"><span>Customer</span><span>${escapeEnquiryHtml(name)}</span></div><div class="detail-row"><span>Mobile</span><span class="mono"><a href="tel:${escapeEnquiryHtml(enquiry.mobile)}" style="color:var(--neon); text-decoration:none;">${escapeEnquiryHtml(enquiry.mobile)}</a></span></div><div class="detail-row"><span>Start date</span><span>${escapeEnquiryHtml(enquiry.startDate)}</span></div><div class="detail-row"><span>End date</span><span>${escapeEnquiryHtml(enquiry.endDate)}</span></div><div class="detail-row"><span>Preferred time</span><span>${escapeEnquiryHtml(enquiry.preferredTime)}</span></div><div class="detail-row"><span>Message</span><span style="white-space:pre-wrap; word-break:break-word; line-height:1.5; color:var(--white);">${escapeEnquiryHtml(enquiry.requirements || '—')}</span></div><div class="detail-row"><span>Summary</span><span>${escapeEnquiryHtml(enquiry.summary)}</span></div><div class="detail-row"><span>Status</span><span class="badge ${statusBadgeClass(status)}">${escapeEnquiryHtml(enquiryStatusLabels[status] || displayEnquiryStatus(status))}</span></div><div class="detail-row"><span>Created</span><span>${escapeEnquiryHtml(formatDateDDMMYYYY(enquiry.createdAt))}</span></div><div class="detail-row"><span>Updated</span><span>${escapeEnquiryHtml(formatDateDDMMYYYY(enquiry.updatedAt))}</span></div>
         <div class="detail-modal-actions" style="margin-top:20px; display:flex; gap:8px; flex-wrap:wrap; border-top:1px solid rgba(255,255,255,0.08); padding-top:16px;">
           <button type="button" class="btn btn-ghost" style="flex:1; min-width:95px; padding:10px 14px; font-size:12.5px; color:var(--red); border-color:rgba(255,107,107,0.4);" onclick="deleteEnquiry('${escapeEnquiryHtml(enquiry._id)}'); closeModal('detailModal');">Delete</button>
           <button type="button" class="btn btn-ghost" style="padding:10px 16px; font-size:12.5px;" onclick="closeModal('detailModal')">Close</button>
