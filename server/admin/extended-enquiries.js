@@ -76,6 +76,7 @@ const projection = {
   summary: 1,
   status: 1,
   read: 1,
+  visited: 1,
   createdAt: 1,
   updatedAt: 1,
 }
@@ -86,6 +87,7 @@ function publicEnquiry(enquiry) {
     ...enquiry,
     status: normalized === 'old' ? 'contacted' : normalized || 'new',
     read: enquiry.read === true,
+    visited: enquiry.visited === true,
     _id: String(enquiry._id),
   }
 }
@@ -95,7 +97,7 @@ function fail(res, status, message) {
 }
 
 export default async function handler(req, res) {
-  if (!['GET', 'PATCH', 'DELETE'].includes(req.method)) return fail(res, 405, 'Method not allowed')
+  if (!['GET', 'PATCH', 'DELETE'].includes(req.method)) return fail(res, 405, 'Method not allowed.')
 
   try {
     const db = await getDb()
@@ -112,16 +114,26 @@ export default async function handler(req, res) {
       }
 
       if (req.method === 'GET') {
-        const enquiry = await db.collection('extended_enquiries').findOne({ _id: id }, { projection })
+        const enquiry = await db.collection('extended_enquiries').findOneAndUpdate(
+          { _id: id },
+          { $set: { visited: true, read: true, updatedAt: new Date() } },
+          { returnDocument: 'after', projection },
+        ) || await db.collection('extended_enquiries').findOne({ _id: id }, { projection })
         return enquiry ? res.status(200).json({ enquiry: publicEnquiry(enquiry) }) : fail(res, 404, 'Enquiry not found.')
       }
 
       const status = req.body?.status === undefined ? null : parseStatus(req.body.status)
       const read = req.body?.read === undefined ? null : req.body.read === true
-      if (!status && read === null) return fail(res, 400, 'Enquiry update is required.')
+      const visited = req.body?.visited === undefined ? null : req.body.visited === true
+      if (!status && read === null && visited === null) return fail(res, 400, 'Enquiry update is required.')
       const update = { updatedAt: new Date() }
       if (status) update.status = status
       if (read !== null) update.read = read
+      if (visited !== null) update.visited = visited
+      if (status && status !== 'new') {
+        update.visited = true
+        update.read = true
+      }
       const result = await db.collection('extended_enquiries').findOneAndUpdate(
         { _id: id },
         { $set: update },

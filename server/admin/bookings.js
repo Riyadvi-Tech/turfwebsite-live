@@ -134,6 +134,8 @@ function bookingProjection() {
     paymentReference: 1,
     paymentStatus: 1,
     bookingStatus: 1,
+    visited: 1,
+    read: 1,
     slots: 1,
     draftReference: 1,
     createdAt: 1,
@@ -171,11 +173,12 @@ export default async function handler(req, res) {
       }
 
       if (req.method === 'GET') {
-        const booking = await db.collection('bookings').findOne(
+        const booking = await db.collection('bookings').findOneAndUpdate(
           { _id: id },
-          { projection: bookingProjection() },
-        )
-          if (!booking) return errorResponse(res, 404, 'Booking not found.')
+          { $set: { visited: true, read: true, updatedAt: new Date() } },
+          { returnDocument: 'after', projection: bookingProjection() },
+        ) || await db.collection('bookings').findOne({ _id: id }, { projection: bookingProjection() })
+        if (!booking) return errorResponse(res, 404, 'Booking not found.')
 
         const [payment, customer] = await Promise.all([
           db.collection('payments').findOne(
@@ -192,17 +195,30 @@ export default async function handler(req, res) {
         return res.status(200).json({ booking: publicBooking({ ...normalizedBooking, name: normalizedBooking.name || customer?.name }), payment: payment || null, customer: customer || null })
       }
 
+      const visited = req.body?.visited === undefined ? null : req.body.visited === true
+      const read = req.body?.read === undefined ? null : req.body.read === true
       const requestedStatus = parseStatus(req.body?.bookingStatus ?? req.body?.status, BOOKING_STATUSES, 'booking status')
-      if (!requestedStatus) return errorResponse(res, 400, 'Booking status is required.')
+      if (!requestedStatus && visited === null && read === null) {
+        return errorResponse(res, 400, 'Booking status or visited update is required.')
+      }
 
       const currentBooking = await db.collection('bookings').findOne({ _id: id }, { projection: { paymentStatus: 1, paymentReference: 1 } })
       if (!currentBooking) return errorResponse(res, 404, 'Booking not found.')
 
       const now = new Date()
-      const nextPaymentStatus = requestedStatus === 'CONFIRMED' ? 'PAID' : requestedStatus === 'CANCELLED' ? 'CANCELLED' : requestedStatus === 'PENDING' ? 'PAYMENT_PENDING' : null
-      const nextBookingValues = { bookingStatus: requestedStatus, updatedAt: now }
-      if (nextPaymentStatus) {
-        nextBookingValues.paymentStatus = nextPaymentStatus
+      const nextBookingValues = { updatedAt: now }
+      if (visited !== null) nextBookingValues.visited = visited
+      if (read !== null) nextBookingValues.read = read
+      let nextPaymentStatus = null
+
+      if (requestedStatus) {
+        nextBookingValues.bookingStatus = requestedStatus
+        nextBookingValues.visited = true
+        nextBookingValues.read = true
+        nextPaymentStatus = requestedStatus === 'CONFIRMED' ? 'PAID' : requestedStatus === 'CANCELLED' ? 'CANCELLED' : requestedStatus === 'PENDING' ? 'PAYMENT_PENDING' : null
+        if (nextPaymentStatus) {
+          nextBookingValues.paymentStatus = nextPaymentStatus
+        }
       }
 
       const result = await db.collection('bookings').findOneAndUpdate(

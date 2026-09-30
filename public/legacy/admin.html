@@ -208,7 +208,8 @@
   /* Reduced panel heading */
   .panel h3{font-size:15px; margin-bottom:16px;}
   /* Reduced activity row text */
-  .activity-row{display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); font-size:12.5px;}
+  .activity-row{display:flex; align-items:center; gap:12px; padding:12px 10px; border-bottom:1px solid var(--border); font-size:12.5px; border-radius:8px; cursor:pointer; transition:background .18s ease, transform .18s ease;}
+  .activity-row:hover{background:rgba(57,255,122,0.06); transform:translateX(3px);}
   .activity-row:last-child{border-bottom:none;}
   .activity-row .adot{width:8px;height:8px;border-radius:50%; background:var(--neon); flex-shrink:0;}
   /* Reduced activity time text */
@@ -2199,6 +2200,108 @@
     });
   }
 
+  const visitedActivityIds = new Set(JSON.parse(localStorage.getItem('visitedActivityIds') || '[]'));
+  const locallyVisitedBookings = new Set(JSON.parse(localStorage.getItem('visitedBookings') || '[]'));
+  const locallyReadWhatsApp = new Set(JSON.parse(localStorage.getItem('readWhatsAppEnquiries') || '[]'));
+  const locallyReadEnquiries = new Set(JSON.parse(localStorage.getItem('readExtendedEnquiries') || '[]'));
+  const locallyReadChatbot = new Set(JSON.parse(localStorage.getItem('readChatbotConversations') || '[]'));
+
+  function rememberVisitedBooking(id){
+    if(!id) return;
+    locallyVisitedBookings.add(String(id));
+    localStorage.setItem('visitedBookings', JSON.stringify([...locallyVisitedBookings]));
+  }
+  function rememberReadWhatsApp(id){
+    if(!id) return;
+    locallyReadWhatsApp.add(String(id));
+    localStorage.setItem('readWhatsAppEnquiries', JSON.stringify([...locallyReadWhatsApp]));
+  }
+  function rememberReadEnquiry(id){
+    if(!id) return;
+    locallyReadEnquiries.add(String(id));
+    localStorage.setItem('readExtendedEnquiries', JSON.stringify([...locallyReadEnquiries]));
+  }
+  function rememberReadChatbot(id){
+    if(!id) return;
+    locallyReadChatbot.add(String(id));
+    localStorage.setItem('readChatbotConversations', JSON.stringify([...locallyReadChatbot]));
+  }
+  function isActivityItemVisited(item){
+    if(!item) return false;
+    const strId = String(item.id || '');
+    if(strId && (visitedActivityIds.has(strId) || visitedActivityIds.has(`${item.type}:${strId}`))) return true;
+    if(item.type === 'booking' && strId && locallyVisitedBookings.has(strId)) return true;
+    if(item.type === 'enquiry' && strId && locallyReadEnquiries.has(strId)) return true;
+    if(item.type === 'whatsapp' && strId && locallyReadWhatsApp.has(strId)) return true;
+    if(item.type === 'chat' && strId && locallyReadChatbot.has(strId)) return true;
+    return false;
+  }
+  function markActivityItemVisited(type, id){
+    if(!id) return;
+    const strId = String(id);
+    visitedActivityIds.add(strId);
+    if(type) visitedActivityIds.add(`${type}:${strId}`);
+    localStorage.setItem('visitedActivityIds', JSON.stringify([...visitedActivityIds]));
+
+    if(type === 'booking'){
+      rememberVisitedBooking(strId);
+      fetch('/api/admin/bookings?id=' + encodeURIComponent(strId), {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({visited: true, read: true})
+      }).catch(()=>{});
+    } else if(type === 'enquiry'){
+      rememberReadEnquiry(strId);
+      fetch('/api/admin/extended-enquiries?id=' + encodeURIComponent(strId), {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({visited: true, read: true})
+      }).catch(()=>{});
+    } else if(type === 'whatsapp'){
+      rememberReadWhatsApp(strId);
+      fetch('/api/admin/whatsapp-enquiries?id=' + encodeURIComponent(strId), {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({visited: true, read: true})
+      }).catch(()=>{});
+    } else if(type === 'chat'){
+      rememberReadChatbot(strId);
+      fetch('/api/admin/chatbot-conversations?id=' + encodeURIComponent(strId), {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({visited: true, read: true})
+      }).catch(()=>{});
+    }
+
+    document.querySelectorAll(`#activityList .activity-row[data-id="${strId}"], #activityList .activity-row[data-id="${type}:${strId}"]`).forEach(el => el.remove());
+    if(!document.querySelectorAll('#activityList .activity-row').length){
+      document.getElementById('activityList').innerHTML = '<div class="tbl-empty">No recent activity</div>';
+    }
+  }
+  window.markActivityItemVisited = markActivityItemVisited;
+
+  async function openRecentActivityItem(type, id){
+    markActivityItemVisited(type, id);
+    if(type === 'booking'){
+      openAdminPage('bookings');
+      loadBookingDetail(id);
+    } else if(type === 'enquiry'){
+      openAdminPage('enquiries');
+      loadEnquiryDetail(id);
+    } else if(type === 'whatsapp'){
+      openAdminPage('whatsapp');
+      viewWhatsAppDetails(id);
+    } else if(type === 'chat'){
+      openAdminPage('chatbot');
+      viewChatbotDetails(id);
+    }
+  }
+  window.openRecentActivityItem = openRecentActivityItem;
+
   function renderLiveDashboard(data){
     const stats = data.stats || {};
     const values = {
@@ -2243,10 +2346,11 @@
       requestAnimationFrame(animate);
     });
 
-    const activity = Array.isArray(data.recentActivity) ? data.recentActivity : [];
+    const rawActivity = Array.isArray(data.recentActivity) ? data.recentActivity : [];
+    const activity = rawActivity.filter(item => !isActivityItemVisited(item));
     renderNotifications(activity);
     document.getElementById('activityList').innerHTML = activity.length
-      ? activity.map(item=>`<div class="activity-row"><span class="adot"></span>${escapePaymentHtml(item.text)}<span class="atime">${escapePaymentHtml(formatDateDDMMYYYY(item.createdAt))}</span></div>`).join('')
+      ? activity.map(item=>`<div class="activity-row" data-type="${escapePaymentHtml(item.type || '')}" data-id="${escapePaymentHtml(item.id || '')}" onclick="openRecentActivityItem('${escapePaymentHtml(item.type || '')}', '${escapePaymentHtml(item.id || '')}')" title="Click to view details"><span class="adot"></span>${escapePaymentHtml(item.text)}<span class="atime">${escapePaymentHtml(formatDateDDMMYYYY(item.createdAt))}</span></div>`).join('')
       : '<div class="tbl-empty">No recent activity</div>';
     const latest = Array.isArray(data.recentBookings) ? data.recentBookings[0] : null;
     if(latest){
@@ -2465,7 +2569,6 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   let waFilter = 'all';
   let waDateMode = 'all';
   let liveWhatsApp = [];
-  const locallyReadWhatsApp = new Set(JSON.parse(localStorage.getItem('readWhatsAppEnquiries') || '[]'));
   function escapeWhatsAppHtml(value){ return String(value ?? '—').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])); }
   function canonicalEnquiryStatus(value){
     const normalized = normalizeStatus(value);
@@ -2521,8 +2624,13 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       </tr>`;
     }).join('') : `<tr><td colspan="8" class="tbl-empty">${escapeWhatsAppHtml(message || 'No WhatsApp enquiries found')}</td></tr>`;
   }
-  function viewWhatsAppDetails(id){
-    const enquiry = liveWhatsApp.find(item => item._id === id);
+  async function viewWhatsAppDetails(id){
+    markActivityItemVisited('whatsapp', id);
+    let enquiry = liveWhatsApp.find(item => String(item._id) === String(id));
+    if(!enquiry){
+      await loadAdminWhatsApp();
+      enquiry = liveWhatsApp.find(item => String(item._id) === String(id));
+    }
     if(!enquiry) return;
     document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Customer</span><span>${escapeWhatsAppHtml(enquiry.name)}</span></div><div class="detail-row"><span>Mobile</span><span class="mono"><a href="tel:${escapeWhatsAppHtml(enquiry.mobile)}" style="color:var(--neon); text-decoration:none;">${escapeWhatsAppHtml(enquiry.mobile)}</a></span></div><div class="detail-row"><span>Email</span><span>${escapeWhatsAppHtml(enquiry.email)}</span></div><div class="detail-row"><span>Enquiry date</span><span>${escapeWhatsAppHtml(formatDateDDMMYYYY(enquiry.createdAt))}</span></div><div class="detail-row"><span>Message</span><span style="white-space:pre-wrap; word-break:break-word; line-height:1.5; color:var(--white);">${escapeWhatsAppHtml(enquiry.message)}</span></div><div class="detail-row"><span>Status</span><span>${escapeWhatsAppHtml(displayEnquiryStatus(enquiry.status))}</span></div>
       <div class="detail-modal-actions" style="margin-top:20px; display:flex; gap:8px; flex-wrap:wrap; border-top:1px solid rgba(255,255,255,0.08); padding-top:16px;">
@@ -2546,10 +2654,12 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     });
   }
   async function markWhatsAppContacted(id){
+    markActivityItemVisited('whatsapp', id);
     try { const response = await fetch('/api/admin/whatsapp-enquiries?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:'contacted'})}); const data = await response.json().catch(()=>({})); if(!response.ok) throw new Error(data.message || 'Unable to update WhatsApp enquiry.'); showToast('WhatsApp enquiry marked as contacted'); await loadAdminWhatsApp(); } catch(error) { showToast(error.message); }
   }
   async function markWhatsAppRead(id){
-    try { const enquiry = liveWhatsApp.find(item => String(item._id) === String(id)); const response = await fetch('/api/admin/whatsapp-enquiries?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:normalizeStatus(enquiry?.status) || 'new', read:true})}); const data = await response.json().catch(()=>({})); if(!response.ok) throw new Error(data.message || 'Unable to mark WhatsApp enquiry as read.'); locallyReadWhatsApp.add(String(id)); localStorage.setItem('readWhatsAppEnquiries', JSON.stringify([...locallyReadWhatsApp])); showToast('WhatsApp enquiry marked as read'); await loadAdminWhatsApp(); } catch(error) { showToast(error.message); }
+    markActivityItemVisited('whatsapp', id);
+    try { const enquiry = liveWhatsApp.find(item => String(item._id) === String(id)); const response = await fetch('/api/admin/whatsapp-enquiries?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:normalizeStatus(enquiry?.status) || 'new', read:true})}); const data = await response.json().catch(()=>({})); if(!response.ok) throw new Error(data.message || 'Unable to mark WhatsApp enquiry as read.'); rememberReadWhatsApp(id); showToast('WhatsApp enquiry marked as read'); await loadAdminWhatsApp(); } catch(error) { showToast(error.message); }
   }
   async function loadAdminWhatsApp(){
     document.getElementById('whatsappBody').innerHTML = '<tr><td colspan="8" class="tbl-empty">Loading WhatsApp enquiries...</td></tr>';
@@ -2567,11 +2677,6 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   let enquiryDateMode = 'all';
   let enquiryFilter = 'all';
   let enquiryRequestId = 0;
-  const locallyReadEnquiries = new Set(JSON.parse(localStorage.getItem('readExtendedEnquiries') || '[]'));
-  function rememberReadEnquiry(id){
-    locallyReadEnquiries.add(String(id));
-    localStorage.setItem('readExtendedEnquiries', JSON.stringify([...locallyReadEnquiries]));
-  }
   const enquiryStatusLabels = {new:'New', contacted:'Contacted', quotation_sent:'Quotation Sent', confirmed:'Confirmed', closed:'Closed'};
   function escapeEnquiryHtml(value){ return String(value ?? '—').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])); }
   function enquiryDays(start, end){
@@ -2637,6 +2742,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     }
   }
   async function loadEnquiryDetail(id){
+    markActivityItemVisited('enquiry', id);
     try {
       const response = await fetch('/api/admin/extended-enquiries?id=' + encodeURIComponent(id), {credentials:'include'});
       const data = await response.json().catch(()=>({}));
@@ -2668,6 +2774,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     });
   }
   async function markEnquiryContacted(id){
+    markActivityItemVisited('enquiry', id);
     try {
       const response = await fetch('/api/admin/extended-enquiries?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:'contacted'})});
       const data = await response.json().catch(()=>({}));
@@ -2677,6 +2784,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     } catch(error) { showToast(error.message); }
   }
   async function markEnquiryRead(id){
+    markActivityItemVisited('enquiry', id);
     try {
       const enquiry = liveEnquiries.find(item => String(item._id) === String(id));
       const response = await fetch('/api/admin/extended-enquiries?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:canonicalEnquiryStatus(enquiry?.status), read:true})});
@@ -2769,7 +2877,6 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   let chatReadMode = 'all';
   let chatFilter = 'all';
   let chatDateMode = 'all';
-  const locallyReadChatbot = new Set(JSON.parse(localStorage.getItem('readChatbotConversations') || '[]'));
   function chatMessage(conversation){
     return conversation.lastMessage || conversation.messages?.[conversation.messages.length - 1]?.message || '—';
   }
@@ -2811,8 +2918,13 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     </tr>`;
     }).join('') : `<tr><td colspan="8" class="tbl-empty">${chatStatus === 'all' ? 'No chatbot conversations found' : 'No ' + (chatStatus === 'new' ? 'New' : chatStatus === 'contacted' ? 'Contacted' : 'Resolved') + ' conversations found'}</td></tr>`;
   }
-  function viewChatbotDetails(id){
-    const conversation = liveChatbot.find(item => String(item._id) === String(id));
+  async function viewChatbotDetails(id){
+    markActivityItemVisited('chat', id);
+    let conversation = liveChatbot.find(item => String(item._id) === String(id));
+    if(!conversation){
+      await loadAdminChatbot();
+      conversation = liveChatbot.find(item => String(item._id) === String(id));
+    }
     if(!conversation){ showToast('Chatbot conversation not found'); return; }
     document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Customer</span><span>${escapeBookingHtml(conversation.name)}</span></div><div class="detail-row"><span>Mobile</span><span class="mono"><a href="tel:${escapeBookingHtml(conversation.mobile)}" style="color:var(--neon); text-decoration:none;">${escapeBookingHtml(conversation.mobile)}</a></span></div><div class="detail-row"><span>Email</span><span>${escapeBookingHtml(conversation.email)}</span></div><div class="detail-row"><span>Enquiry date</span><span>${escapeBookingHtml(formatDateDDMMYYYY(conversation.createdAt))}</span></div><div class="detail-row"><span>Last message</span><span style="white-space:pre-wrap; word-break:break-word; line-height:1.5; color:var(--white);">${escapeBookingHtml(chatMessage(conversation))}</span></div><div class="detail-row"><span>Status</span><span>${escapeBookingHtml(displayEnquiryStatus(conversation.status))}</span></div>
       <div class="detail-modal-actions" style="margin-top:20px; display:flex; gap:8px; flex-wrap:wrap; border-top:1px solid rgba(255,255,255,0.08); padding-top:16px;">
@@ -2836,10 +2948,12 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     });
   }
   async function markChatbotContacted(id){
+    markActivityItemVisited('chat', id);
     try { const response = await fetch('/api/admin/chatbot-conversations?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:'contacted'})}); const data = await response.json().catch(()=>({})); if(!response.ok) throw new Error(data.message || 'Unable to update chatbot conversation.'); showToast('Chatbot conversation marked as contacted'); await loadAdminChatbot(); } catch(error) { showToast(error.message); }
   }
   async function markChatbotRead(id){
-    try { const conversation = liveChatbot.find(item => String(item._id) === String(id)); const response = await fetch('/api/admin/chatbot-conversations?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:normalizeStatus(conversation?.status) || 'new', read:true})}); const data = await response.json().catch(()=>({})); if(!response.ok) throw new Error(data.message || 'Unable to mark chatbot conversation as read.'); locallyReadChatbot.add(String(id)); localStorage.setItem('readChatbotConversations', JSON.stringify([...locallyReadChatbot])); showToast('Chatbot conversation marked as read'); await loadAdminChatbot(); } catch(error) { showToast(error.message); }
+    markActivityItemVisited('chat', id);
+    try { const conversation = liveChatbot.find(item => String(item._id) === String(id)); const response = await fetch('/api/admin/chatbot-conversations?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:normalizeStatus(conversation?.status) || 'new', read:true})}); const data = await response.json().catch(()=>({})); if(!response.ok) throw new Error(data.message || 'Unable to mark chatbot conversation as read.'); rememberReadChatbot(id); showToast('Chatbot conversation marked as read'); await loadAdminChatbot(); } catch(error) { showToast(error.message); }
   }
   async function loadAdminChatbot(){
     document.getElementById('chatbotBody').innerHTML = '<tr><td colspan="8" class="tbl-empty">Loading chatbot conversations...</td></tr>';
@@ -3097,6 +3211,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     }
   }
   async function loadBookingDetail(bookingId){
+    markActivityItemVisited('booking', bookingId);
     try {
       const response = await fetch('/api/admin/bookings?id=' + encodeURIComponent(bookingId), {credentials:'include'});
       const data = await response.json().catch(()=>({}));
@@ -3120,6 +3235,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     } catch(error) { showToast(error.message); }
   }
   async function confirmBookingStatus(bookingId){
+    markActivityItemVisited('booking', bookingId);
     await updateBookingStatus(bookingId, 'CONFIRMED');
   }
   async function sendBookingPaymentMessage(bookingId){
@@ -3140,6 +3256,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     }
   }
   async function updateBookingStatus(bookingId, status){
+    markActivityItemVisited('booking', bookingId);
     try {
       const response = await fetch('/api/admin/bookings?id=' + encodeURIComponent(bookingId), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({bookingStatus:status})});
       const data = await response.json().catch(()=>({}));

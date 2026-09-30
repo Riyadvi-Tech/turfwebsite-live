@@ -35,12 +35,17 @@ export default async function handler(req, res) {
       const update = { updatedAt: new Date() }
       if (requested) update.status = requested === 'contacted' ? 'contacted' : requested
       if (req.body?.read !== undefined) update.read = req.body.read === true
-      if (!update.status && req.body?.read === undefined) return res.status(400).json({ message: 'Conversation update is required.' })
+      if (req.body?.visited !== undefined) update.visited = req.body.visited === true
+      if (requested && requested !== 'new') {
+        update.visited = true
+        update.read = true
+      }
+      if (!update.status && req.body?.read === undefined && req.body?.visited === undefined) return res.status(400).json({ message: 'Conversation update is required.' })
       const result = await collection.findOneAndUpdate({ _id: new ObjectId(String(id)) }, { $set: update }, { returnDocument: 'after' })
       return result ? res.status(200).json({ conversation: { ...result, _id: String(result._id) } }) : res.status(404).json({ message: 'Conversation not found.' })
     }
     const conversations = await collection
-      .find({}, { projection: { name: 1, mobile: 1, email: 1, messages: 1, lastMessage: 1, status: 1, read: 1, createdAt: 1, updatedAt: 1 } })
+      .find({}, { projection: { name: 1, mobile: 1, email: 1, messages: 1, lastMessage: 1, status: 1, read: 1, visited: 1, createdAt: 1, updatedAt: 1 } })
       .sort({ updatedAt: -1, _id: -1 })
       .limit(100)
       .toArray()
