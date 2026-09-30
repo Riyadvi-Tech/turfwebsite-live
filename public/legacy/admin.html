@@ -472,6 +472,10 @@
   /* calendar */
   .cal-head{display:flex; align-items:center; gap:14px; margin-bottom:18px; flex-wrap:wrap;}
   .cal-head h3{flex:1 1 auto; margin:0; font-size:18px;}
+  .cal-title-full{display:inline;}
+  .cal-title-short{display:none;}
+  .desktop-lbl{display:inline;}
+  .mobile-lbl{display:none;}
   .cal-nav{width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; background:var(--charcoal); border:1px solid var(--border); border-radius:9px; color:var(--white); cursor:pointer; transition:border-color .2s ease, background .2s ease;}
   .cal-nav:hover{border-color:var(--neon); background:rgba(57,255,122,0.06);}
 
@@ -810,26 +814,141 @@
     }
     .history-switch{width:100%;}
     .history-switch .filt-pill{flex:1; text-align:center; font-size:11px; padding:8px 6px;}
-    /* Admin Calendar — use the available mobile width for medium square tiles */
-    #page-calendar{padding:10px 8px 24px;}
-    #page-calendar .panel{padding:16px 12px 20px; border-radius:16px;}
-    #page-calendar .cal-head{gap:8px;}
-    #page-calendar .cal-head h3{font-size:16px;}
-    #page-calendar .cal-nav{width:34px; height:34px;}
-    .cal-grid2{grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px;}
-    .cal-cell{min-height:96px; padding:6px; font-size:11px; display:flex; flex-direction:column; align-items:stretch; justify-content:flex-start;}
-    .cal-cell .cal-slot-chip .chip-time{display:none;}
-    .cal-cell-foot{display:none;}
-    .cal-legend{width:100%; margin-left:0; margin-top:8px;}
+    /* Admin Calendar — Mobile Responsive Layout */
+    .cal-title-full{display:none !important;}
+    .cal-title-short{display:inline !important;}
+    .desktop-lbl{display:none !important;}
+    .mobile-lbl{display:inline !important;}
+
+    #page-calendar{padding:10px 6px 24px;}
+    #page-calendar .panel{padding:14px 10px 18px; border-radius:14px;}
+    #page-calendar .cal-head{
+      display:grid;
+      grid-template-columns:34px 1fr 34px;
+      align-items:center;
+      gap:10px 6px;
+      margin-bottom:14px;
+    }
+    #page-calendar #calPrev{
+      grid-column:1;
+      grid-row:1;
+      width:34px;
+      height:34px;
+      justify-self:start;
+      flex-shrink:0;
+    }
+    #page-calendar #calTitle{
+      grid-column:2;
+      grid-row:1;
+      font-size:15px;
+      font-weight:700;
+      text-align:center;
+      margin:0;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      padding:0 2px;
+      line-height:1.2;
+    }
+    #page-calendar #calNext{
+      grid-column:3;
+      grid-row:1;
+      width:34px;
+      height:34px;
+      justify-self:end;
+      flex-shrink:0;
+    }
+    #page-calendar .cal-legend{
+      grid-column:1 / -1;
+      grid-row:2;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:8px;
+      width:100%;
+      margin:2px 0 0 0;
+    }
+    #page-calendar .cal-legend-badge{
+      padding:4px 10px;
+      font-size:10.5px;
+    }
+
+    .cal-grid2{grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px;}
+    .cal-cell{
+      min-height:84px;
+      padding:6px 4px;
+      border-radius:10px;
+      font-size:11px;
+      display:flex;
+      flex-direction:column;
+      align-items:stretch;
+      justify-content:flex-start;
+      gap:3px;
+      overflow:hidden;
+      box-sizing:border-box;
+    }
+    .cal-cell-head{
+      display:flex;
+      align-items:baseline;
+      justify-content:flex-start;
+      margin-bottom:2px;
+      width:100%;
+    }
+    .cal-cell-head .cal-type-pill{display:none !important;}
+    .cal-cell-date{display:inline-flex; align-items:baseline; gap:3px;}
+    .cal-day-num{font-size:13.5px; font-weight:700; line-height:1;}
+    .cal-day-name{font-size:8.5px; line-height:1; letter-spacing:0.2px;}
+
+    .cal-cell-body{display:flex; flex-direction:column; justify-content:flex-start; flex:1 1 auto; gap:3px; padding:0; width:100%;}
+    .cal-booking-badges-wrap{display:flex; flex-direction:column; gap:3px; width:100%;}
+    .cal-booking-badge{
+      display:flex;
+      align-items:center;
+      gap:3px;
+      padding:2.5px 4px;
+      border-radius:5px;
+      font-size:9.5px;
+      line-height:1.2;
+      width:100%;
+      box-sizing:border-box;
+      min-width:0;
+    }
+    .cal-booking-badge .legend-dot{
+      width:5px;
+      height:5px;
+      min-width:5px;
+      flex-shrink:0;
+    }
+    .cal-booking-badge .badge-title{
+      font-size:9.5px;
+      font-weight:600;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      flex:1 1 auto;
+      min-width:0;
+      letter-spacing:-0.2px;
+    }
+    .cal-booking-badge .badge-count{
+      font-size:9px;
+      font-weight:700;
+      padding:0.5px 3.5px;
+      min-width:13px;
+      text-align:center;
+      border-radius:100px;
+      flex-shrink:0;
+      margin-left:auto;
+      line-height:1.1;
+    }
+
     #page-calendar .cal-details{margin:0;}
-    #page-calendar .cal-details-head{gap:10px; margin-bottom:14px;}
-    #page-calendar .cal-details-head h3{order:2; flex:1 1 calc(100% - 50px); font-size:17px;}
-    #page-calendar .cal-back{order:1; width:38px; height:34px; padding:0; justify-content:center; font-size:0;}
+    #page-calendar .cal-details-head{display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap;}
+    #page-calendar .cal-back{order:1; width:36px; height:34px; padding:0; display:inline-flex; align-items:center; justify-content:center; font-size:0; flex-shrink:0;}
     #page-calendar .cal-back svg{width:16px; height:16px;}
-    #page-calendar .cal-detail-count{order:3; flex:1 1 100%; margin-left:48px; margin-top:-4px; width:max-content;}
-    #page-calendar .cal-book-list{max-height:none; margin:0; padding:0;}
-    #page-calendar .cal-book-card{padding:14px 12px; margin-bottom:10px; border-radius:12px;}
-    #page-calendar .cal-book-card .detail-row{font-size:12px; padding:9px 0;}
+    #page-calendar #calDetailDate{order:2; flex:1 1 auto; font-size:16px; margin:0;}
+    #page-calendar #calDetailCount{order:3; margin:0; font-size:11px;}
+    #page-calendar .cal-detail-table-wrap{width:100%; border-radius:12px; overflow-x:auto; -webkit-overflow-scrolling:touch;}
+    #page-calendar .cal-detail-table-wrap table{min-width:900px;}
     .analytics-summary{grid-template-columns:1fr 1fr;}
     .analytics-viz{flex-direction:column;}
     .pie-wrap{flex:1 1 auto; width:100%;}
@@ -1124,7 +1243,7 @@
       <div class="panel">
         <div class="cal-head">
           <button type="button" class="cal-nav" id="calPrev" aria-label="Previous month" title="Previous month"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-          <h3 id="calTitle">September 2026 — booked slots per day</h3>
+          <h3 id="calTitle"><span class="cal-title-full">September 2026 — booked slots per day</span><span class="cal-title-short">September 2026</span></h3>
           <button type="button" class="cal-nav" id="calNext" aria-label="Next month" title="Next month"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
           <div class="cal-legend">
             <span class="cal-legend-badge single"><span class="legend-dot single"></span> Single Slot</span>
@@ -3948,7 +4067,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   async function renderCalendar(){
     closeCalendarDetails();
     var days = new Date(calYear, calMonth + 1, 0).getDate();
-    if(calTitleEl) calTitleEl.textContent = calMonths[calMonth] + ' ' + calYear + ' \u2014 booked slots per day';
+    if(calTitleEl) calTitleEl.innerHTML = '<span class="cal-title-full">' + calMonths[calMonth] + ' ' + calYear + ' \u2014 booked slots per day</span><span class="cal-title-short">' + calMonths[calMonth] + ' ' + calYear + '</span>';
     bookingsByDate = {};
     renderCalendarGrid(days);
     var requestId = ++calendarRequestId;
@@ -4050,25 +4169,25 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
         var badgesHtml = '';
         if(hasMulti){
           badgesHtml += 
-            '<div class="cal-booking-badge multi">' +
+            '<div class="cal-booking-badge multi" title="Multi Slot: ' + multiCount + '">' +
               '<span class="legend-dot multi"></span>' +
-              '<span class="badge-title">Multi Slot</span>' +
+              '<span class="badge-title"><span class="desktop-lbl">Multi Slot</span><span class="mobile-lbl">Multi</span></span>' +
               '<span class="badge-count">' + multiCount + '</span>' +
             '</div>';
         }
         if(hasSingle){
           badgesHtml += 
-            '<div class="cal-booking-badge single">' +
+            '<div class="cal-booking-badge single" title="Single Slot: ' + singleCount + '">' +
               '<span class="legend-dot single"></span>' +
-              '<span class="badge-title">Single Slot</span>' +
+              '<span class="badge-title"><span class="desktop-lbl">Single Slot</span><span class="mobile-lbl">Single</span></span>' +
               '<span class="badge-count">' + singleCount + '</span>' +
             '</div>';
         }
         if(!confirmedBookings.length && pendingCount > 0){
           badgesHtml += 
-            '<div class="cal-booking-badge pending">' +
+            '<div class="cal-booking-badge pending" title="Pending: ' + pendingCount + '">' +
               '<span class="legend-dot pending"></span>' +
-              '<span class="badge-title">Pending</span>' +
+              '<span class="badge-title"><span class="desktop-lbl">Pending</span><span class="mobile-lbl">Pending</span></span>' +
               '<span class="badge-count">' + pendingCount + '</span>' +
             '</div>';
         }
