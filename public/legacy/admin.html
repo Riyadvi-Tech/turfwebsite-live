@@ -470,15 +470,96 @@
   .password-toggle-btn svg{width:16px; height:16px; stroke:currentColor;}
 
   /* calendar */
-  .cal-head{display:flex; align-items:center; gap:12px; margin-bottom:16px;}
+  .cal-head{display:flex; align-items:center; gap:14px; margin-bottom:18px; flex-wrap:wrap;}
   .cal-head h3{flex:1 1 auto; margin:0; font-size:18px;}
   .cal-nav{width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; background:var(--charcoal); border:1px solid var(--border); border-radius:9px; color:var(--white); cursor:pointer; transition:border-color .2s ease, background .2s ease;}
   .cal-nav:hover{border-color:var(--neon); background:rgba(57,255,122,0.06);}
-  .cal-grid2{display:grid; grid-template-columns:repeat(7,1fr); gap:8px;}
-  .cal-cell{aspect-ratio:1 / 1; border:1px solid var(--border); border-radius:10px; padding:8px; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); position:relative;}
-  .cal-cell .cnt{position:absolute; bottom:6px; right:6px; background:rgba(57,255,122,0.15); color:var(--neon); font-size:9px; padding:2px 5px; border-radius:100px;}
-  .cal-cell.has-bookings{border-color:var(--neon); cursor:pointer;}
-  .cal-cell.has-bookings:hover{background:rgba(57,255,122,0.06);}
+
+  /* Calendar Legend */
+  .cal-legend{display:inline-flex; align-items:center; gap:10px;}
+  .cal-legend-badge{display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:100px; font-size:11px; font-weight:600; font-family:'JetBrains Mono',monospace;}
+  .cal-legend-badge.single{background:rgba(57,255,122,0.12); color:#39FF7A; border:1px solid rgba(57,255,122,0.3);}
+  .cal-legend-badge.multi{background:rgba(168,85,247,0.14); color:#C084FC; border:1px solid rgba(168,85,247,0.35);}
+  .legend-dot{width:7px; height:7px; border-radius:50%; display:inline-block;}
+  .legend-dot.single{background:#39FF7A; box-shadow:0 0 6px rgba(57,255,122,0.6);}
+  .legend-dot.multi{background:#C084FC; box-shadow:0 0 6px rgba(192,132,252,0.7);}
+
+  /* Calendar Grid */
+  .cal-grid2{display:grid; grid-template-columns:repeat(7,1fr); gap:10px;}
+  .cal-cell{min-height:135px; border:1px solid rgba(255,255,255,0.07); border-radius:12px; padding:10px; background:rgba(15,22,19,0.55); position:relative; display:flex; flex-direction:column; gap:6px; transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease; cursor:default; overflow:hidden;}
+  
+  .cal-cell.has-bookings{cursor:pointer;}
+  .cal-cell.has-bookings:hover{transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.5);}
+
+  /* Single Slot Day Card - Neon Green */
+  .cal-cell.is-single-slot{border-color:rgba(57,255,122,0.45); background:linear-gradient(180deg, rgba(57,255,122,0.08) 0%, rgba(15,22,19,0.92) 100%);}
+  .cal-cell.is-single-slot:hover{border-color:#39FF7A; box-shadow:0 8px 24px rgba(57,255,122,0.15);}
+
+  /* Multi Slot Day Card - Electric Purple */
+  .cal-cell.is-multi-slot{border-color:rgba(168,85,247,0.5); background:linear-gradient(180deg, rgba(168,85,247,0.10) 0%, rgba(15,22,19,0.92) 100%);}
+  .cal-cell.is-multi-slot:hover{border-color:#C084FC; box-shadow:0 8px 24px rgba(168,85,247,0.22);}
+
+  /* Mixed Slot Day Card (both single and multi slot booked) */
+  .cal-cell.is-mixed-slot{border-color:rgba(168,85,247,0.45); background:linear-gradient(150deg, rgba(168,85,247,0.12) 0%, rgba(15,22,19,0.92) 55%, rgba(57,255,122,0.08) 100%);}
+  .cal-cell.is-mixed-slot:hover{border-color:#C084FC; box-shadow:0 8px 24px rgba(168,85,247,0.18), 0 0 12px rgba(57,255,122,0.12);}
+
+  /* Pending Day Card */
+  .cal-cell.is-pending{border-color:rgba(245,184,65,0.4); background:linear-gradient(180deg, rgba(245,184,65,0.08) 0%, rgba(15,22,19,0.92) 100%);}
+  .cal-cell.is-pending:hover{border-color:#F5B841; box-shadow:0 8px 24px rgba(245,184,65,0.15);}
+
+  /* Card Header: day number + weekday + slot tag */
+  .cal-cell-head{display:flex; align-items:center; justify-content:space-between; gap:4px; margin-bottom:2px;}
+  .cal-cell-date{display:inline-flex; align-items:baseline; gap:5px;}
+  .cal-day-num{font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:700; color:var(--white);}
+  .cal-cell:not(.has-bookings) .cal-day-num{color:rgba(242,244,242,0.38);}
+  .cal-day-name{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); text-transform:uppercase;}
+
+  .cal-type-pill{display:inline-flex; align-items:center; gap:4px; font-size:9.5px; font-weight:700; font-family:'JetBrains Mono',monospace; padding:2px 7px; border-radius:100px; white-space:nowrap; letter-spacing:0.3px;}
+  .cal-type-pill.single{background:rgba(57,255,122,0.18); color:#39FF7A; border:1px solid rgba(57,255,122,0.35);}
+  .cal-type-pill.multi{background:rgba(168,85,247,0.22); color:#E9D5FF; border:1px solid rgba(168,85,247,0.45);}
+  .cal-type-pill.mixed{background:rgba(255,255,255,0.08); color:var(--white); border:1px solid rgba(255,255,255,0.16);}
+  .cal-type-pill.pending{background:rgba(245,184,65,0.18); color:#F5B841; border:1px solid rgba(245,184,65,0.35);}
+
+  /* Center booking count badges wrap */
+  .cal-cell-body{display:flex; flex-direction:column; justify-content:center; flex:1 1 auto; gap:5px; padding:3px 0;}
+  .cal-booking-badges-wrap{display:flex; flex-direction:column; gap:5px; width:100%;}
+  
+  .cal-booking-badge{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:5px 8px;
+    border-radius:8px;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:11.5px;
+    font-weight:600;
+    letter-spacing:0.2px;
+    width:100%;
+    box-sizing:border-box;
+    transition:transform .15s ease;
+  }
+  .cal-booking-badge .badge-title{flex:1 1 auto; white-space:nowrap;}
+  .cal-booking-badge .badge-count{
+    margin-left:auto;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    font-weight:700;
+    padding:1px 6px;
+    border-radius:100px;
+    background:rgba(0,0,0,0.35);
+  }
+
+  .cal-booking-badge.single{background:rgba(57,255,122,0.14); color:#39FF7A; border:1px solid rgba(57,255,122,0.32);}
+  .cal-booking-badge.single .legend-dot{background:#39FF7A; box-shadow:0 0 5px #39FF7A;}
+  .cal-booking-badge.single .badge-count{color:#39FF7A; border:1px solid rgba(57,255,122,0.25);}
+
+  .cal-booking-badge.multi{background:rgba(168,85,247,0.16); color:#E9D5FF; border:1px solid rgba(168,85,247,0.38);}
+  .cal-booking-badge.multi .legend-dot{background:#C084FC; box-shadow:0 0 5px #C084FC;}
+  .cal-booking-badge.multi .badge-count{color:#C084FC; border:1px solid rgba(168,85,247,0.3);}
+
+  .cal-booking-badge.pending{background:rgba(245,184,65,0.14); color:#F5B841; border:1px solid rgba(245,184,65,0.32);}
+  .cal-booking-badge.pending .legend-dot{background:#F5B841; box-shadow:0 0 5px #F5B841;}
+  .cal-booking-badge.pending .badge-count{color:#F5B841; border:1px solid rgba(245,184,65,0.25);}
   .cal-details{margin-top:4px;}
   .cal-detail-table-wrap{overflow-x:auto; overflow-y:hidden;}
   .cal-detail-table-wrap table{min-width:1180px;}
@@ -735,9 +816,11 @@
     #page-calendar .cal-head{gap:8px;}
     #page-calendar .cal-head h3{font-size:16px;}
     #page-calendar .cal-nav{width:34px; height:34px;}
-    .cal-grid2{grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px;}
-    .cal-cell{min-height:52px; padding:0; display:flex; align-items:center; justify-content:center; font-size:13px;}
-    .cal-cell .cnt{right:4px; bottom:4px; font-size:8px; padding:2px 4px;}
+    .cal-grid2{grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px;}
+    .cal-cell{min-height:96px; padding:6px; font-size:11px; display:flex; flex-direction:column; align-items:stretch; justify-content:flex-start;}
+    .cal-cell .cal-slot-chip .chip-time{display:none;}
+    .cal-cell-foot{display:none;}
+    .cal-legend{width:100%; margin-left:0; margin-top:8px;}
     #page-calendar .cal-details{margin:0;}
     #page-calendar .cal-details-head{gap:10px; margin-bottom:14px;}
     #page-calendar .cal-details-head h3{order:2; flex:1 1 calc(100% - 50px); font-size:17px;}
@@ -747,8 +830,6 @@
     #page-calendar .cal-book-list{max-height:none; margin:0; padding:0;}
     #page-calendar .cal-book-card{padding:14px 12px; margin-bottom:10px; border-radius:12px;}
     #page-calendar .cal-book-card .detail-row{font-size:12px; padding:9px 0;}
-    .cal-cell{display:flex; align-items:center; justify-content:center; align-self:start; min-height:0; padding:0; font-size:14px;}
-    .cal-cell .cnt{position:absolute; bottom:4px; right:4px; font-size:8px; line-height:1; min-width:14px; text-align:center; padding:2px 4px;}
     .analytics-summary{grid-template-columns:1fr 1fr;}
     .analytics-viz{flex-direction:column;}
     .pie-wrap{flex:1 1 auto; width:100%;}
@@ -1045,6 +1126,10 @@
           <button type="button" class="cal-nav" id="calPrev" aria-label="Previous month" title="Previous month"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
           <h3 id="calTitle">September 2026 — booked slots per day</h3>
           <button type="button" class="cal-nav" id="calNext" aria-label="Next month" title="Next month"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+          <div class="cal-legend">
+            <span class="cal-legend-badge single"><span class="legend-dot single"></span> Single Slot</span>
+            <span class="cal-legend-badge multi"><span class="legend-dot multi"></span> Multi Slot</span>
+          </div>
         </div>
         <div class="cal-grid2" id="calGrid2"></div>
         <div class="cal-details" id="calDetails" style="display:none;">
@@ -3744,14 +3829,63 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   // ---- calendar (dynamic month navigation) ----
   const calTitleEl = document.querySelector('#page-calendar h3#calTitle');
   const calMonths = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const calWeekdaysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const calGrid = document.getElementById('calGrid2');
   let bookingsByDate = {};
   let calYear = new Date().getFullYear();
   let calMonth = new Date().getMonth();
   let calendarRequestId = 0;
+
   function calDateKey(day){
     return calYear + '-' + String(calMonth + 1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
   }
+
+  function getBookingDateKey(booking){
+    if(!booking) return '';
+    var raw = String(booking.date || '').trim();
+    if(/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+    if(/^\d{2}-\d{2}-\d{4}$/.test(raw)){
+      var p = raw.split('-');
+      return p[2] + '-' + p[1] + '-' + p[0];
+    }
+    if(booking.bookingDate && /^\d{4}-\d{2}-\d{2}$/.test(String(booking.bookingDate).trim())){
+      return String(booking.bookingDate).trim();
+    }
+    if(booking.createdAt){
+      try{
+        var d = new Date(booking.createdAt);
+        if(!Number.isNaN(d.getTime())) return d.toISOString().slice(0, 10);
+      }catch(_){}
+    }
+    return '';
+  }
+
+  function extractBookingSlots(booking){
+    if(Array.isArray(booking.slots) && booking.slots.length > 0){
+      return booking.slots.map(function(s, idx){
+        var name = s.name || s.slot || s.title || ('Slot ' + (idx + 1));
+        var time = s.end ? (s.start + ' - ' + s.end) : (s.start || booking.time || '');
+        return { name: name, time: time, hours: Number(s.hours) || 1 };
+      });
+    }
+    if(booking.time){
+      var parts = String(booking.time).split(',').map(function(t){ return t.trim(); }).filter(Boolean);
+      if(parts.length > 1){
+        return parts.map(function(t, idx){
+          return { name: 'Slot ' + (idx + 1), time: t, hours: 1 };
+        });
+      }
+      return [{ name: 'Slot 1', time: booking.time, hours: Number(booking.duration) || 1 }];
+    }
+    return [{ name: 'Slot 1', time: 'Booked', hours: Number(booking.duration) || 1 }];
+  }
+
+  function isConfirmedBooking(booking){
+    var bs = String(booking?.bookingStatus || '').toUpperCase();
+    var ps = String(booking?.paymentStatus || '').toUpperCase();
+    return bs === 'CONFIRMED' || bs === 'COMPLETED' || ps === 'PAID';
+  }
+
   function timeToMin(t){
     const m = /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.exec(String(t || '').trim());
     if(!m) return 0;
@@ -3759,6 +3893,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     if(m[3].toUpperCase() === 'PM') h += 12;
     return h * 60 + Number(m[2]);
   }
+
   function openCalendarDate(dateKey){
     var list = (bookingsByDate[dateKey] || []).slice().sort(function(a, b){ return timeToMin(a.time) - timeToMin(b.time); });
     var label = formatDateDDMMYYYY(new Date(dateKey + 'T00:00:00'));
@@ -3771,18 +3906,21 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
         '<thead><tr><th>Customer</th><th>Booked on</th><th>Mobile</th><th>Play Date</th><th>Slot</th><th>Time</th><th>Duration</th><th>Amount</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>' +
         '<tbody>' + list.map(function(b){
           var slotRows = Array.isArray(b.slots) && b.slots.length ? b.slots : [{start: b.time || '—', end: '', hours: b.duration || 0}];
-          var slotHtml = slotRows.map(function(slot, index){ return '<div>Slot ' + (index + 1) + '</div>'; }).join('');
+          var isMulti = slotRows.length > 1 || Number(b.duration) > 1;
+          var typeBadge = '<span class="cal-type-pill ' + (isMulti ? 'multi' : 'single') + '" style="margin-bottom:6px;display:inline-block;">' + (isMulti ? 'Multi Slot (' + slotRows.length + ')' : 'Single Slot') + '</span>';
+          var slotHtml = typeBadge + slotRows.map(function(slot, index){ return '<div>Slot ' + (index + 1) + '</div>'; }).join('');
           var timeHtml = slotRows.map(function(slot){ return escapeBookingHtml(slot.end ? slot.start + ' - ' + slot.end : slot.start); }).join('<br>');
           var durationHtml = slotRows.map(function(slot){ return (slot.hours || 0) + ' hr' + (Number(slot.hours) === 1 ? '' : 's'); }).join('<br>');
           var paymentStatus = effectiveCalendarPaymentStatus(b);
           var paymentClass = paymentStatus === 'PAID' ? 'verified' : paymentStatus === 'CANCELLED' ? 'cancelled' : 'pending';
           var paymentText = paymentStatusLabels[paymentStatus] || escapeBookingHtml(paymentStatus);
           var bookedOnValue = formatDateDDMMYYYY(b.createdAt || b.createdAtDate || b.date || dateKey);
+          var playDateValue = bookingDateLabel(b.date || dateKey);
           return '<tr>' +
             '<td>' + escapeBookingHtml(b.name || b.customerName || '—') + '</td>' +
             '<td>' + escapeBookingHtml(bookedOnValue) + '</td>' +
             '<td class="mono">' + escapeBookingHtml(b.mobile) + '</td>' +
-            '<td>' + escapeBookingHtml(b.date) + '</td>' +
+            '<td>' + escapeBookingHtml(playDateValue) + '</td>' +
             '<td>' + slotHtml + '</td>' +
             '<td>' + timeHtml + '</td>' +
             '<td>' + durationHtml + '</td>' +
@@ -3800,11 +3938,13 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     document.querySelector('.cal-head').style.display = 'none';
     document.getElementById('calDetails').style.display = '';
   }
+
   function closeCalendarDetails(){
     document.getElementById('calDetails').style.display = 'none';
     calGrid.style.display = '';
     document.querySelector('.cal-head').style.display = '';
   }
+
   async function renderCalendar(){
     closeCalendarDetails();
     var days = new Date(calYear, calMonth + 1, 0).getDate();
@@ -3820,10 +3960,19 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load calendar bookings.'));
       if(requestId !== calendarRequestId) return;
       bookingsByDate = {};
-      (data.bookings || []).forEach(function(booking){
-        var bookedOnKey = booking.createdAt ? new Date(booking.createdAt).toISOString().slice(0, 10) : (booking.date || '');
-        if(!bookedOnKey) return;
-        (bookingsByDate[bookedOnKey] = bookingsByDate[bookedOnKey] || []).push(booking);
+
+      var allBookings = (data.bookings || []).slice();
+      if(Array.isArray(liveBookings)){
+        liveBookings.forEach(function(lb){
+          var exists = allBookings.some(function(b){ return String(b._id) === String(lb._id); });
+          if(!exists) allBookings.push(lb);
+        });
+      }
+
+      allBookings.forEach(function(booking){
+        var playDateKey = getBookingDateKey(booking);
+        if(!playDateKey) return;
+        (bookingsByDate[playDateKey] = bookingsByDate[playDateKey] || []).push(booking);
       });
     } catch(error) {
       if(requestId !== calendarRequestId) return;
@@ -3832,25 +3981,119 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     }
     renderCalendarGrid(days);
   }
+
   function calShift(dir){
     calMonth += dir;
     if(calMonth < 0){ calMonth = 11; calYear--; }
     if(calMonth > 11){ calMonth = 0; calYear++; }
     renderCalendar();
   }
+
   function renderCalendarGrid(days){
     calGrid.innerHTML = '';
     for(var i = 1; i <= days; i++){
       var key = calDateKey(i);
-      var dayBookings = bookingsByDate[key] || [];
+      var dayBookings = (bookingsByDate[key] || []).filter(function(b){
+        return String(b.bookingStatus || '').toUpperCase() !== 'CANCELLED';
+      });
+      var cellDate = new Date(calYear, calMonth, i);
+      var dayName = calWeekdaysShort[cellDate.getDay()];
+      
       var cell = document.createElement('div');
-      cell.className = 'cal-cell' + (dayBookings.length ? ' has-bookings' : '');
       cell.dataset.date = key;
-      cell.innerHTML = i + (dayBookings.length ? '<span class="cnt">' + dayBookings.length + '</span>' : '');
-      cell.addEventListener('click', (function(k){ return function(){ openCalendarDate(k); }; })(key));
+
+      if(!dayBookings.length){
+        cell.className = 'cal-cell';
+        cell.innerHTML = 
+          '<div class="cal-cell-head">' +
+            '<div class="cal-cell-date"><span class="cal-day-num">' + i + '</span><span class="cal-day-name">' + dayName + '</span></div>' +
+          '</div>';
+      } else {
+        var confirmedBookings = dayBookings.filter(isConfirmedBooking);
+        var pendingBookings = dayBookings.filter(function(b){ return !isConfirmedBooking(b); });
+
+        var multiCount = 0;
+        var singleCount = 0;
+
+        confirmedBookings.forEach(function(b){
+          var bSlots = extractBookingSlots(b);
+          var isMulti = bSlots.length > 1 || Number(b.duration) > 1;
+          if(isMulti){
+            multiCount++;
+          } else {
+            singleCount++;
+          }
+        });
+
+        var pendingCount = pendingBookings.length;
+        var hasMulti = multiCount > 0;
+        var hasSingle = singleCount > 0;
+        var isMixed = hasMulti && hasSingle;
+
+        var stateClass = isMixed
+          ? 'is-mixed-slot'
+          : (hasMulti ? 'is-multi-slot' : (hasSingle ? 'is-single-slot' : (pendingCount > 0 ? 'is-pending' : '')));
+        cell.className = 'cal-cell has-bookings ' + stateClass;
+
+        var topBadgeHtml = '';
+        var totalBookings = confirmedBookings.length || pendingBookings.length;
+        if(isMixed){
+          topBadgeHtml = '<span class="cal-type-pill mixed">' + totalBookings + ' Bookings</span>';
+        } else if(hasMulti){
+          topBadgeHtml = '<span class="cal-type-pill multi">Multi Slot</span>';
+        } else if(hasSingle){
+          topBadgeHtml = '<span class="cal-type-pill single">Single Slot</span>';
+        } else if(pendingCount > 0){
+          topBadgeHtml = '<span class="cal-type-pill pending">Pending</span>';
+        }
+
+        var badgesHtml = '';
+        if(hasMulti){
+          badgesHtml += 
+            '<div class="cal-booking-badge multi">' +
+              '<span class="legend-dot multi"></span>' +
+              '<span class="badge-title">Multi Slot</span>' +
+              '<span class="badge-count">' + multiCount + '</span>' +
+            '</div>';
+        }
+        if(hasSingle){
+          badgesHtml += 
+            '<div class="cal-booking-badge single">' +
+              '<span class="legend-dot single"></span>' +
+              '<span class="badge-title">Single Slot</span>' +
+              '<span class="badge-count">' + singleCount + '</span>' +
+            '</div>';
+        }
+        if(!confirmedBookings.length && pendingCount > 0){
+          badgesHtml += 
+            '<div class="cal-booking-badge pending">' +
+              '<span class="legend-dot pending"></span>' +
+              '<span class="badge-title">Pending</span>' +
+              '<span class="badge-count">' + pendingCount + '</span>' +
+            '</div>';
+        }
+
+        cell.innerHTML = 
+          '<div class="cal-cell-head">' +
+            '<div class="cal-cell-date">' +
+              '<span class="cal-day-num">' + i + '</span>' +
+              '<span class="cal-day-name">' + dayName + '</span>' +
+            '</div>' +
+            topBadgeHtml +
+          '</div>' +
+          '<div class="cal-cell-body">' +
+            '<div class="cal-booking-badges-wrap">' +
+              badgesHtml +
+            '</div>' +
+          '</div>';
+
+        cell.addEventListener('click', (function(k){ return function(){ openCalendarDate(k); }; })(key));
+      }
+
       calGrid.appendChild(cell);
     }
   }
+
   document.getElementById('calPrev').addEventListener('click', function(){ calShift(-1); });
   document.getElementById('calNext').addEventListener('click', function(){ calShift(1); });
   document.getElementById('calBack').addEventListener('click', function(){ closeCalendarDetails(); });

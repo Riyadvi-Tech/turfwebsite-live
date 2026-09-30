@@ -237,8 +237,19 @@ export default async function handler(req, res) {
     if (mobile && !/^\d{3,15}$/.test(mobile)) throw new Error('Invalid mobile.')
 
     const filter = {}
-    if (date) filter.date = date
-    if (startDate && endDate) filter.date = { $gte: startDate, $lte: endDate }
+    if (date) {
+      const parts = date.split('-')
+      const reversedDate = `${parts[2]}-${parts[1]}-${parts[0]}`
+      filter.date = { $in: [date, reversedDate] }
+    }
+    if (startDate && endDate) {
+      const startMonth = startDate.slice(5, 7)
+      const startYear = startDate.slice(0, 4)
+      filter.$or = [
+        { date: { $gte: startDate, $lte: endDate } },
+        { date: { $regex: new RegExp(`-\\s*${startMonth}\\s*-\\s*${startYear}$`) } },
+      ]
+    }
     if (bookingStatus) filter.bookingStatus = bookingStatus
     if (paymentStatus) filter.paymentStatus = paymentStatus
     if (mobile) filter.mobile = mobile
