@@ -72,6 +72,10 @@ export default async function handler(req, res) {
       recentWhatsappEnquiries,
       whatsappEnquiries,
       chatbotConversations,
+      unreadWhatsapp,
+      unreadChatbot,
+      unreadEnquiries,
+      unreadBookings,
     ] = await Promise.all([
       bookings.countDocuments({}),
       bookings.countDocuments({ createdAt: { $gte: start, $lt: end } }),
@@ -112,13 +116,17 @@ export default async function handler(req, res) {
       db.collection('whatsapp_enquiries').find({}, { projection: { name: 1, message: 1, status: 1, visited: 1, read: 1, createdAt: 1, updatedAt: 1 } }).sort({ updatedAt: -1, createdAt: -1, _id: -1 }).limit(10).toArray(),
       db.collection('whatsapp_enquiries').countDocuments({}),
       db.collection('chatbot_conversations').countDocuments({}),
+      db.collection('whatsapp_enquiries').countDocuments({ read: { $ne: true }, status: { $nin: ['contacted', 'resolved', 'closed'] } }),
+      db.collection('chatbot_conversations').countDocuments({ read: { $ne: true }, status: { $nin: ['contacted', 'resolved', 'closed'] } }),
+      enquiries.countDocuments({ read: { $ne: true }, status: { $nin: ['contacted', 'closed', 'confirmed'] } }),
+      bookings.countDocuments({ bookingStatus: 'PENDING' }),
     ])
 
     const totalCustomers = new Set([...bookingMobiles, ...enquiryMobiles]).size
 
     const activity = [
       ...recentBookings
-        .filter((booking) => !booking.visited && !booking.read)
+        .filter((booking) => !booking.read && !booking.visited && booking.bookingStatus === 'PENDING')
         .map((booking) => ({
           id: String(booking._id),
           type: 'booking',
@@ -127,8 +135,9 @@ export default async function handler(req, res) {
         })),
       ...recentEnquiries
         .filter((enquiry) => {
+          if (enquiry.read || enquiry.visited) return false
           const rawStatus = String(enquiry.status || 'new').trim().toLowerCase()
-          return rawStatus === 'new' && !enquiry.visited && !enquiry.read
+          return !['contacted', 'closed', 'confirmed'].includes(rawStatus)
         })
         .map((enquiry) => ({
           id: String(enquiry._id),
@@ -138,8 +147,9 @@ export default async function handler(req, res) {
         })),
       ...recentChatbotConversations
         .filter((conversation) => {
+          if (conversation.read || conversation.visited) return false
           const rawStatus = String(conversation.status || 'new').trim().toLowerCase()
-          return rawStatus === 'new' && !conversation.visited && !conversation.read
+          return !['contacted', 'resolved', 'closed'].includes(rawStatus)
         })
         .map((conversation) => {
           const messages = Array.isArray(conversation.messages) ? conversation.messages : []
@@ -154,8 +164,9 @@ export default async function handler(req, res) {
         }),
       ...recentWhatsappEnquiries
         .filter((enquiry) => {
+          if (enquiry.read || enquiry.visited) return false
           const rawStatus = String(enquiry.status || 'new').trim().toLowerCase()
-          return rawStatus === 'new' && !enquiry.visited && !enquiry.read
+          return !['contacted', 'resolved', 'closed'].includes(rawStatus)
         })
         .map((enquiry) => {
           const customer = String(enquiry.name || 'Visitor').trim()
@@ -179,11 +190,17 @@ export default async function handler(req, res) {
         completedBookings,
         totalCustomers,
         pendingPayments,
-        newEnquiries: totalEnquiries,
+        newEnquiries: unreadEnquiries,
         activeEnquiries: totalEnquiries,
         totalRevenue: Number(paidRevenue[0]?.total || 0),
         whatsappEnquiries,
         chatbotConversations,
+        unreadWhatsapp,
+        unreadChatbot,
+        unreadEnquiries,
+        unreadBookings,
+        newMessages: unreadWhatsapp + unreadChatbot,
+        totalUnread: unreadWhatsapp + unreadChatbot + unreadEnquiries + unreadBookings,
       },
       recentBookings: recentBookings.map(safeBooking),
       recentActivity: activity,

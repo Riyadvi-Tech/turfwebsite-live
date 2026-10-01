@@ -144,11 +144,34 @@
   .nav-item.active{background:rgba(57,255,122,0.1); color:var(--neon);}
   .nav-item.active::before{content:""; position:absolute; left:-10px; top:8px; bottom:8px; width:3px; background:var(--neon); border-radius:0 3px 3px 0; box-shadow:0 0 8px var(--neon);}
   .nav-item svg{flex-shrink:0;}
-  .nav-notice{display:none; width:6px; height:6px; margin-left:auto; border-radius:50%; background:var(--neon); box-shadow:0 0 7px var(--neon); flex-shrink:0;}
-  .nav-notice.show{display:block;}
+  .nav-notice{
+    display:none;
+    align-items:center;
+    justify-content:center;
+    min-width:18px;
+    height:18px;
+    padding:0 5px;
+    border-radius:9px;
+    background:var(--neon);
+    color:var(--black);
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    font-weight:700;
+    box-shadow:0 0 8px rgba(57,255,122,0.45);
+    flex-shrink:0;
+    box-sizing:border-box;
+  }
+  .nav-notice.show{display:inline-flex !important;}
   .nav-divider{height:1px; flex-shrink:0; background:var(--border); margin:8px 6px;}
   .side-foot{padding:16px 20px; border-top:1px solid var(--border); background:rgba(10,15,13,0.95); display:flex; align-items:center; gap:10px; white-space:nowrap; overflow:hidden; flex-shrink:0;}
   .side-foot .avatar{width:32px;height:32px;border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--emerald)); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;}
+  .side-foot .admin-profile{display:flex;align-items:center;gap:10px;width:100%;padding:6px 10px;border:1px solid rgba(57,255,122,0.12);border-radius:28px;background:rgba(255,255,255,0.025);}
+  .side-foot .admin-profile-avatar-wrap{width:34px;height:34px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:transparent;}
+  .side-foot .admin-profile-avatar{width:34px;height:34px;padding:0;border-radius:50%;object-fit:cover;display:block;flex-shrink:0;transform:scale(1.08);background:transparent !important;}
+  .side-foot .admin-profile-avatar.avatar{background:transparent !important;}
+  .side-foot .admin-profile-name, .side-foot .admin-profile-email{font-size:12px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .sidebar.collapsed .side-foot .admin-profile{justify-content:center;padding:6px;}
+  .sidebar.collapsed .side-foot .admin-profile-name, .sidebar.collapsed .side-foot .admin-profile-email{display:none;}
   /* Reduced sidebar footer admin name */
   .side-foot span{font-size:12px;}
   .side-foot .role{color:var(--muted); font-size:10.5px; display:block;}
@@ -166,7 +189,220 @@
   .topbar-right{display:flex; align-items:center; gap:14px; flex-shrink:0;}
   .icon-btn{width:36px;height:36px;border-radius:10px; border:1px solid var(--border); background:transparent; color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative; transition:all .2s ease;}
   .icon-btn:hover{color:var(--neon); border-color:var(--neon);}
-  .dot-badge{position:absolute; top:6px; right:6px; width:7px; height:7px; border-radius:50%; background:var(--neon); box-shadow:0 0 6px var(--neon);}
+  .dot-badge{
+    position:absolute;
+    top:-5px;
+    right:-5px;
+    min-width:18px;
+    height:18px;
+    padding:0 4px;
+    border-radius:9px;
+    background:#FF3B30;
+    color:#FFFFFF;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    font-weight:700;
+    line-height:18px;
+    text-align:center;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 0 10px rgba(255,59,48,0.7);
+    z-index:3;
+    pointer-events:none;
+    animation:pulseBadge 2.2s infinite;
+    box-sizing:border-box;
+  }
+  @keyframes pulseBadge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+  }
+
+  /* Stat Card New Message/Booking Badges */
+  .stat-new-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:10px;
+    font-weight:700;
+    padding:2px 7px;
+    border-radius:12px;
+    font-family:'JetBrains Mono',monospace;
+    letter-spacing:0.02em;
+  }
+  .stat-new-badge.green{
+    background:rgba(57,255,122,0.14);
+    color:var(--neon);
+    border:1px solid rgba(57,255,122,0.3);
+  }
+  .stat-new-badge.amber{
+    background:rgba(245,184,65,0.16);
+    color:var(--amber);
+    border:1px solid rgba(245,184,65,0.35);
+  }
+  .badge-pulse-dot{
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    background:currentColor;
+    box-shadow:0 0 6px currentColor;
+    animation:radarPing2 1.5s infinite;
+  }
+
+  /* Venue Messages Alert Pill */
+  .venue-messages-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:4px 10px;
+    border-radius:20px;
+    background:rgba(57,255,122,0.12);
+    border:1px solid rgba(57,255,122,0.28);
+    color:var(--neon);
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    font-weight:600;
+    cursor:pointer;
+    transition:all .2s ease;
+  }
+  .venue-messages-pill:hover{
+    background:rgba(57,255,122,0.2);
+    box-shadow:0 0 12px rgba(57,255,122,0.25);
+  }
+  .vmp-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--neon);
+    box-shadow:0 0 7px var(--neon);
+    animation:radarPing2 1.5s infinite;
+  }
+
+  /* Hourly Bookings Distinction Banner */
+  .bookings-distinction-banner{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-bottom:18px;
+  }
+  @media (max-width:768px){
+    .bookings-distinction-banner{grid-template-columns:1fr;}
+  }
+  .dist-card{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:14px 18px;
+    border-radius:12px;
+    background:var(--glass);
+    backdrop-filter:blur(10px);
+    cursor:pointer;
+    transition:all .2s ease;
+    position:relative;
+    overflow:hidden;
+  }
+  .dist-card:hover{transform:translateY(-1px);}
+  .dist-card.dist-pending{
+    border:1px solid rgba(245,184,65,0.35);
+    background:linear-gradient(135deg,rgba(245,184,65,0.08) 0%,rgba(20,29,25,0.6) 100%);
+  }
+  .dist-card.dist-pending:hover{
+    border-color:var(--amber);
+    box-shadow:0 0 20px rgba(245,184,65,0.18);
+  }
+  .dist-card.dist-confirmed{
+    border:1px solid rgba(57,255,122,0.25);
+    background:linear-gradient(135deg,rgba(57,255,122,0.06) 0%,rgba(20,29,25,0.6) 100%);
+  }
+  .dist-card.dist-confirmed:hover{
+    border-color:var(--neon);
+    box-shadow:0 0 20px rgba(57,255,122,0.18);
+  }
+  .dist-dot-wrap{
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+  .dist-pending .dist-dot-wrap{background:rgba(245,184,65,0.15);}
+  .dist-confirmed .dist-dot-wrap{background:rgba(57,255,122,0.15); color:var(--neon);}
+  .dist-dot{width:10px; height:10px; border-radius:50%;}
+  .dist-dot.amber{background:var(--amber); box-shadow:0 0 10px var(--amber);}
+  .dist-dot.green{background:var(--neon); box-shadow:0 0 10px var(--neon);}
+  .dist-dot.pulse{animation:radarPing2 1.8s ease-in-out infinite;}
+  .dist-info{flex:1; min-width:0;}
+  .dist-title{font-family:'Space Grotesk',sans-serif; font-size:13.5px; font-weight:700; color:var(--white);}
+  .dist-sub{font-size:11px; color:var(--muted); margin-top:2px;}
+  .dist-sub strong{color:var(--white); font-family:'JetBrains Mono',monospace;}
+  .dist-pill{font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:4px 10px; border-radius:20px; white-space:nowrap;}
+  .dist-pill.amber{background:rgba(245,184,65,0.15); color:var(--amber); border:1px solid rgba(245,184,65,0.3);}
+  .dist-pill.green{background:rgba(57,255,122,0.12); color:var(--neon); border:1px solid rgba(57,255,122,0.25);}
+
+  /* Filter Count Badges */
+  .filter-badge{display:inline-block; padding:1px 6px; margin-left:5px; border-radius:10px; background:rgba(255,255,255,0.1); font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700;}
+  .filter-badge.badge-amber{background:rgba(245,184,65,0.25); color:var(--amber);}
+  .filter-badge.badge-green{background:rgba(57,255,122,0.2); color:var(--neon);}
+  .filter-dot-amber, .filter-dot-green{display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:6px; vertical-align:middle;}
+  .filter-dot-amber{background:var(--amber); box-shadow:0 0 6px var(--amber);}
+  .filter-dot-green{background:var(--neon); box-shadow:0 0 6px var(--neon);}
+
+  /* Table Section Dividers */
+  tr.table-section-divider td{padding:10px 16px !important; background:rgba(15,22,19,0.95) !important; border-top:1px solid rgba(57,255,122,0.12); border-bottom:1px solid rgba(57,255,122,0.12);}
+  .section-divider-content{display:flex; align-items:center; gap:8px; font-size:11px; font-family:'Space Grotesk',sans-serif; letter-spacing:0.04em; text-transform:uppercase;}
+  .section-pending .section-divider-content{color:var(--amber);}
+  .section-confirmed .section-divider-content{color:var(--neon);}
+  .section-other .section-divider-content{color:var(--red);}
+  .s-dot{width:8px; height:8px; border-radius:50%; flex-shrink:0;}
+  .s-dot.amber{background:var(--amber); box-shadow:0 0 8px var(--amber);}
+  .s-dot.green{background:var(--neon); box-shadow:0 0 8px var(--neon);}
+  .s-dot.red{background:var(--red);}
+  .s-dot.pulse{animation:radarPing2 1.6s ease-in-out infinite;}
+
+  /* Booking Row Styling Distinction */
+  tr.booking-row-pending-new{
+    background:linear-gradient(90deg, rgba(245,184,65,0.12) 0%, rgba(245,184,65,0.02) 100%) !important;
+    border-left:4px solid var(--amber) !important;
+  }
+  tr.booking-row-pending-new:hover{
+    background:linear-gradient(90deg, rgba(245,184,65,0.2) 0%, rgba(245,184,65,0.05) 100%) !important;
+  }
+  tr.booking-row-confirmed-old{
+    border-left:4px solid rgba(57,255,122,0.35) !important;
+    background:rgba(255,255,255,0.015);
+  }
+  tr.booking-row-confirmed-old:hover{
+    background:rgba(57,255,122,0.04) !important;
+  }
+
+  /* Tags & Badges */
+  .pill-new-booking{display:inline-block; padding:2px 6px; border-radius:4px; background:var(--amber); color:#000; font-family:'Space Grotesk',sans-serif; font-size:9px; font-weight:800; letter-spacing:0.06em; box-shadow:0 0 8px rgba(245,184,65,0.5); animation:pulseBadge 2s infinite;}
+  .badge-dot-amber{display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--amber); box-shadow:0 0 6px var(--amber); margin-right:5px; animation:radarPing2 1.5s ease-in-out infinite;}
+  .badge.pending.pulse-badge{background:rgba(245,184,65,0.16); border:1px solid rgba(245,184,65,0.4); color:var(--amber); font-weight:600;}
+  .booked-on-pill{font-family:'JetBrains Mono',monospace; font-size:11px;}
+  .booked-on-pill.new{color:var(--amber); font-weight:600;}
+  .booked-on-pill.old{color:var(--muted);}
+  .btn-confirm-highlight{
+    width:28px !important;
+    height:28px !important;
+    min-width:28px !important;
+    max-width:28px !important;
+    flex:0 0 28px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    padding:0 !important;
+    background:rgba(57,255,122,0.18) !important;
+    border:1px solid var(--neon) !important;
+    border-radius:7px !important;
+    color:var(--neon) !important;
+    cursor:pointer;
+    box-shadow:0 0 8px rgba(57,255,122,0.35);
+    transition:all .2s ease;
+  }
+  .btn-confirm-highlight:hover{background:var(--neon) !important; color:var(--black) !important; box-shadow:0 0 12px rgba(57,255,122,0.6);}
   .notification-wrap{position:relative;}
   .notification-panel{position:absolute; top:calc(100% + 12px); right:0; width:360px; background:var(--charcoal); border:1px solid var(--border); border-radius:14px; box-shadow:0 18px 45px rgba(0,0,0,0.45); opacity:0; pointer-events:none; transform:translateY(-8px); transition:opacity .2s ease, transform .2s ease; z-index:20; overflow:hidden;}
   .notification-wrap.open .notification-panel{opacity:1; pointer-events:auto; transform:translateY(0);}
@@ -422,14 +658,14 @@
   .slider::before{content:""; position:absolute; width:20px; height:20px; left:5px; top:4px; border-radius:50%; background:var(--white); transition:all .2s ease; box-shadow:0 4px 12px rgba(0,0,0,0.25);}
   .switch input:checked + .slider{background:rgba(57,255,122,0.2); border-color:var(--neon);}
   .switch input:checked + .slider::before{transform:translateX(22px); background:var(--neon); box-shadow:0 0 10px rgba(57,255,122,0.5);}
-  .row-actions{display:flex; gap:6px;}
-  .row-actions button{width:28px;height:28px;border-radius:7px; border:1px solid var(--border); background:transparent; color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s ease;}
+  .row-actions{display:flex; align-items:center; gap:6px;}
+  .row-actions button{width:28px; height:28px; min-width:28px; max-width:28px; flex:0 0 28px; border-radius:7px; border:1px solid var(--border); background:transparent; color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s ease; box-sizing:border-box; padding:0;}
   .row-actions button:hover{border-color:var(--neon); color:var(--neon);}
   .row-actions button.danger:hover{border-color:var(--red); color:var(--red);}
   #page-bookings .table-wrap{overflow-x:auto; overflow-y:hidden;}
-  #page-bookings table{min-width:1320px;}
-  #page-bookings th:last-child, #page-bookings td:last-child{min-width:112px; padding-right:20px;}
-  #page-bookings .row-actions{min-width:100px; white-space:nowrap;}
+  #page-bookings table{min-width:1340px;}
+  #page-bookings th:last-child, #page-bookings td:last-child{min-width:145px; width:145px; padding-right:16px;}
+  #page-bookings .row-actions{min-width:130px; display:flex; align-items:center; gap:6px; white-space:nowrap;}
   #page-enquiries .table-wrap{overflow-x:auto; overflow-y:hidden;}
   #page-enquiries table{min-width:1440px;}
   #page-enquiries th:nth-child(1), #page-enquiries td:nth-child(1){min-width:110px;}
@@ -1124,18 +1360,18 @@
     <div class="side-nav" id="sideNav">
       <div class="nav-item active" data-page="dashboard"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg><span class="nav-label">Dashboard</span></div>
       <div class="nav-item" data-page="analytics"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><span class="nav-label">Analytics</span></div>
-      <div class="nav-item" data-page="bookings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg><span class="nav-label">Hourly Booking</span><span class="nav-notice" title="New booking"></span><div class="booking-status-menu" id="bookingStatusMenu"><button type="button" class="nav-dropdown-trigger" id="bookingStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open booking filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="bookingStatusMenuList" role="menu"></div></div></div>
-      <div class="nav-item" data-page="enquiries"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg><span class="nav-label">Extended Enquiries</span><div class="booking-status-menu" id="enquiryStatusMenu"><button type="button" class="nav-dropdown-trigger" id="enquiryStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open enquiry filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="enquiryStatusMenuList" role="menu"></div></div></div>
+      <div class="nav-item" data-page="bookings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg><span class="nav-label">Hourly Booking</span><span class="nav-notice" id="bookingsNavNotice" title="Pending new bookings"></span><div class="booking-status-menu" id="bookingStatusMenu"><button type="button" class="nav-dropdown-trigger" id="bookingStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open booking filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="bookingStatusMenuList" role="menu"></div></div></div>
+      <div class="nav-item" data-page="enquiries"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg><span class="nav-label">Extended Enquiries</span><span class="nav-notice" id="enquiriesNavNotice" title="New enquiries"></span><div class="booking-status-menu" id="enquiryStatusMenu"><button type="button" class="nav-dropdown-trigger" id="enquiryStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open enquiry filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="enquiryStatusMenuList" role="menu"></div></div></div>
       <div class="nav-item" data-page="calendar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="nav-label">Calendar</span></div>
       <div class="nav-item" data-page="payments"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M16 12h.01"/><path d="M2 9h5M17 9h5"/></svg><span class="nav-label">Payment Confirmation</span><div class="booking-status-menu" id="paymentStatusMenu"><button type="button" class="nav-dropdown-trigger" id="paymentStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open payment filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="paymentStatusMenuList" role="menu"></div></div></div>
-      <div class="nav-item" data-page="whatsapp"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg><span class="nav-label">WhatsApp Enquiries</span><div class="booking-status-menu" id="whatsappStatusMenu"><button type="button" class="nav-dropdown-trigger" id="whatsappStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open WhatsApp filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="whatsappStatusMenuList" role="menu"></div></div></div>
-      <div class="nav-item" data-page="chatbot"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg><span class="nav-label">Chatbot Conversations</span><span class="nav-notice" title="New chat conversation"></span><div class="booking-status-menu" id="chatbotStatusMenu"><button type="button" class="nav-dropdown-trigger" id="chatbotStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open chatbot filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="chatbotStatusMenuList" role="menu"></div></div></div>
+      <div class="nav-item" data-page="whatsapp"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg><span class="nav-label">WhatsApp Enquiries</span><span class="nav-notice" id="whatsappNavNotice" title="New WhatsApp enquiries"></span><div class="booking-status-menu" id="whatsappStatusMenu"><button type="button" class="nav-dropdown-trigger" id="whatsappStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open WhatsApp filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="whatsappStatusMenuList" role="menu"></div></div></div>
+      <div class="nav-item" data-page="chatbot"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg><span class="nav-label">Chatbot Conversations</span><span class="nav-notice" id="chatbotNavNotice" title="New chat conversation"></span><div class="booking-status-menu" id="chatbotStatusMenu"><button type="button" class="nav-dropdown-trigger" id="chatbotStatusMenuButton" aria-haspopup="menu" aria-expanded="false" aria-label="Open chatbot filters"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="booking-status-menu-list" id="chatbotStatusMenuList" role="menu"></div></div></div>
       <div class="nav-divider"></div>
       <div class="nav-item" data-page="settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V19a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H4a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.5V4a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V10a1.7 1.7 0 0 0 1.5 1H20a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg><span class="nav-label">Website Settings</span></div>
       <div class="nav-item" data-page="profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg><span class="nav-label">Profile</span></div>
       <div class="nav-item" onclick="logout()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg><span class="nav-label">Logout</span></div>
     </div>
-    <div class="side-foot"><div class="avatar">A</div><div><span id="adminSidebarName">Admin</span><span class="role">Owner</span></div></div>
+    <div class="side-foot"><div class="admin-profile"><div class="admin-profile-avatar-wrap"><img class="admin-profile-avatar avatar" src="/logo-assets/LogoWater.png" alt="TurfOn24" /></div><span class="admin-profile-name" id="adminSidebarName">Admin</span></div></div>
   </div>
 
   <div class="main">
@@ -1148,7 +1384,7 @@
       <div class="topbar-right">
         <button class="icon-btn" onclick="openCmdPalette()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
         <div class="notification-wrap" id="notificationWrap">
-          <button class="icon-btn" id="notificationBtn" aria-label="Open notifications" aria-expanded="false" onclick="toggleNotifications()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="dot-badge"></span></button>
+          <button class="icon-btn" id="notificationBtn" aria-label="Open notifications" aria-expanded="false" onclick="toggleNotifications()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="dot-badge count-badge" id="notificationCountBadge"></span></button>
           <div class="notification-panel" id="notificationPanel" role="dialog" aria-label="Notifications">
             <div class="notification-head"><h3>Notifications</h3><button type="button" onclick="markAllNotificationsRead()">Mark all read</button></div>
             <div class="notification-list" id="notificationList"></div>
@@ -1167,7 +1403,10 @@
             <div style="font-size:10.5px; color:var(--muted);" id="venueStatusSub">Next booking in 45 minutes — 07:00 AM slot</div>
           </div>
         </div>
-        <div class="mono" style="font-size:10.5px; color:var(--muted);">Live · updated just now</div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="venue-messages-pill" id="dashboardMessagesAlert" style="display:none;" onclick="openAdminPage('chatbot')" title="Click to view new incoming messages"><span class="vmp-dot"></span><span id="dashboardMessagesAlertText">0 new messages</span></div>
+          <div class="mono" style="font-size:10.5px; color:var(--muted);">Live · updated just now</div>
+        </div>
       </div>
       <div class="panel">
         <h3>Recent activity</h3>
@@ -1237,8 +1476,7 @@
         <span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input id="bookingDate" class="date-filter" type="text" readonly aria-label="Choose booking date" title="Choose booking date"><input id="bookingDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         <div class="toolbar-actions">
           <div class="booking-status-filters" id="bookingStatusFilters" aria-label="Booking status filter">
-            <button type="button" class="status-filter-btn" data-booking-filter="all">All</button>
-            <button type="button" class="status-filter-btn" data-booking-filter="pending">Pending</button>
+            <button type="button" class="status-filter-btn sel" data-booking-filter="all">All</button>
           </div>
           <button class="btn btn-ghost" id="bookingExport" title="Export hourly bookings as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         </div>
@@ -1375,8 +1613,7 @@
           <div class="fgroup"><label>Phone</label><input id="settingPhone" type="text" value="+91 89399 89366"></div>
           <div class="fgroup"><label>WhatsApp</label><input id="settingWhatsApp" type="text" value="+91 89399 89366"></div>
           <div class="fgroup"><label>Email</label><input id="settingEmail" type="text" value="ask@turfon24.com"></div>
-          <div class="fgroup"><label>UPI ID</label><input id="settingUpi" type="text" value="20221229583742@yesbank"></div>
-          <div class="fgroup full"><label>Address</label><input id="settingAddress" type="text" value="Cuddaloore"></div>
+          <div class="fgroup"><label>Address</label><input id="settingAddress" type="text" value="Cuddaloore"></div>
           <div class="fgroup full">
             <label>Booking control</label>
             <div class="toggle-row">
@@ -1755,8 +1992,9 @@
   const pageTitles = {dashboard:'Dashboard', analytics:'Analytics', bookings:'Hourly Booking', payments:'Payment Confirmation', enquiries:'Extended Enquiries', calendar:'Calendar', whatsapp:'WhatsApp Enquiries', chatbot:'Chatbot Conversations', settings:'Website Settings', profile:'Profile'};
   const SITE_SETTINGS_KEY = 'turfon24-site-settings';
   const defaultSiteSettings = { businessName:'TurfOn24', hourlyRate:'800', phone:'+91 89399 89366', whatsapp:'+91 89399 89366', email:'ask@turfon24.com', upi:'20221229583742@yesbank', address:'Cuddaloore' };
+  let currentLoadedUpiId = '';
   async function loadWebsiteSettings(){
-    const settingFields = ['settingBusinessName','settingHourlyRate','settingPhone','settingWhatsApp','settingEmail','settingUpi','settingAddress','settingBookingsBlocked'].map(id=>document.getElementById(id)).filter(Boolean);
+    const settingFields = ['settingBusinessName','settingHourlyRate','settingPhone','settingWhatsApp','settingEmail','settingAddress','settingBookingsBlocked'].map(id=>document.getElementById(id)).filter(Boolean);
     const saveButton = document.querySelector('#page-settings button[onclick="saveWebsiteSettings()"]');
     settingFields.forEach(field=>{ field.disabled = true; if(field.type !== 'checkbox'){ field.value = ''; } });
     if(saveButton) saveButton.disabled = true;
@@ -1765,7 +2003,8 @@
       const data = await response.json().catch(()=>({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load website settings.'));
       const settings = data.settings || {};
-      Object.entries({businessName:'settingBusinessName', hourlyRate:'settingHourlyRate', phone:'settingPhone', whatsapp:'settingWhatsApp', email:'settingEmail', upiId:'settingUpi', address:'settingAddress'}).forEach(([key,id])=>{ const field=document.getElementById(id); if(field) field.value=settings[key] ?? ''; });
+      currentLoadedUpiId = settings.upiId || settings.upi || currentLoadedUpiId || defaultSiteSettings.upi;
+      Object.entries({businessName:'settingBusinessName', hourlyRate:'settingHourlyRate', phone:'settingPhone', whatsapp:'settingWhatsApp', email:'settingEmail', address:'settingAddress'}).forEach(([key,id])=>{ const field=document.getElementById(id); if(field) field.value=settings[key] ?? ''; });
       const bookingToggle = document.getElementById('settingBookingsBlocked');
       if(bookingToggle) bookingToggle.checked = Boolean(settings.bookingsBlocked === true || settings.bookingsBlocked === 'true' || settings.bookingsBlocked === 1 || settings.bookingsBlocked === '1');
       settingFields.forEach(field=>{ field.disabled = false; });
@@ -1775,7 +2014,7 @@
   async function saveWebsiteSettings(){
     const bookingBlockedInput = document.getElementById('settingBookingsBlocked');
     const bookingBlockedChecked = bookingBlockedInput?.checked === true;
-    const settings = {businessName:document.getElementById('settingBusinessName').value.trim(), hourlyRate:Number(document.getElementById('settingHourlyRate').value), phone:document.getElementById('settingPhone').value.trim(), whatsapp:document.getElementById('settingWhatsApp').value.trim(), email:document.getElementById('settingEmail').value.trim(), upiId:document.getElementById('settingUpi').value.trim(), address:document.getElementById('settingAddress').value.trim(), bookingsBlocked: bookingBlockedChecked};
+    const settings = {businessName:document.getElementById('settingBusinessName').value.trim(), hourlyRate:Number(document.getElementById('settingHourlyRate').value), phone:document.getElementById('settingPhone').value.trim(), whatsapp:document.getElementById('settingWhatsApp').value.trim(), email:document.getElementById('settingEmail').value.trim(), address:document.getElementById('settingAddress').value.trim(), bookingsBlocked: bookingBlockedChecked};
     const saveButton = document.querySelector('#page-settings button[onclick="saveWebsiteSettings()"]');
     if(saveButton) saveButton.disabled = true;
     try {
@@ -1795,7 +2034,7 @@
           phone: saved.phone || document.getElementById('settingPhone').value.trim(),
           whatsapp: saved.whatsapp || document.getElementById('settingWhatsApp').value.trim(),
           email: saved.email || document.getElementById('settingEmail').value.trim(),
-          upi: saved.upiId || saved.upi || document.getElementById('settingUpi').value.trim(),
+          upi: saved.upiId || saved.upi || currentLoadedUpiId || defaultSiteSettings.upi,
           address: saved.address || document.getElementById('settingAddress').value.trim(),
           bookingsBlocked: effectiveBookingBlocked
         };
@@ -1812,11 +2051,16 @@
   }
   if(adminSessionReady) loadWebsiteSettings();
   const PROFILE_PICTURE_KEY = 'turfon24-admin-profile-picture';
+  const ADMIN_NAME_KEY = 'turfon24-admin-name';
   const PROFILE_PICTURE_SOURCE = '/logo-assets/LogoWater.png';
   let currentProfilePicture = null;
   function syncSidebarProfileName(name){
+    const cleanName = (name || '').trim() || 'Admin';
     const sidebarName = document.getElementById('adminSidebarName');
-    if(sidebarName){ sidebarName.textContent = (name || '').trim() || 'Admin'; }
+    if(sidebarName){ sidebarName.textContent = cleanName; }
+    document.querySelectorAll('.side-foot .admin-profile-name, .side-foot .admin-profile-email, .side-foot .admin-name').forEach(el => {
+      el.textContent = cleanName;
+    });
   }
   function applyProfilePicture(source){
     const preview = document.getElementById('profilePicturePreview');
@@ -1824,12 +2068,16 @@
     const previewImage = preview?.querySelector('img');
     if(previewImage) previewImage.src = source;
     document.querySelectorAll('.side-foot .avatar').forEach(avatar => {
-      avatar.textContent = '';
-      avatar.style.backgroundImage = `url(${source})`;
-      avatar.style.backgroundSize = 'cover';
-      avatar.style.backgroundPosition = 'center';
+      if(avatar.tagName === 'IMG'){
+        avatar.src = source;
+      } else {
+        avatar.textContent = '';
+        avatar.style.backgroundImage = `url(${source})`;
+        avatar.style.backgroundSize = 'cover';
+        avatar.style.backgroundPosition = 'center';
+      }
     });
-    if(injectedAvatar) injectedAvatar.src = source;
+    if(injectedAvatar && injectedAvatar.tagName === 'IMG') injectedAvatar.src = source;
   }
   function previewProfilePicture(event){
     const file = event.target.files[0];
@@ -1844,9 +2092,11 @@
       const data = await response.json().catch(() => ({}));
       if(!response.ok) return;
       const profile = data.profile || {};
-      document.getElementById('profileName').value = profile.name || 'Admin';
+      const adminName = profile.name || 'Admin';
+      document.getElementById('profileName').value = adminName;
       document.getElementById('profileEmail').value = profile.email || '';
-      syncSidebarProfileName(profile.name || 'Admin');
+      localStorage.setItem(ADMIN_NAME_KEY, adminName);
+      syncSidebarProfileName(adminName);
       currentProfilePicture = profile.profilePicture || null;
       applyProfilePicture(profile.profilePicture || PROFILE_PICTURE_SOURCE);
     } catch(error) {}
@@ -1863,9 +2113,9 @@
       const response = await fetch('/api/admin/profile', {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, email, newPassword, profilePicture: currentProfilePicture || savedProfilePicture || null})});
       const data = await response.json().catch(() => ({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to update profile.'));
-      const sidebarEmail = document.querySelector('.side-foot .admin-profile-email');
-      if(sidebarEmail) sidebarEmail.textContent = data.profile?.email || email;
-      syncSidebarProfileName(data.profile?.name || name);
+      const savedAdminName = data.profile?.name || name || 'Admin';
+      localStorage.setItem(ADMIN_NAME_KEY, savedAdminName);
+      syncSidebarProfileName(savedAdminName);
       applyProfilePicture(data.profile?.profilePicture || PROFILE_PICTURE_SOURCE);
       currentProfilePicture = data.profile?.profilePicture || currentProfilePicture;
       document.getElementById('profileNewPassword').value = '';
@@ -1879,8 +2129,9 @@
       syncSidebarProfileName(event.target.value);
     });
   }
-  applyProfilePicture(PROFILE_PICTURE_SOURCE);
-  syncSidebarProfileName('Admin');
+  applyProfilePicture(localStorage.getItem(PROFILE_PICTURE_KEY) || PROFILE_PICTURE_SOURCE);
+  const initialAdminName = localStorage.getItem(ADMIN_NAME_KEY) || 'Admin';
+  syncSidebarProfileName(initialAdminName);
   if(adminSessionReady) loadAdminProfile();
   function openAdminPage(page, cardMode = null){
     const target = document.getElementById('page-' + page);
@@ -1888,12 +2139,12 @@
     document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.page === page));
     document.querySelectorAll('.page').forEach(item => item.classList.toggle('active', item === target));
     document.getElementById('pageTitle').textContent = pageTitles[page] || page;
-    if(page === 'bookings') markSectionNotificationsRead('booking');
+    if(page === 'dashboard') loadDashboardSummary();
+    if(page === 'bookings') loadAdminBookings();
     if(page === 'calendar') renderCalendar();
-    if(page === 'chatbot') {
-      markSectionNotificationsRead('chat');
-      loadAdminChatbot();
-    }
+    if(page === 'enquiries') loadAdminEnquiries();
+    if(page === 'whatsapp') loadAdminWhatsApp();
+    if(page === 'chatbot') loadAdminChatbot();
     if(cardMode) applyDashboardCardFilterPills(cardMode.metric, cardMode.page);
     else restorePageFilters(page);
     if(window.innerWidth <= 1000) closeMobileSidebar();
@@ -1973,13 +2224,13 @@
       const text = String(item.text || 'New activity');
       const [title, ...rest] = text.split(' — ');
       const detail = rest.join(' — ') || text;
-      const type = item.type === 'chat' || item.type === 'whatsapp' ? 'chat' : 'booking';
+      const type = item.type === 'chat' ? 'chat' : item.type === 'whatsapp' ? 'whatsapp' : item.type === 'enquiry' ? 'enquiry' : 'booking';
       const icon = item.type === 'chat'
         ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg>'
         : item.type === 'whatsapp'
           ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L4 20l1.05-4.42A8.5 8.5 0 1 1 21 11.5Z"/></svg>'
-          : item.type === 'payment'
-            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>'
+          : item.type === 'enquiry'
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg>'
             : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>';
       return `<div class="notification-item unread" data-notification-type="${type}" onclick="markNotificationRead(this)"><span class="notification-icon">${icon}</span><span class="notification-copy"><strong>${escapeNotificationHtml(title || 'New activity')}</strong><span>${escapeNotificationHtml(detail || 'New activity')}</span><span class="notification-time">${escapeNotificationHtml(formatNotificationRelative(item.createdAt || new Date()))}</span></span><span class="notification-dot"></span></div>`;
     }).join('');
@@ -1992,19 +2243,42 @@
   }
   function markAllNotificationsRead(){
     document.querySelectorAll('.notification-item.unread').forEach(item=>item.classList.remove('unread'));
-    document.querySelectorAll('.nav-notice').forEach(dot=>dot.style.display = 'none');
-    syncNotificationBadge();
+    syncNotificationBadge(0);
   }
   function markSectionNotificationsRead(type){
     document.querySelectorAll(`.notification-item.unread[data-notification-type="${type}"]`).forEach(item=>item.classList.remove('unread'));
     syncSectionNotice(type);
     syncNotificationBadge();
   }
-  function syncSectionNotice(type){
-    const page = type === 'booking' ? 'bookings' : 'chatbot';
-    const hasUnread = document.querySelector(`.notification-item.unread[data-notification-type="${type}"]`);
+  function syncSectionNotice(type, explicitCount){
+    const page = type === 'booking' ? 'bookings' : type === 'whatsapp' ? 'whatsapp' : type === 'enquiry' ? 'enquiries' : 'chatbot';
     const dot = document.querySelector(`.nav-item[data-page="${page}"] .nav-notice`);
-    if(dot) dot.style.display = hasUnread ? 'block' : 'none';
+    if(!dot) return;
+    if(typeof explicitCount === 'number'){
+      dot.textContent = explicitCount > 99 ? '99+' : (explicitCount > 0 ? String(explicitCount) : '');
+      dot.classList.toggle('show', explicitCount > 0);
+      return;
+    }
+    const count = document.querySelectorAll(`.notification-item.unread[data-notification-type="${type}"]`).length;
+    dot.textContent = count > 99 ? '99+' : (count > 0 ? String(count) : '');
+    dot.classList.toggle('show', count > 0);
+  }
+  function syncAllNavNotices(stats){
+    if(!stats) return;
+    const chatCount = Number(stats.unreadChatbot ?? stats.newChatbot ?? 0);
+    const waCount = Number(stats.unreadWhatsapp ?? stats.newWhatsapp ?? 0);
+    const enqCount = Number(stats.unreadEnquiries ?? stats.newEnquiries ?? 0);
+    const bookCount = Number(stats.unreadBookings ?? stats.pendingBookings ?? 0);
+
+    const chatNotice = document.getElementById('chatbotNavNotice');
+    const waNotice = document.getElementById('whatsappNavNotice');
+    const enqNotice = document.getElementById('enquiriesNavNotice');
+    const bookNotice = document.getElementById('bookingsNavNotice');
+
+    if(chatNotice){ chatNotice.textContent = chatCount > 99 ? '99+' : (chatCount > 0 ? String(chatCount) : ''); chatNotice.classList.toggle('show', chatCount > 0); }
+    if(waNotice){ waNotice.textContent = waCount > 99 ? '99+' : (waCount > 0 ? String(waCount) : ''); waNotice.classList.toggle('show', waCount > 0); }
+    if(enqNotice){ enqNotice.textContent = enqCount > 99 ? '99+' : (enqCount > 0 ? String(enqCount) : ''); enqNotice.classList.toggle('show', enqCount > 0); }
+    if(bookNotice){ bookNotice.textContent = bookCount > 99 ? '99+' : (bookCount > 0 ? String(bookCount) : ''); bookNotice.classList.toggle('show', bookCount > 0); }
   }
   function notifyNew(type){
     const item = document.querySelector(`.notification-item[data-notification-type="${type}"]`);
@@ -2014,14 +2288,21 @@
       syncNotificationBadge();
     }
   }
-  window.addEventListener('new-booking', ()=>notifyNew('booking'));
-  window.addEventListener('new-chat-message', ()=>notifyNew('chat'));
-  syncSectionNotice('booking');
-  syncSectionNotice('chat');
-  function syncNotificationBadge(){
-    const hasUnread = document.querySelector('.notification-item.unread');
+  window.addEventListener('new-booking', ()=>{ notifyNew('booking'); loadDashboardSummary(); });
+  window.addEventListener('new-chat-message', ()=>{ notifyNew('chat'); loadDashboardSummary(); });
+  window.addEventListener('new-whatsapp', ()=>{ notifyNew('whatsapp'); loadDashboardSummary(); });
+  window.addEventListener('new-enquiry', ()=>{ notifyNew('enquiry'); loadDashboardSummary(); });
+  function syncNotificationBadge(explicitCount){
     const badge = document.querySelector('#notificationBtn .dot-badge');
-    if(badge) badge.style.display = hasUnread ? 'block' : 'none';
+    if(!badge) return;
+    const count = typeof explicitCount === 'number' ? explicitCount : document.querySelectorAll('#notificationList .notification-item.unread').length;
+    if(count > 0){
+      badge.textContent = count > 99 ? '99+' : String(count);
+      badge.style.display = 'inline-flex';
+    } else {
+      badge.textContent = '';
+      badge.style.display = 'none';
+    }
   }
   document.addEventListener('click', e=>{
     const wrap = document.getElementById('notificationWrap');
@@ -2379,42 +2660,104 @@
       customers: Number(stats.totalCustomers || 0),
       wa: Number(stats.whatsappEnquiries || 0),
       chat: Number(stats.chatbotConversations || 0),
+      unreadWa: Number(stats.unreadWhatsapp || 0),
+      unreadChat: Number(stats.unreadChatbot || 0),
+      unreadEnq: Number(stats.unreadEnquiries || 0),
+      unreadBookings: Number(stats.unreadBookings || stats.pendingBookings || 0),
+      newMessages: Number(stats.newMessages || 0),
+      totalUnread: Number(stats.totalUnread || 0),
     };
     const cards = [
-      ['total','total',values.total,'Total bookings',false,'bookings'],
-      ['today','today',values.today,"Today's bookings",false,'bookings'],
-      ['pendingConf','pend',values.pendingConf,'Pending confirmations',false,'bookings'],
-      ['enq','enq',values.enq,'Extended booking enquiries',false,'enquiries'],
-      ['cancelled','cancel',values.cancelled,'Cancelled bookings',false,'bookings'],
-      ['wa','wa',values.wa,'WhatsApp enquiries',false,'whatsapp'],
-      ['chat','chat',values.chat,'Chatbot conversations',false,'chatbot'],
+      ['total','total',values.total,'Total bookings',false,'bookings', 0],
+      ['today','today',values.today,"Today's bookings",false,'bookings', 0],
+      ['pendingConf','pend',values.pendingConf,'Pending confirmations',false,'bookings', values.pendingConf],
+      ['enq','enq',values.enq,'Extended booking enquiries',false,'enquiries', values.unreadEnq],
+      ['cancelled','cancel',values.cancelled,'Cancelled bookings',false,'bookings', 0],
+      ['wa','wa',values.wa,'WhatsApp enquiries',false,'whatsapp', values.unreadWa],
+      ['chat','chat',values.chat,'Chatbot conversations',false,'chatbot', values.unreadChat],
     ];
-    statGrid.innerHTML = '';
-    cards.forEach(([metric, icon, value, label, currency, page])=>{
-      const el = document.createElement('div');
-      el.className = 'stat-card';
-      el.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:flex-start;"><div class="ic">${statIcons[icon]}</div><span style="font-size:10.5px; font-weight:600; color:#39FF7A;">Live</span></div><div class="num" data-target="${value}" data-currency="${currency ? '1' : '0'}">${currency ? '₹0' : '0'}</div><div style="display:flex; justify-content:space-between; align-items:flex-end; gap:8px;"><div class="lbl">${label}</div><div style="flex-shrink:0;">${sparkline([0,0,0,0,0,0,value], true)}</div></div>`;
-      el.addEventListener('click', ()=>navigateDashboardCard(metric, page));
-      statGrid.appendChild(el);
-    });
-    statGrid.querySelectorAll('.stat-card .num').forEach(el=>{
-      const target = Number(el.dataset.target || 0);
-      const currency = el.dataset.currency === '1';
-      const started = performance.now();
-      function animate(now){
-        const progress = Math.min((now - started) / 700, 1);
-        el.textContent = (currency ? '₹' : '') + Math.round(target * progress).toLocaleString('en-IN');
-        if(progress < 1) requestAnimationFrame(animate);
-      }
-      requestAnimationFrame(animate);
-    });
+    const existingCards = statGrid.querySelectorAll('.stat-card');
+    if(!existingCards.length){
+      statGrid.innerHTML = '';
+      cards.forEach(([metric, icon, value, label, currency, page, newCount])=>{
+        const el = document.createElement('div');
+        el.className = 'stat-card';
+        el.dataset.metric = metric;
+        const isMsgMetric = metric === 'wa' || metric === 'chat';
+        const isPending = metric === 'pendingConf';
+        const badgePill = newCount > 0
+          ? `<span class="stat-new-badge ${isPending ? 'amber' : 'green'}"><span class="badge-pulse-dot"></span>${newCount} ${isMsgMetric ? 'new message' + (newCount > 1 ? 's' : '') : isPending ? 'pending' : 'new'}</span>`
+          : `<span style="font-size:10.5px; font-weight:600; color:#39FF7A;">Live</span>`;
+
+        el.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:flex-start;"><div class="ic">${statIcons[icon]}</div><div class="badge-wrap" style="display:flex; align-items:center; gap:6px;">${badgePill}</div></div><div class="num" data-target="${value}" data-currency="${currency ? '1' : '0'}">${currency ? '₹0' : '0'}</div><div style="display:flex; justify-content:space-between; align-items:flex-end; gap:8px;"><div class="lbl">${label}</div><div class="sparkline-wrap" style="flex-shrink:0;">${sparkline([0,0,0,0,0,0,value], true)}</div></div>`;
+        el.addEventListener('click', ()=>navigateDashboardCard(metric, page));
+        statGrid.appendChild(el);
+      });
+      statGrid.querySelectorAll('.stat-card .num').forEach(el=>{
+        const target = Number(el.dataset.target || 0);
+        const currency = el.dataset.currency === '1';
+        const started = performance.now();
+        function animate(now){
+          const progress = Math.min((now - started) / 700, 1);
+          el.textContent = (currency ? '₹' : '') + Math.round(target * progress).toLocaleString('en-IN');
+          if(progress < 1) requestAnimationFrame(animate);
+        }
+        requestAnimationFrame(animate);
+      });
+    } else {
+      cards.forEach(([metric, icon, value, label, currency, page, newCount])=>{
+        const card = statGrid.querySelector(`.stat-card[data-metric="${metric}"]`);
+        if(!card) return;
+        const isMsgMetric = metric === 'wa' || metric === 'chat';
+        const isPending = metric === 'pendingConf';
+        const badgeWrap = card.querySelector('.badge-wrap');
+        if(badgeWrap){
+          const expectedHtml = newCount > 0
+            ? `<span class="stat-new-badge ${isPending ? 'amber' : 'green'}"><span class="badge-pulse-dot"></span>${newCount} ${isMsgMetric ? 'new message' + (newCount > 1 ? 's' : '') : isPending ? 'pending' : 'new'}</span>`
+            : `<span style="font-size:10.5px; font-weight:600; color:#39FF7A;">Live</span>`;
+          if(badgeWrap.innerHTML !== expectedHtml) badgeWrap.innerHTML = expectedHtml;
+        }
+        const numEl = card.querySelector('.num');
+        if(numEl){
+          const oldTarget = Number(numEl.dataset.target || 0);
+          if(oldTarget !== value){
+            numEl.dataset.target = String(value);
+            numEl.textContent = (currency ? '₹' : '') + Math.round(value).toLocaleString('en-IN');
+          }
+        }
+      });
+    }
 
     const rawActivity = Array.isArray(data.recentActivity) ? data.recentActivity : [];
     const activity = rawActivity.filter(item => !isActivityItemVisited(item));
     renderNotifications(activity);
-    document.getElementById('activityList').innerHTML = activity.length
+
+    // Sync notification bell badge count (1, 2, 3...)
+    const msgOnlyCount = values.unreadWa + values.unreadChat;
+    const totalNotifyCount = values.totalUnread || activity.length || msgOnlyCount;
+    syncNotificationBadge(totalNotifyCount);
+
+    // Sync sidebar badges (1, 2, 3...)
+    syncAllNavNotices(stats);
+
+    // Sync venue status messages pill
+    const messagesAlert = document.getElementById('dashboardMessagesAlert');
+    const messagesAlertText = document.getElementById('dashboardMessagesAlertText');
+    if(messagesAlert && messagesAlertText){
+      const totalNewMsgs = values.newMessages || msgOnlyCount || activity.filter(a => a.type === 'chat' || a.type === 'whatsapp').length;
+      if(totalNewMsgs > 0){
+        messagesAlert.style.display = 'inline-flex';
+        messagesAlertText.textContent = `${totalNewMsgs} new message${totalNewMsgs > 1 ? 's' : ''}`;
+      } else {
+        messagesAlert.style.display = 'none';
+      }
+    }
+
+    const actHtml = activity.length
       ? activity.map(item=>`<div class="activity-row" data-type="${escapePaymentHtml(item.type || '')}" data-id="${escapePaymentHtml(item.id || '')}" onclick="openRecentActivityItem('${escapePaymentHtml(item.type || '')}', '${escapePaymentHtml(item.id || '')}')" title="Click to view details"><span class="adot"></span>${escapePaymentHtml(item.text)}<span class="atime">${escapePaymentHtml(formatDateDDMMYYYY(item.createdAt))}</span></div>`).join('')
       : '<div class="tbl-empty">No recent activity</div>';
+    const actEl = document.getElementById('activityList');
+    if(actEl && actEl.innerHTML !== actHtml) actEl.innerHTML = actHtml;
     const latest = Array.isArray(data.recentBookings) ? data.recentBookings[0] : null;
     if(latest){
       document.getElementById('venueStatusSub').textContent = `Latest booking — ${latest.date || 'date unavailable'} ${latest.time || ''}`;
@@ -2596,20 +2939,26 @@
     if(nav) nav.click();
   }
 
+  let dashboardLoadedOnce = false;
   async function loadDashboardSummary(){
     const activityList = document.getElementById('activityList');
     const statGridElement = document.getElementById('statGrid');
-    activityList.innerHTML = '<div class="tbl-empty">Loading dashboard...</div>';
-    statGridElement.innerHTML = '<div class="tbl-empty">Loading dashboard...</div>';
+    if(!dashboardLoadedOnce && statGridElement && !statGridElement.querySelector('.stat-card')){
+      if(activityList) activityList.innerHTML = '<div class="tbl-empty">Loading dashboard...</div>';
+      if(statGridElement) statGridElement.innerHTML = '<div class="tbl-empty">Loading dashboard...</div>';
+    }
     try {
       const response = await fetch('/api/admin/dashboard', {credentials:'include'});
       const data = await response.json().catch(()=>({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load dashboard data.'));
+      dashboardLoadedOnce = true;
       renderLiveDashboard(data);
     } catch(error) {
-      activityList.innerHTML = `<div class="tbl-empty">${escapePaymentHtml(error.message)}</div>`;
-      statGridElement.innerHTML = `<div class="tbl-empty">${escapePaymentHtml(error.message)}</div>`;
-      showToast(error.message);
+      if(!dashboardLoadedOnce){
+        if(activityList) activityList.innerHTML = `<div class="tbl-empty">${escapePaymentHtml(error.message)}</div>`;
+        if(statGridElement) statGridElement.innerHTML = `<div class="tbl-empty">${escapePaymentHtml(error.message)}</div>`;
+        showToast(error.message);
+      }
     }
   }
 
@@ -2670,7 +3019,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   }
   function renderWhatsApp(message){
     const rows = waRows();
-    document.getElementById('whatsappBody').innerHTML = rows.length ? rows.map(enquiry=>{
+    const targetHtml = rows.length ? rows.map(enquiry=>{
       const isRead = enquiry.read === true || locallyReadWhatsApp.has(String(enquiry._id));
       const readAction = isRead ? '' : `<button onclick="markWhatsAppRead('${escapeWhatsAppHtml(enquiry._id)}')" title="Mark as read"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18v12H3z"/><path d="m4 7 8 6 8-6"/></svg></button>`;
       const status = normalizeStatus(enquiry.status);
@@ -2686,6 +3035,8 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
         <td><div class="row-actions" onclick="event.stopPropagation()"><button onclick="viewWhatsAppDetails('${escapeWhatsAppHtml(enquiry._id)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>${readAction}<button onclick="markWhatsAppContacted('${escapeWhatsAppHtml(enquiry._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 10h8"/></svg></button><button class="danger" onclick="deleteWhatsApp('${escapeWhatsAppHtml(enquiry._id)}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button></div></td>
       </tr>`;
     }).join('') : `<tr><td colspan="8" class="tbl-empty">${escapeWhatsAppHtml(message || 'No WhatsApp enquiries found')}</td></tr>`;
+    const targetEl = document.getElementById('whatsappBody');
+    if (targetEl && targetEl.innerHTML !== targetHtml) targetEl.innerHTML = targetHtml;
   }
   async function viewWhatsAppDetails(id){
     markActivityItemVisited('whatsapp', id);
@@ -2718,21 +3069,68 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   }
   async function markWhatsAppContacted(id){
     markActivityItemVisited('whatsapp', id);
-    try { const response = await fetch('/api/admin/whatsapp-enquiries?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:'contacted'})}); const data = await response.json().catch(()=>({})); if(!response.ok) throw new Error(data.message || 'Unable to update WhatsApp enquiry.'); showToast('WhatsApp enquiry marked as contacted'); await loadAdminWhatsApp(); } catch(error) { showToast(error.message); }
+    rememberReadWhatsApp(id);
+    const enquiry = liveWhatsApp.find(item => String(item._id) === String(id));
+    if(enquiry){
+      enquiry.status = 'contacted';
+      enquiry.read = true;
+      enquiry.visited = true;
+      renderWhatsApp();
+      const newWaCount = liveWhatsApp.filter(w => !w.read && String(w.status || '').toLowerCase() !== 'contacted' && String(w.status || '').toLowerCase() !== 'resolved').length;
+      const waNotice = document.getElementById('whatsappNavNotice');
+      if(waNotice){ waNotice.textContent = newWaCount > 99 ? '99+' : (newWaCount > 0 ? String(newWaCount) : ''); waNotice.classList.toggle('show', newWaCount > 0); }
+    }
+    try {
+      const response = await fetch('/api/admin/whatsapp-enquiries?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:'contacted', read:true, visited:true})});
+      const data = await response.json().catch(()=>({}));
+      if(!response.ok) throw new Error(data.message || 'Unable to update WhatsApp enquiry.');
+      showToast('WhatsApp enquiry marked as contacted');
+      await Promise.all([loadAdminWhatsApp(), loadDashboardSummary()]);
+    } catch(error) { showToast(error.message); }
   }
   async function markWhatsAppRead(id){
     markActivityItemVisited('whatsapp', id);
-    try { const enquiry = liveWhatsApp.find(item => String(item._id) === String(id)); const response = await fetch('/api/admin/whatsapp-enquiries?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:normalizeStatus(enquiry?.status) || 'new', read:true})}); const data = await response.json().catch(()=>({})); if(!response.ok) throw new Error(data.message || 'Unable to mark WhatsApp enquiry as read.'); rememberReadWhatsApp(id); showToast('WhatsApp enquiry marked as read'); await loadAdminWhatsApp(); } catch(error) { showToast(error.message); }
+    rememberReadWhatsApp(id);
+    const enquiry = liveWhatsApp.find(item => String(item._id) === String(id));
+    if(enquiry){
+      enquiry.read = true;
+      enquiry.visited = true;
+      renderWhatsApp();
+      const newWaCount = liveWhatsApp.filter(w => !w.read && String(w.status || '').toLowerCase() !== 'contacted' && String(w.status || '').toLowerCase() !== 'resolved').length;
+      const waNotice = document.getElementById('whatsappNavNotice');
+      if(waNotice){ waNotice.textContent = newWaCount > 99 ? '99+' : (newWaCount > 0 ? String(newWaCount) : ''); waNotice.classList.toggle('show', newWaCount > 0); }
+    }
+    try {
+      const response = await fetch('/api/admin/whatsapp-enquiries?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:normalizeStatus(enquiry?.status) || 'new', read:true, visited:true})});
+      const data = await response.json().catch(()=>({}));
+      if(!response.ok) throw new Error(data.message || 'Unable to mark WhatsApp enquiry as read.');
+      showToast('WhatsApp enquiry marked as read');
+      await Promise.all([loadAdminWhatsApp(), loadDashboardSummary()]);
+    } catch(error) { showToast(error.message); }
   }
-  async function loadAdminWhatsApp(){
-    document.getElementById('whatsappBody').innerHTML = '<tr><td colspan="8" class="tbl-empty">Loading WhatsApp enquiries...</td></tr>';
+  let liveWhatsAppLoaded = false;
+  async function loadAdminWhatsApp(isBackground = false){
+    const waBody = document.getElementById('whatsappBody');
+    if(!liveWhatsAppLoaded && !isBackground && waBody && !liveWhatsApp.length){
+      waBody.innerHTML = '<tr><td colspan="8" class="tbl-empty">Loading WhatsApp enquiries...</td></tr>';
+    }
     try {
       const response = await fetch('/api/admin/whatsapp-enquiries', {credentials:'include'});
       const data = await response.json().catch(()=>({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load WhatsApp enquiries.'));
+      liveWhatsAppLoaded = true;
       liveWhatsApp = Array.isArray(data.enquiries) ? data.enquiries.map(enquiry => ({...enquiry, read: enquiry.read === true || locallyReadWhatsApp.has(String(enquiry._id))})) : [];
       renderWhatsApp();
-    } catch(error) { liveWhatsApp = []; renderWhatsApp(error.message); showToast(error.message); }
+      const newWaCount = liveWhatsApp.filter(w => !w.read && String(w.status || '').toLowerCase() !== 'contacted' && String(w.status || '').toLowerCase() !== 'resolved').length;
+      const waNotice = document.getElementById('whatsappNavNotice');
+      if(waNotice){ waNotice.textContent = newWaCount > 99 ? '99+' : (newWaCount > 0 ? String(newWaCount) : ''); waNotice.classList.toggle('show', newWaCount > 0); }
+    } catch(error) {
+      if(!isBackground){
+        liveWhatsApp = [];
+        renderWhatsApp(error.message);
+        showToast(error.message);
+      }
+    }
   }
   let liveEnquiries = [];
   let enquiryStatus = 'all';
@@ -2767,7 +3165,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   }
   function renderEnquiries(message){
     const rows = enquiryRows();
-    document.getElementById('enquiriesBody').innerHTML = rows.length ? rows.map(enquiry=>{
+    const targetHtml = rows.length ? rows.map(enquiry=>{
       const status = canonicalEnquiryStatus(enquiry.status);
       const name = enquiry.name || String(enquiry.summary || '').split(' extended booking enquiry for ')[0] || '—';
       const enquiryDate = formatDateDDMMYYYY(enquiry.createdAt);
@@ -2778,8 +3176,11 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       const displayStatus = isRead && status === 'contacted' ? 'Read / Contacted' : isRead ? 'Read' : (enquiryStatusLabels[status] || displayEnquiryStatus(status));
       return `<tr><td class="mono">${escapeEnquiryHtml(enquiry._id)}</td><td>${escapeEnquiryHtml(enquiryDate)}</td><td>${escapeEnquiryHtml(name)}</td><td class="mono">${escapeEnquiryHtml(enquiry.mobile)}</td><td>${escapeEnquiryHtml(createdDisplay)}</td><td>${escapeEnquiryHtml(enquiry.startDate)}</td><td>${escapeEnquiryHtml(enquiry.endDate)}</td><td>${escapeEnquiryHtml(enquiryDays(enquiry.startDate, enquiry.endDate))}</td><td>${escapeEnquiryHtml(enquiry.preferredTime)}</td><td class="enquiry-message-cell">${requirements}</td><td><span class="badge ${isRead ? 'confirmed' : statusBadgeClass(status)}">${escapeEnquiryHtml(displayStatus)}</span></td><td><div class="row-actions"><button onclick="loadEnquiryDetail('${escapeEnquiryHtml(enquiry._id)}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>${readAction}<button onclick="markEnquiryContacted('${escapeEnquiryHtml(enquiry._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 10h8"/></svg></button><button class="danger" onclick="deleteEnquiry('${escapeEnquiryHtml(enquiry._id)}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button></div></td></tr>`;
     }).join('') : `<tr><td colspan="12" class="tbl-empty">${escapeEnquiryHtml(message || 'No enquiries found')}</td></tr>`;
+    const targetEl = document.getElementById('enquiriesBody');
+    if (targetEl && targetEl.innerHTML !== targetHtml) targetEl.innerHTML = targetHtml;
   }
-  async function loadAdminEnquiries(){
+  let liveEnquiriesLoaded = false;
+  async function loadAdminEnquiries(isBackground = false){
     const requestId = ++enquiryRequestId;
     const params = new URLSearchParams({limit:'100', page:'1'});
     if(enquiryStatus !== 'all') params.set('status', enquiryStatus);
@@ -2789,19 +3190,28 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const search = document.getElementById('enquirySearch').value.trim();
     const mobile = search.replace(/\D/g, '');
     if(mobile.length >= 3) params.set('mobile', mobile);
-    document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class="tbl-empty">Loading enquiries...</td></tr>';
+    const eBody = document.getElementById('enquiriesBody');
+    if(!liveEnquiriesLoaded && !isBackground && eBody && !liveEnquiries.length){
+      eBody.innerHTML = '<tr><td colspan="12" class="tbl-empty">Loading enquiries...</td></tr>';
+    }
     try {
       const response = await fetch('/api/admin/extended-enquiries?' + params.toString(), {credentials:'include'});
       const data = await response.json().catch(()=>({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load enquiries.'));
       if(requestId !== enquiryRequestId) return;
+      liveEnquiriesLoaded = true;
       liveEnquiries = Array.isArray(data.enquiries) ? data.enquiries.map(enquiry => ({...enquiry, read: enquiry.read === true || locallyReadEnquiries.has(String(enquiry._id))})) : [];
       renderEnquiries();
+      const newEnqCount = liveEnquiries.filter(e => !e.read && String(e.status || '').toLowerCase() !== 'contacted' && String(e.status || '').toLowerCase() !== 'closed').length;
+      const enqNotice = document.getElementById('enquiriesNavNotice');
+      if(enqNotice){ enqNotice.textContent = newEnqCount > 99 ? '99+' : (newEnqCount > 0 ? String(newEnqCount) : ''); enqNotice.classList.toggle('show', newEnqCount > 0); }
     } catch(error) {
       if(requestId !== enquiryRequestId) return;
-      liveEnquiries = [];
-      renderEnquiries(error.message);
-      showToast(error.message);
+      if(!isBackground){
+        liveEnquiries = [];
+        renderEnquiries(error.message);
+        showToast(error.message);
+      }
     }
   }
   async function loadEnquiryDetail(id){
@@ -2839,24 +3249,43 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   }
   async function markEnquiryContacted(id){
     markActivityItemVisited('enquiry', id);
+    rememberReadEnquiry(id);
+    const enquiry = liveEnquiries.find(item => String(item._id) === String(id));
+    if(enquiry){
+      enquiry.status = 'contacted';
+      enquiry.read = true;
+      enquiry.visited = true;
+      renderEnquiries();
+      const newEnqCount = liveEnquiries.filter(e => !e.read && String(e.status || '').toLowerCase() !== 'contacted' && String(e.status || '').toLowerCase() !== 'closed').length;
+      const enqNotice = document.getElementById('enquiriesNavNotice');
+      if(enqNotice){ enqNotice.textContent = newEnqCount > 99 ? '99+' : (newEnqCount > 0 ? String(newEnqCount) : ''); enqNotice.classList.toggle('show', newEnqCount > 0); }
+    }
     try {
-      const response = await fetch('/api/admin/extended-enquiries?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:'contacted'})});
+      const response = await fetch('/api/admin/extended-enquiries?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:'contacted', read:true, visited:true})});
       const data = await response.json().catch(()=>({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to update enquiry status.'));
       showToast('Enquiry marked as contacted');
-      await loadAdminEnquiries();
+      await Promise.all([loadAdminEnquiries(), loadDashboardSummary()]);
     } catch(error) { showToast(error.message); }
   }
   async function markEnquiryRead(id){
     markActivityItemVisited('enquiry', id);
+    rememberReadEnquiry(id);
+    const enquiry = liveEnquiries.find(item => String(item._id) === String(id));
+    if(enquiry){
+      enquiry.read = true;
+      enquiry.visited = true;
+      renderEnquiries();
+      const newEnqCount = liveEnquiries.filter(e => !e.read && String(e.status || '').toLowerCase() !== 'contacted' && String(e.status || '').toLowerCase() !== 'closed').length;
+      const enqNotice = document.getElementById('enquiriesNavNotice');
+      if(enqNotice){ enqNotice.textContent = newEnqCount > 99 ? '99+' : (newEnqCount > 0 ? String(newEnqCount) : ''); enqNotice.classList.toggle('show', newEnqCount > 0); }
+    }
     try {
-      const enquiry = liveEnquiries.find(item => String(item._id) === String(id));
-      const response = await fetch('/api/admin/extended-enquiries?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:canonicalEnquiryStatus(enquiry?.status), read:true})});
+      const response = await fetch('/api/admin/extended-enquiries?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:canonicalEnquiryStatus(enquiry?.status), read:true, visited:true})});
       const data = await response.json().catch(()=>({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to mark enquiry as read.'));
-      rememberReadEnquiry(id);
       showToast('Enquiry marked as read');
-      await loadAdminEnquiries();
+      await Promise.all([loadAdminEnquiries(), loadDashboardSummary()]);
     } catch(error) { showToast(error.message); }
   }
   function syncEnquiryFilters(){
@@ -2964,7 +3393,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   }
   function renderChatbot(){
     const rows = chatRows();
-    document.getElementById('chatbotBody').innerHTML = rows.length ? rows.map(c=>{
+    const targetHtml = rows.length ? rows.map(c=>{
       const message = chatMessage(c);
       const isRead = c.read === true || locallyReadChatbot.has(String(c._id));
       const readAction = isRead ? '' : `<button onclick="markChatbotRead('${escapeBookingHtml(c._id)}')" title="Mark as read"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18v12H3z"/><path d="m4 7 8 6 8-6"/></svg></button>`;
@@ -2981,6 +3410,8 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       <td><div class="row-actions" onclick="event.stopPropagation()"><button onclick="viewChatbotDetails('${escapeBookingHtml(c._id)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>${readAction}<button onclick="markChatbotContacted('${escapeBookingHtml(c._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 10h8"/></svg></button><button class="danger" onclick="deleteChatbot('${escapeBookingHtml(c._id)}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button></div></td>
     </tr>`;
     }).join('') : `<tr><td colspan="8" class="tbl-empty">${chatStatus === 'all' ? 'No chatbot conversations found' : 'No ' + (chatStatus === 'new' ? 'New' : chatStatus === 'contacted' ? 'Contacted' : 'Resolved') + ' conversations found'}</td></tr>`;
+    const targetEl = document.getElementById('chatbotBody');
+    if (targetEl && targetEl.innerHTML !== targetHtml) targetEl.innerHTML = targetHtml;
   }
   async function viewChatbotDetails(id){
     markActivityItemVisited('chat', id);
@@ -3013,21 +3444,68 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   }
   async function markChatbotContacted(id){
     markActivityItemVisited('chat', id);
-    try { const response = await fetch('/api/admin/chatbot-conversations?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:'contacted'})}); const data = await response.json().catch(()=>({})); if(!response.ok) throw new Error(data.message || 'Unable to update chatbot conversation.'); showToast('Chatbot conversation marked as contacted'); await loadAdminChatbot(); } catch(error) { showToast(error.message); }
+    rememberReadChatbot(id);
+    const conversation = liveChatbot.find(item => String(item._id) === String(id));
+    if(conversation){
+      conversation.status = 'contacted';
+      conversation.read = true;
+      conversation.visited = true;
+      renderChatbot();
+      const newChatCount = liveChatbot.filter(c => !c.read && String(c.status || '').toLowerCase() !== 'contacted' && String(c.status || '').toLowerCase() !== 'resolved').length;
+      const chatNotice = document.getElementById('chatbotNavNotice');
+      if(chatNotice){ chatNotice.textContent = newChatCount > 99 ? '99+' : (newChatCount > 0 ? String(newChatCount) : ''); chatNotice.classList.toggle('show', newChatCount > 0); }
+    }
+    try {
+      const response = await fetch('/api/admin/chatbot-conversations?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:'contacted', read:true, visited:true})});
+      const data = await response.json().catch(()=>({}));
+      if(!response.ok) throw new Error(data.message || 'Unable to update chatbot conversation.');
+      showToast('Chatbot conversation marked as contacted');
+      await Promise.all([loadAdminChatbot(), loadDashboardSummary()]);
+    } catch(error) { showToast(error.message); }
   }
   async function markChatbotRead(id){
     markActivityItemVisited('chat', id);
-    try { const conversation = liveChatbot.find(item => String(item._id) === String(id)); const response = await fetch('/api/admin/chatbot-conversations?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:normalizeStatus(conversation?.status) || 'new', read:true})}); const data = await response.json().catch(()=>({})); if(!response.ok) throw new Error(data.message || 'Unable to mark chatbot conversation as read.'); rememberReadChatbot(id); showToast('Chatbot conversation marked as read'); await loadAdminChatbot(); } catch(error) { showToast(error.message); }
+    rememberReadChatbot(id);
+    const conversation = liveChatbot.find(item => String(item._id) === String(id));
+    if(conversation){
+      conversation.read = true;
+      conversation.visited = true;
+      renderChatbot();
+      const newChatCount = liveChatbot.filter(c => !c.read && String(c.status || '').toLowerCase() !== 'contacted' && String(c.status || '').toLowerCase() !== 'resolved').length;
+      const chatNotice = document.getElementById('chatbotNavNotice');
+      if(chatNotice){ chatNotice.textContent = newChatCount > 99 ? '99+' : (newChatCount > 0 ? String(newChatCount) : ''); chatNotice.classList.toggle('show', newChatCount > 0); }
+    }
+    try {
+      const response = await fetch('/api/admin/chatbot-conversations?id=' + encodeURIComponent(id), {method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:normalizeStatus(conversation?.status) || 'new', read:true, visited:true})});
+      const data = await response.json().catch(()=>({}));
+      if(!response.ok) throw new Error(data.message || 'Unable to mark chatbot conversation as read.');
+      showToast('Chatbot conversation marked as read');
+      await Promise.all([loadAdminChatbot(), loadDashboardSummary()]);
+    } catch(error) { showToast(error.message); }
   }
-  async function loadAdminChatbot(){
-    document.getElementById('chatbotBody').innerHTML = '<tr><td colspan="8" class="tbl-empty">Loading chatbot conversations...</td></tr>';
+  let liveChatbotLoaded = false;
+  async function loadAdminChatbot(isBackground = false){
+    const chatBody = document.getElementById('chatbotBody');
+    if(!liveChatbotLoaded && !isBackground && chatBody && !liveChatbot.length){
+      chatBody.innerHTML = '<tr><td colspan="8" class="tbl-empty">Loading chatbot conversations...</td></tr>';
+    }
     try {
       const response = await fetch('/api/admin/chatbot-conversations', {credentials:'include'});
       const data = await response.json().catch(()=>({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load chatbot conversations.'));
+      liveChatbotLoaded = true;
       liveChatbot = Array.isArray(data.conversations) ? data.conversations.map(conversation => ({...conversation, read: conversation.read === true || locallyReadChatbot.has(String(conversation._id))})) : [];
       renderChatbot();
-    } catch(error) { liveChatbot = []; renderChatbot(error.message); showToast(error.message); }
+      const newChatCount = liveChatbot.filter(c => !c.read && String(c.status || '').toLowerCase() !== 'contacted' && String(c.status || '').toLowerCase() !== 'resolved').length;
+      const chatNotice = document.getElementById('chatbotNavNotice');
+      if(chatNotice){ chatNotice.textContent = newChatCount > 99 ? '99+' : (newChatCount > 0 ? String(newChatCount) : ''); chatNotice.classList.toggle('show', newChatCount > 0); }
+    } catch(error) {
+      if(!isBackground){
+        liveChatbot = [];
+        renderChatbot(error.message);
+        showToast(error.message);
+      }
+    }
   }
   function syncChatbotFilters(){
     document.querySelectorAll('[data-chat-filter]').forEach(item=>item.classList.toggle('sel', item.dataset.chatFilter === chatFilter));
@@ -3160,6 +3638,8 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const id = escapeBookingHtml(booking._id);
     const whatsappSent = false;
     const status = effectiveBookingStatus(booking);
+    const isPending = status === 'PENDING';
+    const isConfirmed = status === 'CONFIRMED';
     const payment = status === 'CONFIRMED' ? 'CONFIRMED' : status === 'CANCELLED' ? 'CANCELLED' : 'PAYMENT_PENDING';
     const customer = escapeBookingHtml(booking.name || booking.customerName || '—');
     const mobile = escapeBookingHtml(booking.mobile);
@@ -3173,19 +3653,72 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const slotDurations = slotRows.map(item => `${item.hours || 0} hr${Number(item.hours) === 1 ? '' : 's'}`).join('<br>');
     const duration = escapeBookingHtml(`${booking.duration || 0} hr${Number(booking.duration) === 1 ? '' : 's'}`);
     const amount = `₹${Number(booking.amount || 0).toLocaleString('en-IN')}`;
-    return `<tr onclick="openBookingDetail('${id}')" style="cursor:pointer;"><td class="mono">${id}</td><td>${customer}</td><td>${escapeBookingHtml(bookingCreatedDate)}</td><td class="mono">${mobile}</td><td>${date}</td><td>${slot}</td><td>${time}</td><td>${slotDurations || duration}</td><td class="mono">${amount}</td><td><span class="badge ${payment === 'CONFIRMED' ? 'confirmed' : payment === 'CANCELLED' ? 'cancelled' : 'pending'}">${paymentStatusLabels[payment] || escapeBookingHtml(payment)}</span></td><td><span class="badge ${status.toLowerCase()}">${bookingStatusLabels[status] || escapeBookingHtml(status)}</span></td><td><div class="row-actions" onclick="event.stopPropagation()"><button onclick="confirmBookingStatus('${id}')" title="Confirm booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button><button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="danger" onclick="deleteBooking('${id}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td></tr>`;
+
+    const rowClass = isPending ? 'booking-row-pending-new' : isConfirmed ? 'booking-row-confirmed-old' : 'booking-row-cancelled';
+    const idDisplay = isPending 
+      ? `<div style="display:flex; align-items:center; gap:6px;"><span class="mono">${id}</span><span class="pill-new-booking">NEW</span></div>`
+      : `<span class="mono">${id}</span>`;
+
+    const statusBadge = isPending
+      ? `<span class="badge pending pulse-badge"><span class="badge-dot-amber"></span>Pending</span>`
+      : isConfirmed
+        ? `<span class="badge confirmed"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12.5l5 5L20 6"/></svg>Confirmed</span>`
+        : `<span class="badge cancelled">${bookingStatusLabels[status] || escapeBookingHtml(status)}</span>`;
+
+    const paymentBadge = `<span class="badge ${payment === 'CONFIRMED' ? 'confirmed' : payment === 'CANCELLED' ? 'cancelled' : 'pending'}">${paymentStatusLabels[payment] || escapeBookingHtml(payment)}</span>`;
+
+    const bookedOnDisplay = isPending
+      ? `<span class="booked-on-pill new">${escapeBookingHtml(bookingCreatedDate)}</span>`
+      : `<span class="booked-on-pill old">${escapeBookingHtml(bookingCreatedDate)}</span>`;
+
+    const confirmActionBtn = isPending
+      ? `<button class="btn-confirm-highlight" onclick="confirmBookingStatus('${id}')" title="Confirm new booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12.5l5 5L20 6"/></svg></button>`
+      : `<button onclick="confirmBookingStatus('${id}')" title="Confirm booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button>`;
+
+    return `<tr class="${rowClass}" onclick="openBookingDetail('${id}')" style="cursor:pointer;"><td class="mono">${idDisplay}</td><td><strong>${customer}</strong></td><td>${bookedOnDisplay}</td><td class="mono">${mobile}</td><td>${date}</td><td>${slot}</td><td>${time}</td><td>${slotDurations || duration}</td><td class="mono"><strong>${amount}</strong></td><td>${paymentBadge}</td><td>${statusBadge}</td><td><div class="row-actions" onclick="event.stopPropagation()">${confirmActionBtn}<button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="danger" onclick="deleteBooking('${id}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td></tr>`;
   }
 
   function renderBookings(message){
     const rows = bookingRows();
-    const countText = rows.length ? `Showing ${rows.length} booking${rows.length === 1 ? '' : 's'}` : (message ? escapeBookingHtml(message) : 'Showing all bookings');
-    
+
     const tableBody = document.getElementById('bookingsBody');
-    if (tableBody) {
-      tableBody.innerHTML = rows.length ? rows.map(bookingRowHtml).join('') : `<tr><td colspan="12" class="tbl-empty">${escapeBookingHtml(message || 'No bookings found')}</td></tr>`;
+    if (!tableBody) return;
+
+    if (!rows.length) {
+      tableBody.innerHTML = `<tr><td colspan="12" class="tbl-empty">${escapeBookingHtml(message || 'No bookings found')}</td></tr>`;
+      const tableFoot = document.getElementById('bookingsTableFoot');
+      if (tableFoot) tableFoot.textContent = message ? escapeBookingHtml(message) : 'Showing 0 bookings';
+      return;
     }
+
+    let renderedHtml = '';
+    if (bookingStatus === 'ALL') {
+      const pendingRows = rows.filter(b => effectiveBookingStatus(b) === 'PENDING');
+      const confirmedRows = rows.filter(b => effectiveBookingStatus(b) === 'CONFIRMED');
+      const otherRows = rows.filter(b => effectiveBookingStatus(b) !== 'PENDING' && effectiveBookingStatus(b) !== 'CONFIRMED');
+
+      if (pendingRows.length > 0 && confirmedRows.length > 0) {
+        renderedHtml += `<tr class="table-section-divider section-pending"><td colspan="12"><div class="section-divider-content"><span class="s-dot amber pulse"></span><strong>PENDING NEW BOOKINGS</strong> (${pendingRows.length}) &mdash; Action Required</div></td></tr>`;
+        renderedHtml += pendingRows.map(bookingRowHtml).join('');
+        renderedHtml += `<tr class="table-section-divider section-confirmed"><td colspan="12"><div class="section-divider-content"><span class="s-dot green"></span><strong>CONFIRMED OLD BOOKINGS</strong> (${confirmedRows.length})</div></td></tr>`;
+        renderedHtml += confirmedRows.map(bookingRowHtml).join('');
+        if (otherRows.length > 0) {
+          renderedHtml += `<tr class="table-section-divider section-other"><td colspan="12"><div class="section-divider-content"><span class="s-dot red"></span><strong>OTHER / CANCELLED BOOKINGS</strong> (${otherRows.length})</div></td></tr>`;
+          renderedHtml += otherRows.map(bookingRowHtml).join('');
+        }
+      } else {
+        renderedHtml = rows.map(bookingRowHtml).join('');
+      }
+    } else {
+      renderedHtml = rows.map(bookingRowHtml).join('');
+    }
+
+    if (tableBody.innerHTML !== renderedHtml) {
+      tableBody.innerHTML = renderedHtml;
+    }
+    const countText = `Showing ${rows.length} booking${rows.length === 1 ? '' : 's'}`;
     const tableFoot = document.getElementById('bookingsTableFoot');
-    if (tableFoot) tableFoot.textContent = countText;
+    if (tableFoot && tableFoot.textContent !== countText) tableFoot.textContent = countText;
   }
   function normalizeWhatsAppNumber(value){
     const digits = String(value || '').replace(/\D/g, '');
@@ -3249,7 +3782,8 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     showToast('Opening WhatsApp chat...');
     return true;
   }
-  async function loadAdminBookings(){
+  let liveBookingsLoaded = false;
+  async function loadAdminBookings(isBackground = false){
     const requestId = ++bookingRequestId;
     const params = new URLSearchParams({limit:'100', page:'1'});
     const selectedDate = document.getElementById('bookingDate').value;
@@ -3259,19 +3793,28 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const rawSearch = document.getElementById('bookingSearch').value.trim();
     const mobileSearch = rawSearch.replace(/\D/g, '');
     if(mobileSearch.length >= 3) params.set('mobile', mobileSearch);
-    document.getElementById('bookingsBody').innerHTML = '<tr><td colspan="12" class="tbl-empty">Loading bookings...</td></tr>';
+    const bBody = document.getElementById('bookingsBody');
+    if(!liveBookingsLoaded && !isBackground && bBody && !liveBookings.length){
+      bBody.innerHTML = '<tr><td colspan="12" class="tbl-empty">Loading bookings...</td></tr>';
+    }
     try {
       const response = await fetch('/api/admin/bookings?' + params.toString(), {credentials:'include'});
       const data = await response.json().catch(()=>({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load bookings.'));
       if(requestId !== bookingRequestId) return;
+      liveBookingsLoaded = true;
       liveBookings = Array.isArray(data.bookings) ? data.bookings : [];
       renderBookings();
+      const pendingCount = liveBookings.filter(b => effectiveBookingStatus(b) === 'PENDING').length;
+      const bookNotice = document.getElementById('bookingsNavNotice');
+      if(bookNotice){ bookNotice.textContent = pendingCount > 99 ? '99+' : (pendingCount > 0 ? String(pendingCount) : ''); bookNotice.classList.toggle('show', pendingCount > 0); }
     } catch(error) {
       if(requestId !== bookingRequestId) return;
-      liveBookings = [];
-      renderBookings(error.message);
-      showToast(error.message);
+      if(!isBackground){
+        liveBookings = [];
+        renderBookings(error.message);
+        showToast(error.message);
+      }
     }
   }
   async function loadBookingDetail(bookingId){
@@ -4441,6 +4984,33 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     }
     draw();
   }
+
+  // ---- real-time background polling for dashboard and notifications ----
+  let dashboardPollTimer = null;
+  let lastBackgroundPoll = 0;
+  function startDashboardPolling(){
+    if(dashboardPollTimer) clearInterval(dashboardPollTimer);
+    dashboardPollTimer = setInterval(()=>{
+      if(document.visibilityState === 'visible' && adminSessionReady){
+        lastBackgroundPoll = Date.now();
+        loadDashboardSummary();
+        const activePage = document.querySelector('.page.active')?.id;
+        if(activePage === 'page-bookings') loadAdminBookings(true);
+        if(activePage === 'page-enquiries') loadAdminEnquiries(true);
+        if(activePage === 'page-whatsapp') loadAdminWhatsApp(true);
+        if(activePage === 'page-chatbot') loadAdminChatbot(true);
+      }
+    }, 30000);
+  }
+  startDashboardPolling();
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.visibilityState === 'visible' && adminSessionReady){
+      if(Date.now() - lastBackgroundPoll > 25000){
+        lastBackgroundPoll = Date.now();
+        loadDashboardSummary();
+      }
+    }
+  });
 </script>
 
 </body>

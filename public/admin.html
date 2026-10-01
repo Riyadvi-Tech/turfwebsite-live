@@ -138,6 +138,13 @@
   .nav-divider{height:1px; flex-shrink:0; background:var(--border); margin:12px 8px 12px;}
   .side-foot{padding:16px 20px; border-top:1px solid var(--border); display:flex; align-items:center; gap:10px; white-space:nowrap; overflow:hidden;}
   .side-foot .avatar{width:32px;height:32px;border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--emerald)); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;}
+  .side-foot .admin-profile{display:flex;align-items:center;gap:10px;width:100%;padding:6px 10px;border:1px solid rgba(57,255,122,0.12);border-radius:28px;background:rgba(255,255,255,0.025);}
+  .side-foot .admin-profile-avatar-wrap{width:34px;height:34px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:transparent;}
+  .side-foot .admin-profile-avatar{width:34px;height:34px;padding:0;border-radius:50%;object-fit:cover;display:block;flex-shrink:0;transform:scale(1.08);background:transparent !important;}
+  .side-foot .admin-profile-avatar.avatar{background:transparent !important;}
+  .side-foot .admin-profile-name, .side-foot .admin-profile-email{font-size:12px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .sidebar.collapsed .side-foot .admin-profile{justify-content:center;padding:6px;}
+  .sidebar.collapsed .side-foot .admin-profile-name, .sidebar.collapsed .side-foot .admin-profile-email{display:none;}
   /* Reduced sidebar footer admin name */
   .side-foot span{font-size:12px;}
   .side-foot .role{color:var(--muted); font-size:10.5px; display:block;}
@@ -456,7 +463,7 @@
       <div class="nav-item" data-page="profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg><span class="nav-label">Profile</span></div>
       <div class="nav-item" onclick="logout()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg><span class="nav-label">Logout</span></div>
     </div>
-    <div class="side-foot"><div class="avatar" id="sidebarAvatar">A</div><div class="admin-meta"><span class="admin-name">Admin</span><span class="admin-email">ask@turfon24.com</span></div></div>
+    <div class="side-foot"><div class="admin-profile"><div class="admin-profile-avatar-wrap"><img class="admin-profile-avatar avatar" src="/logo-assets/LogoWater.png" alt="TurfOn24" /></div><span class="admin-profile-name" id="adminSidebarName">Admin</span></div></div>
   </div>
 
   <div class="main">
@@ -608,8 +615,7 @@
           <div class="fgroup"><label>Phone</label><input type="text" value="+91 98xxx xxxxx"></div>
           <div class="fgroup"><label>WhatsApp</label><input type="text" value="+91 98xxx xxxxx"></div>
           <div class="fgroup"><label>Email</label><input type="text" value="play@turfon24.com"></div>
-          <div class="fgroup"><label>UPI ID</label><input type="text" value="turfon24@okaxis"></div>
-          <div class="fgroup full"><label>Address</label><input type="text" value="Turf Grounds, Sector 12"></div>
+          <div class="fgroup"><label>Address</label><input type="text" value="Turf Grounds, Sector 12"></div>
         </div>
         <button class="btn btn-glow" style="width:auto; padding:12px 26px;" onclick="showToast('Settings saved')">Save changes</button>
       </div>
