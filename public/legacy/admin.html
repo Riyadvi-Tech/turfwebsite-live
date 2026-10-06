@@ -126,7 +126,8 @@
   .sidebar{width:260px; flex-shrink:0; background:rgba(10,15,13,0.85); border-right:1px solid var(--border); backdrop-filter:blur(10px); display:flex; flex-direction:column; overflow:hidden; transition:width .3s cubic-bezier(.2,.8,.2,1); position:sticky; top:0; height:100vh; height:100dvh; max-height:100vh; max-height:100dvh; z-index:10;}
   .sidebar.collapsed{width:74px;}
   .side-head{display:flex; align-items:center; justify-content:center; padding:22px 16px; border-bottom:1px solid var(--border); white-space:nowrap; overflow:hidden; text-align:center; flex-shrink:0;}
-  .side-head img{display:block; margin:0 auto; max-width:176px; height:auto; filter:drop-shadow(0 0 10px rgba(57,255,122,0.18));}
+  .side-head .admin-brand-wrap{display:flex; align-items:center; justify-content:center; width:100%; overflow:hidden;}
+  .side-head img, .side-head .admin-tagline-logo{display:block; margin:0 auto; max-width:176px; width:100%; height:auto; object-fit:contain; filter:drop-shadow(0 0 10px rgba(57,255,122,0.18));}
   .side-head .mark{width:30px;height:30px;border-radius:8px; background:linear-gradient(135deg,var(--emerald),var(--neon)); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
   /* Reduced sidebar brand text */
   .side-head span{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px;}
@@ -164,14 +165,16 @@
   .nav-notice.show{display:inline-flex !important;}
   .nav-divider{height:1px; flex-shrink:0; background:var(--border); margin:8px 6px;}
   .side-foot{padding:16px 20px; border-top:1px solid var(--border); background:rgba(10,15,13,0.95); display:flex; align-items:center; gap:10px; white-space:nowrap; overflow:hidden; flex-shrink:0;}
-  .side-foot .avatar{width:32px;height:32px;border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--emerald)); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;}
-  .side-foot .admin-profile{display:flex;align-items:center;gap:10px;width:100%;padding:6px 10px;border:1px solid rgba(57,255,122,0.12);border-radius:28px;background:rgba(255,255,255,0.025);}
+  .side-foot .avatar{width:34px;height:34px;border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--emerald)); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;}
+  .side-foot .admin-profile{display:flex;align-items:center;gap:10px;width:100%;padding:6px 10px;border:1px solid rgba(57,255,122,0.18);border-radius:28px;background:rgba(255,255,255,0.025);box-sizing:border-box;}
   .side-foot .admin-profile-avatar-wrap{width:34px;height:34px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:transparent;}
-  .side-foot .admin-profile-avatar{width:34px;height:34px;padding:0;border-radius:50%;object-fit:cover;display:block;flex-shrink:0;transform:scale(1.08);background:transparent !important;}
+  .side-foot .admin-profile-avatar{width:34px;height:34px;padding:0;border-radius:50%;object-fit:contain;display:block;flex-shrink:0;background:transparent !important;}
   .side-foot .admin-profile-avatar.avatar{background:transparent !important;}
-  .side-foot .admin-profile-name, .side-foot .admin-profile-email{font-size:12px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .sidebar.collapsed .side-foot .admin-profile{justify-content:center;padding:6px;}
-  .sidebar.collapsed .side-foot .admin-profile-name, .sidebar.collapsed .side-foot .admin-profile-email{display:none;}
+  .sidebar.collapsed .side-foot{padding:14px 0; justify-content:center; display:flex; align-items:center;}
+  .sidebar.collapsed .side-foot .admin-profile{width:38px; height:38px; min-width:38px; max-width:38px; min-height:38px; max-height:38px; padding:0 !important; border-radius:50% !important; display:flex !important; justify-content:center !important; align-items:center !important; margin:0 auto !important; box-sizing:border-box !important; gap:0 !important; overflow:hidden !important; border:1px solid rgba(57,255,122,0.25) !important; background:rgba(255,255,255,0.025) !important;}
+  .sidebar.collapsed .side-foot .admin-profile-avatar-wrap{width:100% !important; height:100% !important; min-width:100% !important; max-width:100% !important; min-height:100% !important; max-height:100% !important; border-radius:50% !important; overflow:hidden !important; display:flex !important; align-items:center !important; justify-content:center !important; margin:0 !important; padding:0 !important; flex-shrink:0 !important; background:transparent !important;}
+  .sidebar.collapsed .side-foot .admin-profile-avatar, .sidebar.collapsed .side-foot .avatar{width:100% !important; height:100% !important; min-width:100% !important; min-height:100% !important; max-width:100% !important; max-height:100% !important; border-radius:50% !important; object-fit:cover !important; display:block !important; margin:0 !important; padding:0 !important; transform:none !important;}
+  .sidebar.collapsed .side-foot .admin-profile-name, .sidebar.collapsed .side-foot .admin-profile-email{display:none !important;}
   /* Reduced sidebar footer admin name */
   .side-foot span{font-size:12px;}
   .side-foot .role{color:var(--muted); font-size:10.5px; display:block;}
@@ -184,8 +187,9 @@
   /* Reduced page title text */
   .page-title{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px; white-space:nowrap;}
   /* Reduced global search text */
-  .gsearch{flex:0 1 240px; max-width:240px; height:32px; display:flex; align-items:center; gap:8px; background:var(--charcoal); border:1px solid var(--border); border-radius:8px; padding:6px 12px; color:var(--muted); font-size:11.5px; cursor:pointer;}
-  .gsearch kbd{margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:9.5px; border:1px solid var(--border); border-radius:4px; padding:1px 5px;}
+  .gsearch{flex:0 1 280px; max-width:320px; height:32px; display:flex; align-items:center; gap:8px; background:var(--charcoal); border:1px solid var(--border); border-radius:8px; padding:6px 12px; color:var(--muted); font-size:11.5px; cursor:pointer; white-space:nowrap; overflow:hidden;}
+  .gsearch .gsearch-text, .gsearch span:not(kbd){white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; flex:1;}
+  .gsearch kbd{margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:9.5px; border:1px solid var(--border); border-radius:4px; padding:1px 5px; flex-shrink:0;}
   .topbar-right{display:flex; align-items:center; gap:14px; flex-shrink:0;}
   .icon-btn{width:36px;height:36px;border-radius:10px; border:1px solid var(--border); background:transparent; color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative; transition:all .2s ease;}
   .icon-btn:hover{color:var(--neon); border-color:var(--neon);}
@@ -411,7 +415,7 @@
   .notification-head h3{font-size:14px;}
   /* Reduced notification mark-all-read button */
   .notification-head button{border:0; background:none; color:var(--neon); cursor:pointer; font-size:10px;}
-  .notification-list{display:flex; flex-direction:column;}
+  .notification-list{display:flex; flex-direction:column; max-height:420px; overflow-y:auto; -webkit-overflow-scrolling:touch;}
   .notification-item{display:flex; align-items:flex-start; gap:10px; padding:13px 16px; color:var(--muted); cursor:pointer; border-bottom:1px solid rgba(57,255,122,0.08); transition:background .2s ease, color .2s ease;}
   .notification-item:last-child{border-bottom:0;}
   .notification-item:hover{background:rgba(57,255,122,0.06); color:var(--white);}
@@ -453,9 +457,34 @@
 
   /* toolbar */
   .toolbar{display:flex; align-items:center; gap:10px; margin-bottom:18px; flex-wrap:wrap;}
-  /* Reduced toolbar input text */
-  .toolbar input[type="text"]{background:var(--charcoal); border:1px solid var(--border); border-radius:8px; padding:6px 12px; color:var(--white); font-size:11.5px; height:32px; min-height:32px; max-height:32px; min-width:140px; max-width:200px; flex:0 1 200px; box-sizing:border-box; text-overflow:ellipsis;}
-  #page-enquiries #enquirySearch{flex:0 1 200px; max-width:200px;}
+  /* Reduced toolbar input text with search icon */
+  .toolbar input[type="text"]{
+    order:1;
+    background-color:var(--charcoal);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:6px 12px 6px 30px;
+    color:var(--white);
+    font-size:11.5px;
+    height:32px;
+    min-height:32px;
+    max-height:32px;
+    min-width:110px;
+    max-width:150px;
+    flex:0 1 150px;
+    box-sizing:border-box;
+    text-overflow:ellipsis;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238F9E97' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:9px center;
+    background-size:13px 13px;
+  }
+  .toolbar input[type="text"]:focus{
+    outline:none;
+    border-color:var(--neon);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2339ff7a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  }
+  #page-enquiries #enquirySearch{flex:0 1 150px; max-width:150px;}
   /* Reduced date filter text */
   .date-wrap{position:relative; display:inline-flex; align-items:center; min-width:170px; max-width:100%; flex:0 1 auto; box-sizing:border-box; background:var(--charcoal); border:1px solid var(--border); border-radius:10px; color:var(--white); font-size:12.5px; cursor:pointer;}
   .date-wrap .date-ph{display:block; position:relative; z-index:1; left:0; top:0; transform:none; width:100%; box-sizing:border-box; color:var(--white); font-size:inherit; pointer-events:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:9px 40px 9px 12px; font-family:'Inter',sans-serif;}
@@ -484,19 +513,20 @@
   .payment-status-filters .status-filter-btn.sel, .payment-status-filters .status-filter-btn:hover{border-color:var(--neon); color:var(--neon); background:rgba(57,255,122,0.06);}
   .nav-item{position:relative; width:100%; box-sizing:border-box;}
   .nav-item .nav-label{flex:1 1 auto; min-width:0; max-width:calc(100% - 42px); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-right:32px;}
-  .nav-item .nav-notice{position:absolute !important; right:38px !important; top:50% !important; transform:translateY(-50%) !important; margin:0 !important; z-index:4 !important;}
+  .nav-item .nav-notice{display:none !important;}
+  .nav-notice{display:none !important;}
   .nav-item .booking-status-menu{display:contents;}
   .sidebar.collapsed .booking-status-menu, .sidebar.collapsed .nav-dropdown-trigger{display:none !important;}
 
   .nav-item[data-page="bookings"]{z-index:2;}
-  .nav-item[data-page="bookings"]:has(.booking-status-menu.open){margin-bottom:92px;}
+  .nav-item[data-page="bookings"]:has(.booking-status-menu.open){margin-bottom:120px;}
   .nav-item[data-page="payments"]{z-index:2;}
-  .nav-item[data-page="payments"]:has(.booking-status-menu.open){margin-bottom:124px;}
+  .nav-item[data-page="payments"]:has(.booking-status-menu.open){margin-bottom:95px;}
   .nav-item[data-page="enquiries"]{z-index:2;}
-  .nav-item[data-page="enquiries"]:has(.booking-status-menu.open){margin-bottom:124px;}
+  .nav-item[data-page="enquiries"]:has(.booking-status-menu.open){margin-bottom:120px;}
   .nav-item[data-page="whatsapp"], .nav-item[data-page="chatbot"]{z-index:2;}
-  .nav-item[data-page="whatsapp"]:has(.booking-status-menu.open){margin-bottom:124px;}
-  .nav-item[data-page="chatbot"]:has(.booking-status-menu.open){margin-bottom:124px;}
+  .nav-item[data-page="whatsapp"]:has(.booking-status-menu.open){margin-bottom:120px;}
+  .nav-item[data-page="chatbot"]:has(.booking-status-menu.open){margin-bottom:120px;}
   .sidebar.collapsed .nav-item{margin-bottom:0 !important;}
 
   /* Dropdown Chevron Trigger Buttons - Unified Straight Vertical Alignment & Exact Same Size */
@@ -579,7 +609,10 @@
   }
   .nav-item .booking-status-menu-list button{
     width:100%;
-    padding:6px 8px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:5.5px 8px;
     border:0;
     border-radius:6px;
     background:transparent;
@@ -588,6 +621,7 @@
     text-align:left;
     cursor:pointer;
     transition:background .15s ease, color .15s ease;
+    box-sizing:border-box;
   }
   .nav-item .booking-status-menu-list button:hover{
     background:rgba(57,255,122,.08);
@@ -597,14 +631,60 @@
     background:rgba(57,255,122,.14);
     color:var(--neon);
   }
+  .nav-item .booking-status-menu-list .sub-label{
+    flex:1 1 auto;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .nav-item .booking-status-menu-list .sub-count{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:18px;
+    height:16px;
+    padding:0 4.5px;
+    border-radius:8px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    font-weight:700;
+    line-height:1;
+    margin-left:6px;
+    background:rgba(255,255,255,0.06);
+    color:var(--muted);
+    flex-shrink:0;
+    box-sizing:border-box;
+    transition:all .15s ease;
+  }
+  .nav-item .booking-status-menu-list .sub-count.count-active{
+    background:rgba(57,255,122,0.18);
+    color:var(--neon);
+    border:1px solid rgba(57,255,122,0.3);
+  }
+  .nav-item .booking-status-menu-list .sub-count.count-pending{
+    background:rgba(245,184,65,0.18);
+    color:var(--amber);
+    border:1px solid rgba(245,184,65,0.35);
+  }
+  .nav-item .booking-status-menu-list button:hover .sub-count{
+    color:var(--white);
+    background:rgba(255,255,255,0.12);
+  }
+  .nav-item .booking-status-menu-list button.sel .sub-count{
+    background:var(--neon);
+    color:#04140D;
+    border:none;
+    font-weight:800;
+  }
   .date-wrap[hidden]{display:none !important;}
   .history-switch{display:inline-flex; gap:4px; padding:4px; background:var(--charcoal); border:1px solid var(--border); border-radius:10px;}
   .history-switch .filt-pill{border:0; padding:7px 14px; background:transparent; color:var(--muted);}
   .toolbar .spacer{display:none;}
-  .toolbar-actions{display:inline-flex; align-items:center; gap:6px; flex-wrap:nowrap; flex:0 0 auto;}
+  .toolbar-actions{order:2; display:inline-flex; align-items:center; gap:6px; flex-wrap:nowrap; flex:0 0 auto;}
   .toolbar-actions .status-filter-btn,
   .toolbar-actions .filt-pill,
-  .toolbar-actions .btn-ghost{
+  .toolbar-actions .btn-ghost,
+  .toolbar .toolbar-export-btn{
     min-width:82px;
     height:34px;
     padding:0 10px;
@@ -618,7 +698,25 @@
     white-space:nowrap;
     gap:4px;
   }
-  .toolbar-actions .btn-ghost svg{width:13px; height:13px; flex-shrink:0;}
+  .toolbar .toolbar-export-btn{
+    order:3;
+    margin-left:0 !important;
+  }
+  .toolbar-actions .btn-ghost svg,
+  .toolbar .toolbar-export-btn svg{width:13px; height:13px; flex-shrink:0;}
+  .toolbar-actions .date-wrap{
+    height:34px;
+    min-width:130px;
+    max-width:160px;
+    font-size:11.5px;
+    border-radius:100px;
+    flex:0 0 auto;
+  }
+  .toolbar-actions .date-wrap .date-ph{
+    padding:0 34px 0 12px;
+    line-height:32px;
+    font-size:11.5px;
+  }
   .toolbar #enquiryExport, .toolbar #whatsappExport, .toolbar #chatbotExport, .toolbar #bookingExport, .toolbar #paymentExport{margin-left:0 !important;}
 
   /* table */
@@ -1077,15 +1175,82 @@
     .date-wrap .date-ph{display:flex; align-items:center; height:32px !important; max-height:32px !important; min-height:32px !important; padding:0 22px 0 10px !important; font-size:12px !important; line-height:32px !important;}
     .date-wrap .date-filter{font-size:16px !important; height:32px !important; max-height:32px !important; min-height:32px !important;}
     .date-wrap::after{width:12px !important; height:12px !important; top:50% !important; transform:translateY(-50%) !important; right:8px !important;}
-    .toolbar{gap:6px; margin-bottom:14px; flex-wrap:wrap;}
-    .toolbar input[type="text"]{width:auto !important; min-width:96px !important; max-width:170px !important; flex:1 1 120px !important; height:31px !important; min-height:31px !important; max-height:31px !important; padding:4px 8px !important; font-size:11px !important; border-radius:8px !important; box-sizing:border-box; text-overflow:ellipsis;}
-    #page-enquiries #enquirySearch{width:auto !important; min-width:96px !important; max-width:170px !important; flex:1 1 120px !important;}
-    .toolbar-actions{display:inline-flex; align-items:center; gap:5px; flex-wrap:nowrap; flex:0 0 auto;}
+    .toolbar{
+      display:flex !important;
+      flex-wrap:wrap !important;
+      align-items:center !important;
+      gap:8px 6px !important;
+      margin-bottom:14px !important;
+    }
+    .toolbar input[type="text"]{
+      order:1 !important;
+      width:auto !important;
+      min-width:100px !important;
+      max-width:145px !important;
+      flex:0 1 145px !important;
+      height:32px !important;
+      min-height:32px !important;
+      max-height:32px !important;
+      padding:4px 8px 4px 28px !important;
+      font-size:11px !important;
+      border-radius:8px !important;
+      box-sizing:border-box !important;
+      text-overflow:ellipsis !important;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238F9E97' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") !important;
+      background-repeat:no-repeat !important;
+      background-position:8px center !important;
+      background-size:13px 13px !important;
+    }
+    .toolbar input[type="text"]:focus{
+      outline:none !important;
+      border-color:var(--neon) !important;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2339ff7a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") !important;
+    }
+    #page-enquiries #enquirySearch{
+      width:auto !important;
+      min-width:100px !important;
+      max-width:145px !important;
+      flex:0 1 145px !important;
+    }
+    .toolbar .toolbar-export-btn{
+      order:2 !important;
+      width:auto !important;
+      min-width:74px !important;
+      max-width:84px !important;
+      height:32px !important;
+      min-height:32px !important;
+      max-height:32px !important;
+      padding:0 10px !important;
+      font-size:11px !important;
+      font-weight:600 !important;
+      display:inline-flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      text-align:center !important;
+      box-sizing:border-box !important;
+      border-radius:100px !important;
+      white-space:nowrap !important;
+      flex:0 0 auto !important;
+      gap:4px !important;
+      margin:0 !important;
+    }
+    .toolbar-actions{
+      order:3 !important;
+      width:100% !important;
+      flex:1 0 100% !important;
+      display:inline-flex !important;
+      align-items:center !important;
+      gap:5px !important;
+      flex-wrap:nowrap !important;
+      overflow-x:auto !important;
+      scrollbar-width:none !important;
+      margin-top:0 !important;
+    }
+    .toolbar-actions::-webkit-scrollbar{display:none;}
     .booking-status-filters, .payment-status-filters{display:inline-flex; align-items:center; gap:5px; flex-wrap:nowrap; flex:0 0 auto; overflow:visible;}
     .booking-status-filters::-webkit-scrollbar, .payment-status-filters::-webkit-scrollbar{display:none;}
     .toolbar-actions .status-filter-btn,
-    .toolbar-actions .filt-pill,
-    .toolbar-actions .btn-ghost{
+    .toolbar-actions .filt-pill{
       width:68px !important;
       min-width:68px !important;
       max-width:68px !important;
@@ -1106,7 +1271,8 @@
       gap:3px !important;
       margin:0 !important;
     }
-    .toolbar-actions .btn-ghost svg{
+    .toolbar-actions .btn-ghost svg,
+    .toolbar .toolbar-export-btn svg{
       width:12px !important;
       height:12px !important;
       flex-shrink:0 !important;
@@ -1380,7 +1546,7 @@
         <button class="collapse-btn" onclick="toggleSidebar()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
         <div class="page-title" id="pageTitle">Dashboard</div>
       </div>
-      <div class="gsearch" onclick="openCmdPalette()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Search bookings, customers...<kbd>⌘K</kbd></div>
+      <div class="gsearch" onclick="openCmdPalette()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><span class="gsearch-text">Search bookings, customers...</span><kbd>⌘K</kbd></div>
       <div class="topbar-right">
         <button class="icon-btn" onclick="openCmdPalette()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
         <div class="notification-wrap" id="notificationWrap">
@@ -1473,12 +1639,13 @@
     <div class="page" id="page-bookings">
       <div class="toolbar">
         <input id="bookingSearch" type="text" placeholder="Search by name, mobile, booking ID...">
-        <span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input id="bookingDate" class="date-filter" type="text" readonly aria-label="Choose booking date" title="Choose booking date"><input id="bookingDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
+        <button class="btn btn-ghost toolbar-export-btn" id="bookingExport" title="Export hourly bookings as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         <div class="toolbar-actions">
           <div class="booking-status-filters" id="bookingStatusFilters" aria-label="Booking status filter">
             <button type="button" class="status-filter-btn sel" data-booking-filter="all">All</button>
+            <button type="button" class="status-filter-btn" data-booking-filter="today">Today</button>
           </div>
-          <button class="btn btn-ghost" id="bookingExport" title="Export hourly bookings as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
+          <span class="date-wrap"><span class="date-ph placeholder">dd/mm/yyyy</span><input id="bookingDate" class="date-filter" type="text" readonly aria-label="Choose booking date" title="Choose booking date"><input id="bookingDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         </div>
       </div>
       <div class="table-wrap" id="bookingsTableWrap">
@@ -1504,12 +1671,13 @@
       </div>
       <div class="toolbar">
         <input id="paymentSearch" type="text" placeholder="Search by name, mobile, booking ID...">
+        <button class="btn btn-ghost toolbar-export-btn" id="paymentExport" title="Export payment confirmations as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         <div class="toolbar-actions">
           <div class="payment-status-filters" id="paymentStatusFilters" aria-label="Payment confirmation filter">
             <button type="button" class="status-filter-btn" data-payment-filter="all">All</button>
             <button type="button" class="status-filter-btn" data-payment-filter="today">Today</button>
           </div>
-          <button class="btn btn-ghost" id="paymentExport" title="Export payment confirmations as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
+          <span class="date-wrap"><span class="date-ph placeholder">dd/mm/yyyy</span><input id="paymentDate" class="date-filter" type="text" readonly aria-label="Choose payment date" title="Choose payment date"><input id="paymentDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         </div>
       </div>
       <div class="table-wrap" id="paymentsTableWrap">
@@ -1525,10 +1693,11 @@
     <div class="page" id="page-enquiries">
       <div class="toolbar">
         <input id="enquirySearch" type="text" placeholder="Search by name, mobile, booking ID...">
-        <span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input id="enquiryDate" class="date-filter" type="text" readonly aria-label="Choose enquiry date" title="Choose enquiry date"><input id="enquiryDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
+        <button class="btn btn-ghost toolbar-export-btn" id="enquiryExport" title="Export enquiries as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         <div class="toolbar-actions">
           <div class="filt-pill sel" data-enquiry-filter="all">All</div>
-          <button class="btn btn-ghost" id="enquiryExport" title="Export enquiries as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
+          <div class="filt-pill" data-enquiry-filter="today">Today</div>
+          <span class="date-wrap"><span class="date-ph placeholder">dd/mm/yyyy</span><input id="enquiryDate" class="date-filter" type="text" readonly aria-label="Choose enquiry date" title="Choose enquiry date"><input id="enquiryDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         </div>
       </div>
       <div class="table-wrap">
@@ -1569,15 +1738,16 @@
     <div class="page" id="page-whatsapp">
       <div class="toolbar">
         <input type="text" id="whatsappSearch" placeholder="Search by name, mobile...">
-        <span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input class="date-filter" type="text" readonly id="whatsappDate" aria-label="Choose WhatsApp enquiry date" title="Choose WhatsApp enquiry date"><input id="whatsappDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
+        <button class="btn btn-ghost toolbar-export-btn" id="whatsappExport" title="Export WhatsApp enquiries as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         <div class="toolbar-actions">
           <div class="filt-pill sel" data-wa-filter="all">All</div>
-          <button class="btn btn-ghost" id="whatsappExport" title="Export WhatsApp enquiries as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
+          <div class="filt-pill" data-wa-filter="today">Today</div>
+          <span class="date-wrap"><span class="date-ph placeholder">dd/mm/yyyy</span><input class="date-filter" type="text" readonly id="whatsappDate" aria-label="Choose WhatsApp enquiry date" title="Choose WhatsApp enquiry date"><input id="whatsappDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         </div>
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Customer</th><th>Mobile</th><th>Email</th><th>Message</th><th>Enquiry date</th><th>Received</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Customer</th><th>Mobile</th><th>Email</th><th>Message</th><th>Enquiry date</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="whatsappBody"></tbody>
         </table>
         <div class="table-foot"><span>Showing all WhatsApp enquiries</span></div>
@@ -1588,15 +1758,16 @@
     <div class="page" id="page-chatbot">
       <div class="toolbar">
         <input type="text" id="chatSearch" placeholder="Search by name, mobile...">
-        <span class="date-wrap" hidden><span class="date-ph">dd-mm-yyyy</span><input class="date-filter" type="text" readonly id="chatDate" aria-label="Choose chatbot date" title="Choose chatbot date"><input id="chatDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
+        <button class="btn btn-ghost toolbar-export-btn" id="chatbotExport" title="Export chatbot conversations as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         <div class="toolbar-actions">
           <div class="filt-pill sel" data-chat-filter="all">All</div>
-          <button class="btn btn-ghost" id="chatbotExport" title="Export chatbot conversations as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
+          <div class="filt-pill" data-chat-filter="today">Today</div>
+          <span class="date-wrap"><span class="date-ph placeholder">dd/mm/yyyy</span><input class="date-filter" type="text" readonly id="chatDate" aria-label="Choose chatbot date" title="Choose chatbot date"><input id="chatDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         </div>
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Customer</th><th>Mobile</th><th>Email</th><th>Questions asked</th><th>Enquiry date</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Customer</th><th>Mobile</th><th>Email</th><th>Questions asked</th><th>Enquiry date</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="chatbotBody"></tbody>
         </table>
         <div class="table-foot"><span>Showing all chatbot conversations</span></div>
@@ -2132,10 +2303,31 @@
   applyProfilePicture(localStorage.getItem(PROFILE_PICTURE_KEY) || PROFILE_PICTURE_SOURCE);
   const initialAdminName = localStorage.getItem(ADMIN_NAME_KEY) || 'Admin';
   syncSidebarProfileName(initialAdminName);
+  let isNavigatedFromDashboardPending = false;
   if(adminSessionReady) loadAdminProfile();
-  function openAdminPage(page, cardMode = null){
+  function toggleNavDropdown(menuId, buttonId, event){
+    if(event) event.stopPropagation();
+    const menu = document.getElementById(menuId);
+    const button = document.getElementById(buttonId);
+    if(!menu) return;
+    const willOpen = !menu.classList.contains('open');
+    document.querySelectorAll('.booking-status-menu.open').forEach(otherMenu => {
+      if(otherMenu !== menu){
+        otherMenu.classList.remove('open');
+        otherMenu.querySelector('.nav-dropdown-trigger')?.setAttribute('aria-expanded', 'false');
+        syncMenuMargin(otherMenu);
+      }
+    });
+    menu.classList.toggle('open', willOpen);
+    if(button) button.setAttribute('aria-expanded', String(willOpen));
+    syncMenuMargin(menu);
+  }
+  function openAdminPage(page, cardMode = null, keepSidebarOpen = false){
     const target = document.getElementById('page-' + page);
     if(!target) return;
+    if(page !== 'bookings' || !cardMode || cardMode.metric !== 'pendingConf'){
+      isNavigatedFromDashboardPending = false;
+    }
     document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.page === page));
     document.querySelectorAll('.page').forEach(item => item.classList.toggle('active', item === target));
     document.getElementById('pageTitle').textContent = pageTitles[page] || page;
@@ -2145,17 +2337,42 @@
     if(page === 'enquiries') loadAdminEnquiries();
     if(page === 'whatsapp') loadAdminWhatsApp();
     if(page === 'chatbot') loadAdminChatbot();
+    if(page === 'payments') renderPayments();
     if(cardMode) applyDashboardCardFilterPills(cardMode.metric, cardMode.page);
     else restorePageFilters(page);
-    if(window.innerWidth <= 1000) closeMobileSidebar();
+    if(window.innerWidth <= 1000 && !keepSidebarOpen) closeMobileSidebar();
   }
   document.querySelectorAll('.nav-item[data-page]').forEach(item=>{
     item.addEventListener('click', event=>{
+      if(event.target.closest('.booking-status-menu-list') || event.target.closest('.nav-dropdown-trigger')){
+        return;
+      }
       event.preventDefault();
       const p = item.dataset.page;
       const cardMode = dashboardCardFilterContext && dashboardCardFilterContext.page === p ? dashboardCardFilterContext : null;
       dashboardCardFilterContext = null;
-      openAdminPage(p, cardMode);
+      if(!cardMode || cardMode.metric !== 'pendingConf'){
+        isNavigatedFromDashboardPending = false;
+      }
+
+      const menu = item.querySelector('.booking-status-menu');
+      let willOpen = false;
+      if(menu){
+        willOpen = !menu.classList.contains('open');
+        document.querySelectorAll('.booking-status-menu.open').forEach(otherMenu => {
+          if(otherMenu !== menu){
+            otherMenu.classList.remove('open');
+            otherMenu.querySelector('.nav-dropdown-trigger')?.setAttribute('aria-expanded', 'false');
+            syncMenuMargin(otherMenu);
+          }
+        });
+        menu.classList.toggle('open', willOpen);
+        const triggerBtn = menu.querySelector('.nav-dropdown-trigger');
+        if(triggerBtn) triggerBtn.setAttribute('aria-expanded', String(willOpen));
+        syncMenuMargin(menu);
+      }
+
+      openAdminPage(p, cardMode, willOpen);
     });
   });
   function syncMenuMargin(menu){
@@ -2220,11 +2437,11 @@
       syncNotificationBadge();
       return;
     }
-    list.innerHTML = safeItems.slice(0, 8).map((item) => {
+    list.innerHTML = safeItems.slice(0, 20).map((item) => {
       const text = String(item.text || 'New activity');
       const [title, ...rest] = text.split(' — ');
       const detail = rest.join(' — ') || text;
-      const type = item.type === 'chat' ? 'chat' : item.type === 'whatsapp' ? 'whatsapp' : item.type === 'enquiry' ? 'enquiry' : 'booking';
+      const type = item.type === 'chat' ? 'chat' : item.type === 'whatsapp' ? 'whatsapp' : item.type === 'enquiry' ? 'enquiry' : item.type === 'payment' ? 'payment' : 'booking';
       const icon = item.type === 'chat'
         ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg>'
         : item.type === 'whatsapp'
@@ -2232,14 +2449,41 @@
           : item.type === 'enquiry'
             ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v13H8l-4 4Z"/></svg>'
             : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>';
-      return `<div class="notification-item unread" data-notification-type="${type}" onclick="markNotificationRead(this)"><span class="notification-icon">${icon}</span><span class="notification-copy"><strong>${escapeNotificationHtml(title || 'New activity')}</strong><span>${escapeNotificationHtml(detail || 'New activity')}</span><span class="notification-time">${escapeNotificationHtml(formatNotificationRelative(item.createdAt || new Date()))}</span></span><span class="notification-dot"></span></div>`;
+      return `<div class="notification-item unread" data-notification-type="${type}" data-item-id="${escapeNotificationHtml(item.id || '')}" onclick="markNotificationRead(this)"><span class="notification-icon">${icon}</span><span class="notification-copy"><strong>${escapeNotificationHtml(title || 'New activity')}</strong><span>${escapeNotificationHtml(detail || 'New activity')}</span><span class="notification-time">${escapeNotificationHtml(formatNotificationRelative(item.createdAt || new Date()))}</span></span><span class="notification-dot"></span></div>`;
     }).join('');
     syncNotificationBadge();
   }
   function markNotificationRead(item){
     item.classList.remove('unread');
-    syncSectionNotice(item.dataset.notificationType);
+    const type = item.dataset.notificationType;
+    const itemId = item.dataset.itemId;
+    if(type && itemId){
+      markActivityItemVisited(type, itemId);
+    }
+    syncSectionNotice(type);
     syncNotificationBadge();
+
+    // Close notification panel
+    const wrap = document.getElementById('notificationWrap');
+    if(wrap){
+      wrap.classList.remove('open');
+      document.getElementById('notificationBtn')?.setAttribute('aria-expanded', 'false');
+    }
+
+    // Redirect to the section
+    const targetPage = type === 'booking' ? 'bookings'
+      : type === 'whatsapp' ? 'whatsapp'
+      : type === 'enquiry' ? 'enquiries'
+      : type === 'payment' ? 'payments'
+      : type === 'chat' ? 'chatbot'
+      : 'dashboard';
+
+    if(typeof openAdminPage === 'function'){
+      openAdminPage(targetPage);
+    }
+    if(window.innerWidth <= 1000 && typeof closeMobileSidebar === 'function'){
+      closeMobileSidebar();
+    }
   }
   function markAllNotificationsRead(){
     document.querySelectorAll('.notification-item.unread').forEach(item=>item.classList.remove('unread'));
@@ -2265,20 +2509,22 @@
   }
   function syncAllNavNotices(stats){
     if(!stats) return;
-    const chatCount = Number(stats.unreadChatbot ?? stats.newChatbot ?? 0);
-    const waCount = Number(stats.unreadWhatsapp ?? stats.newWhatsapp ?? 0);
-    const enqCount = Number(stats.unreadEnquiries ?? stats.newEnquiries ?? 0);
-    const bookCount = Number(stats.unreadBookings ?? stats.pendingBookings ?? 0);
-
+    latestDashboardStats = stats;
     const chatNotice = document.getElementById('chatbotNavNotice');
     const waNotice = document.getElementById('whatsappNavNotice');
     const enqNotice = document.getElementById('enquiriesNavNotice');
     const bookNotice = document.getElementById('bookingsNavNotice');
 
-    if(chatNotice){ chatNotice.textContent = chatCount > 99 ? '99+' : (chatCount > 0 ? String(chatCount) : ''); chatNotice.classList.toggle('show', chatCount > 0); }
-    if(waNotice){ waNotice.textContent = waCount > 99 ? '99+' : (waCount > 0 ? String(waCount) : ''); waNotice.classList.toggle('show', waCount > 0); }
-    if(enqNotice){ enqNotice.textContent = enqCount > 99 ? '99+' : (enqCount > 0 ? String(enqCount) : ''); enqNotice.classList.toggle('show', enqCount > 0); }
-    if(bookNotice){ bookNotice.textContent = bookCount > 99 ? '99+' : (bookCount > 0 ? String(bookCount) : ''); bookNotice.classList.toggle('show', bookCount > 0); }
+    if(chatNotice){ chatNotice.textContent = ''; chatNotice.classList.remove('show'); }
+    if(waNotice){ waNotice.textContent = ''; waNotice.classList.remove('show'); }
+    if(enqNotice){ enqNotice.textContent = ''; enqNotice.classList.remove('show'); }
+    if(bookNotice){ bookNotice.textContent = ''; bookNotice.classList.remove('show'); }
+
+    if(typeof syncBookingStatusOptions === 'function') syncBookingStatusOptions();
+    if(typeof syncPaymentStatusOptions === 'function') syncPaymentStatusOptions();
+    if(typeof syncEnquiryFilters === 'function') syncEnquiryFilters();
+    if(typeof syncWhatsAppFilters === 'function') syncWhatsAppFilters();
+    if(typeof syncChatbotFilters === 'function') syncChatbotFilters();
   }
   function notifyNew(type){
     const item = document.querySelector(`.notification-item[data-notification-type="${type}"]`);
@@ -2768,6 +3014,7 @@
 
   function restorePageFilters(page){
     if(page === 'bookings'){
+      isNavigatedFromDashboardPending = false;
       document.querySelectorAll('#page-bookings [data-booking-status]').forEach(item => { item.style.display = ''; item.classList.remove('sel'); });
       const allButton = document.querySelector('#page-bookings [data-booking-status="all"]');
       if(allButton) allButton.classList.add('sel');
@@ -2809,28 +3056,148 @@
     }));
   }
 
+  let latestDashboardStats = null;
+
+  function renderDropdownOptions(options, selectedValue, filterAttr){
+    return options.map(opt => {
+      const isSel = opt.key === selectedValue;
+      const count = Number(opt.count || 0);
+      const countClass = count > 0 ? (opt.key === 'pending' ? 'count-pending' : 'count-active') : 'count-zero';
+      const showCount = opt.showCount !== false;
+      const countHtml = showCount ? `<span class="sub-count ${countClass}">${count}</span>` : '';
+      return `<button type="button" role="menuitem" class="${isSel ? 'sel' : ''}" ${filterAttr}="${opt.key}">
+        <span class="sub-label">${opt.label}</span>
+        ${countHtml}
+      </button>`;
+    }).join('');
+  }
+
+  function getLiveBookingCounts(){
+    const todayKey = localTodayKey();
+    const rows = Array.isArray(liveBookings) && liveBookings.length ? liveBookings : (typeof bookings !== 'undefined' ? bookings : []);
+    let today = 0, pending = 0, confirmed = 0, cancelled = 0;
+    rows.forEach(b => {
+      const isArr = Array.isArray(b);
+      const createdAt = isArr ? String(b[9] || '').slice(0, 10) : (b.createdAt ? new Date(b.createdAt).toISOString().slice(0, 10) : '');
+      const status = isArr ? String(b[8] || '').toUpperCase() : (typeof effectiveBookingStatus === 'function' ? effectiveBookingStatus(b) : String(b.bookingStatus || '').toUpperCase());
+      if(createdAt === todayKey) today++;
+      if(status === 'PENDING') pending++;
+      else if(status === 'CONFIRMED' || status === 'COMPLETED') confirmed++;
+      else if(status === 'CANCELLED') cancelled++;
+    });
+    if(!rows.length && latestDashboardStats){
+      pending = Number(latestDashboardStats.pendingBookings ?? latestDashboardStats.unreadBookings ?? 0);
+    }
+    return { today, pending, confirmed, cancelled };
+  }
+
+  function getLivePaymentCounts(){
+    const list = Array.isArray(payments) ? payments : [];
+    let today = 0, pending = 0, confirmed = 0, cancelled = 0;
+    list.forEach(p => {
+      if(typeof paymentIsToday === 'function' && paymentIsToday(p)) today++;
+      const s = String(p.status || '').toUpperCase();
+      if(s === 'PAYMENT_PENDING' || s === 'PENDING') pending++;
+      else if(typeof isPaymentReceivedStatus === 'function' ? isPaymentReceivedStatus(s) : (s === 'CONFIRMED' || s === 'PAID' || s === 'VERIFIED')) confirmed++;
+      else if(s === 'CANCELLED') cancelled++;
+    });
+    return { today, pending, confirmed, cancelled };
+  }
+
+  function getLiveEnquiryCounts(){
+    const todayKey = localTodayKey();
+    const list = Array.isArray(liveEnquiries) ? liveEnquiries : (typeof enquiries !== 'undefined' ? enquiries : []);
+    let today = 0, pending = 0, contacted = 0, read = 0, unread = 0;
+    list.forEach(e => {
+      const isArr = Array.isArray(e);
+      const createdDate = isArr ? String(e[8] || '').slice(0, 10) : (e.createdAt ? new Date(e.createdAt).toISOString().slice(0, 10) : '');
+      const status = isArr ? canonicalEnquiryStatus(e[7]) : canonicalEnquiryStatus(e.status);
+      const isRead = isArr ? false : (e.read === true || locallyReadEnquiries.has(String(e._id)));
+      if(createdDate === todayKey) today++;
+      if(status === 'new' && !isRead) pending++;
+      if(status === 'contacted') contacted++;
+      if(isRead) read++;
+      else unread++;
+    });
+    if(!list.length && latestDashboardStats){
+      pending = Number(latestDashboardStats.newEnquiries ?? latestDashboardStats.unreadEnquiries ?? 0);
+    }
+    return { today, pending, contacted, read, unread };
+  }
+
+  function getLiveWhatsAppCounts(){
+    const todayKey = localTodayKey();
+    const list = Array.isArray(liveWhatsApp) ? liveWhatsApp : [];
+    let today = 0, pending = 0, contacted = 0, read = 0, unread = 0;
+    list.forEach(w => {
+      const createdDate = w.createdAt ? new Date(w.createdAt).toISOString().slice(0, 10) : '';
+      const status = normalizeStatus(w.status);
+      const isRead = w.read === true || locallyReadWhatsApp.has(String(w._id));
+      if(createdDate === todayKey) today++;
+      if(status === 'new' && !isRead) pending++;
+      if(status === 'contacted') contacted++;
+      if(isRead) read++;
+      else unread++;
+    });
+    if(!list.length && latestDashboardStats){
+      pending = Number(latestDashboardStats.newWhatsapp ?? latestDashboardStats.unreadWhatsapp ?? 0);
+    }
+    return { today, pending, contacted, read, unread };
+  }
+
+  function getLiveChatbotCounts(){
+    const todayKey = localTodayKey();
+    const list = Array.isArray(liveChatbot) ? liveChatbot : [];
+    let today = 0, pending = 0, contacted = 0, read = 0, unread = 0;
+    list.forEach(c => {
+      const createdDate = c.createdAt ? new Date(c.createdAt).toISOString().slice(0, 10) : '';
+      const status = canonicalEnquiryStatus(c.status);
+      const isRead = c.read === true || locallyReadChatbot.has(String(c._id));
+      if(createdDate === todayKey) today++;
+      if(status === 'new' && !isRead) pending++;
+      if(status === 'contacted') contacted++;
+      if(isRead) read++;
+      else unread++;
+    });
+    if(!list.length && latestDashboardStats){
+      pending = Number(latestDashboardStats.newChatbot ?? latestDashboardStats.unreadChatbot ?? 0);
+    }
+    return { today, pending, contacted, read, unread };
+  }
+
   function syncBookingStatusOptions(){
-    const currentValue = bookingDateMode === 'today' ? 'today' : String(bookingStatus || 'ALL').toLowerCase();
-    const selected = ['all','pending','confirmed','cancelled','today'].includes(currentValue) ? currentValue : 'all';
+    const currentValue = bookingDateMode === 'today' ? 'today' : bookingDateMode === 'custom' ? '' : String(bookingStatus || 'ALL').toLowerCase();
+    const selected = ['all','pending','confirmed','cancelled','today'].includes(currentValue) ? currentValue : '';
     document.querySelectorAll('[data-booking-filter]').forEach(button => {
       button.classList.toggle('sel', button.dataset.bookingFilter === selected);
     });
     const menu = document.getElementById('bookingStatusMenuList');
     if(!menu) return;
-    const menuOptions = ['today','pending','confirmed','cancelled'];
-    menu.innerHTML = menuOptions.map(value => `<button type="button" role="menuitem" class="${value === selected ? 'sel' : ''}" data-booking-filter="${value}">${value.charAt(0).toUpperCase() + value.slice(1)}</button>`).join('');
+    const counts = getLiveBookingCounts();
+    const menuOptions = [
+      { key: 'today', label: 'Today', count: counts.today },
+      { key: 'pending', label: 'Pending', count: counts.pending },
+      { key: 'confirmed', label: 'Confirmed', showCount: false },
+      { key: 'cancelled', label: 'Cancelled', showCount: false }
+    ];
+    menu.innerHTML = renderDropdownOptions(menuOptions, selected, 'data-booking-filter');
     syncMenuMargin(document.getElementById('bookingStatusMenu'));
   }
 
   function syncPaymentStatusOptions(){
-    const selected = paymentDateMode === 'today' ? 'today' : String(paymentStatus || 'all').toLowerCase();
+    const selected = paymentDateMode === 'today' ? 'today' : paymentDateMode === 'custom' ? '' : String(paymentStatus || 'all').toLowerCase();
     document.querySelectorAll('[data-payment-filter]').forEach(button => {
       button.classList.toggle('sel', button.dataset.paymentFilter === selected);
     });
     const menu = document.getElementById('paymentStatusMenuList');
     if(!menu) return;
-    const menuOptions = ['today','pending','confirmed','cancelled'];
-    menu.innerHTML = menuOptions.map(value => `<button type="button" role="menuitem" class="${value === selected ? 'sel' : ''}" data-payment-filter="${value}">${value.charAt(0).toUpperCase() + value.slice(1)}</button>`).join('');
+    const counts = getLivePaymentCounts();
+    const menuOptions = [
+      { key: 'today', label: 'Today', count: counts.today },
+      { key: 'confirmed', label: 'Confirmed', count: counts.confirmed },
+      { key: 'cancelled', label: 'Cancelled', count: counts.cancelled }
+    ];
+    menu.innerHTML = renderDropdownOptions(menuOptions, selected, 'data-payment-filter');
     syncMenuMargin(document.getElementById('paymentStatusMenu'));
   }
 
@@ -2897,6 +3264,7 @@
 
   function navigateDashboardCard(metric, page){
     dashboardCardFilterContext = {metric, page};
+    isNavigatedFromDashboardPending = (metric === 'pendingConf' && page === 'bookings');
     if(page === 'bookings'){
       bookingStatus = metric === 'pendingConf' ? 'PENDING' : metric === 'completed' ? 'COMPLETED' : metric === 'cancelled' ? 'CANCELLED' : 'ALL';
       bookingDateMode = metric === 'today' ? 'today' : 'all';
@@ -3030,11 +3398,10 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
         <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeWhatsAppHtml(enquiry.email)}">${escapeWhatsAppHtml(enquiry.email)}</td>
         <td style="min-width:280px; max-width:420px; white-space:normal; word-break:break-word; line-height:1.45; font-size:12px;">${escapeWhatsAppHtml(enquiry.message)}</td>
         <td>${escapeWhatsAppHtml(formatDateDDMMYYYY(enquiry.createdAt))}</td>
-        <td>${escapeWhatsAppHtml(formatDateDDMMYYYY(enquiry.createdAt))}</td>
         <td><span class="badge ${isRead ? 'confirmed' : statusBadgeClass(enquiry.status)}">${escapeWhatsAppHtml(displayStatus)}</span></td>
         <td><div class="row-actions" onclick="event.stopPropagation()"><button onclick="viewWhatsAppDetails('${escapeWhatsAppHtml(enquiry._id)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>${readAction}<button onclick="markWhatsAppContacted('${escapeWhatsAppHtml(enquiry._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 10h8"/></svg></button><button class="danger" onclick="deleteWhatsApp('${escapeWhatsAppHtml(enquiry._id)}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button></div></td>
       </tr>`;
-    }).join('') : `<tr><td colspan="8" class="tbl-empty">${escapeWhatsAppHtml(message || 'No WhatsApp enquiries found')}</td></tr>`;
+    }).join('') : `<tr><td colspan="7" class="tbl-empty">${escapeWhatsAppHtml(message || 'No WhatsApp enquiries found')}</td></tr>`;
     const targetEl = document.getElementById('whatsappBody');
     if (targetEl && targetEl.innerHTML !== targetHtml) targetEl.innerHTML = targetHtml;
   }
@@ -3112,7 +3479,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   async function loadAdminWhatsApp(isBackground = false){
     const waBody = document.getElementById('whatsappBody');
     if(!liveWhatsAppLoaded && !isBackground && waBody && !liveWhatsApp.length){
-      waBody.innerHTML = '<tr><td colspan="8" class="tbl-empty">Loading WhatsApp enquiries...</td></tr>';
+      waBody.innerHTML = '<tr><td colspan="7" class="tbl-empty">Loading WhatsApp enquiries...</td></tr>';
     }
     try {
       const response = await fetch('/api/admin/whatsapp-enquiries', {credentials:'include'});
@@ -3121,9 +3488,9 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       liveWhatsAppLoaded = true;
       liveWhatsApp = Array.isArray(data.enquiries) ? data.enquiries.map(enquiry => ({...enquiry, read: enquiry.read === true || locallyReadWhatsApp.has(String(enquiry._id))})) : [];
       renderWhatsApp();
-      const newWaCount = liveWhatsApp.filter(w => !w.read && String(w.status || '').toLowerCase() !== 'contacted' && String(w.status || '').toLowerCase() !== 'resolved').length;
       const waNotice = document.getElementById('whatsappNavNotice');
-      if(waNotice){ waNotice.textContent = newWaCount > 99 ? '99+' : (newWaCount > 0 ? String(newWaCount) : ''); waNotice.classList.toggle('show', newWaCount > 0); }
+      if(waNotice){ waNotice.textContent = ''; waNotice.classList.remove('show'); }
+      syncWhatsAppFilters();
     } catch(error) {
       if(!isBackground){
         liveWhatsApp = [];
@@ -3202,9 +3569,9 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       liveEnquiriesLoaded = true;
       liveEnquiries = Array.isArray(data.enquiries) ? data.enquiries.map(enquiry => ({...enquiry, read: enquiry.read === true || locallyReadEnquiries.has(String(enquiry._id))})) : [];
       renderEnquiries();
-      const newEnqCount = liveEnquiries.filter(e => !e.read && String(e.status || '').toLowerCase() !== 'contacted' && String(e.status || '').toLowerCase() !== 'closed').length;
       const enqNotice = document.getElementById('enquiriesNavNotice');
-      if(enqNotice){ enqNotice.textContent = newEnqCount > 99 ? '99+' : (newEnqCount > 0 ? String(newEnqCount) : ''); enqNotice.classList.toggle('show', newEnqCount > 0); }
+      if(enqNotice){ enqNotice.textContent = ''; enqNotice.classList.remove('show'); }
+      syncEnquiryFilters();
     } catch(error) {
       if(requestId !== enquiryRequestId) return;
       if(!isBackground){
@@ -3289,12 +3656,19 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     } catch(error) { showToast(error.message); }
   }
   function syncEnquiryFilters(){
-    const selected = enquiryFilter || 'all';
+    const currentValue = enquiryDateMode === 'today' ? 'today' : enquiryDateMode === 'custom' ? '' : enquiryFilter || 'all';
+    const selected = ['all','today','contacted','read','unread'].includes(currentValue) ? currentValue : '';
     document.querySelectorAll('[data-enquiry-filter]').forEach(button => button.classList.toggle('sel', button.dataset.enquiryFilter === selected));
     const menu = document.getElementById('enquiryStatusMenuList');
     if(!menu) return;
-    const options = ['today','contacted','read','unread'];
-    menu.innerHTML = options.map(value => `<button type="button" role="menuitem" class="${value === selected ? 'sel' : ''}" data-enquiry-filter="${value}">${value.charAt(0).toUpperCase() + value.slice(1)}</button>`).join('');
+    const counts = getLiveEnquiryCounts();
+    const options = [
+      { key: 'today', label: 'Today', count: counts.today },
+      { key: 'contacted', label: 'Contacted', count: counts.contacted },
+      { key: 'read', label: 'Read', count: counts.read },
+      { key: 'unread', label: 'Unread', count: counts.unread }
+    ];
+    menu.innerHTML = renderDropdownOptions(options, selected, 'data-enquiry-filter');
     syncMenuMargin(document.getElementById('enquiryStatusMenu'));
   }
   function applyEnquiryFilter(value){
@@ -3302,7 +3676,11 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     enquiryStatus = value === 'contacted' ? 'contacted' : 'all';
     enquiryReadMode = value === 'read' || value === 'unread' ? value : 'all';
     enquiryDateMode = value === 'today' ? 'today' : 'all';
-    if(value === 'today') document.getElementById('enquiryDate').value = '';
+    const eDate = document.getElementById('enquiryDate');
+    if(eDate) eDate.value = '';
+    const eNative = document.getElementById('enquiryDate-picker');
+    if(eNative) eNative.value = '';
+    syncDateDisplay();
     syncEnquiryFilters();
     loadAdminEnquiries();
   }
@@ -3311,12 +3689,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     if(filterButton) applyEnquiryFilter(filterButton.dataset.enquiryFilter);
   });
   document.getElementById('enquiryStatusMenuButton').addEventListener('click', event => {
-    event.stopPropagation();
-    const menu = document.getElementById('enquiryStatusMenu');
-    const button = document.getElementById('enquiryStatusMenuButton');
-    const isOpen = menu.classList.toggle('open');
-    button.setAttribute('aria-expanded', String(isOpen));
-    syncMenuMargin(menu);
+    toggleNavDropdown('enquiryStatusMenu', 'enquiryStatusMenuButton', event);
   });
   document.getElementById('enquiryStatusMenuList').addEventListener('click', event => {
     event.stopPropagation();
@@ -3333,16 +3706,37 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   document.getElementById('enquiryExport').addEventListener('click', ()=>exportCsv(`extended-enquiries-${new Date().toISOString().slice(0,10)}.csv`, [{key:'id',label:'Enquiry ID'},{key:'mobile',label:'Mobile'},{key:'start',label:'Start Date'},{key:'end',label:'End Date'},{key:'preferred',label:'Preferred Time'},{key:'status',label:'Status'},{key:'summary',label:'Summary'}], enquiryRows().map(enquiry=>({id:enquiry._id,mobile:enquiry.mobile,start:enquiry.startDate,end:enquiry.endDate,preferred:enquiry.preferredTime,status:enquiry.status,summary:enquiry.summary}))));
   if(adminSessionReady) loadAdminEnquiries();
   function syncWhatsAppFilters(){
-    document.querySelectorAll('[data-wa-filter]').forEach(item=>item.classList.toggle('sel', item.dataset.waFilter === waFilter));
+    const currentValue = waDateMode === 'today' ? 'today' : waDateMode === 'custom' ? '' : waFilter || 'all';
+    const selected = ['all','today','contacted','read','unread'].includes(currentValue) ? currentValue : '';
+    document.querySelectorAll('[data-wa-filter]').forEach(item=>item.classList.toggle('sel', item.dataset.waFilter === selected));
     const menu = document.getElementById('whatsappStatusMenuList');
     if(menu) {
-      menu.innerHTML = ['today','contacted','read','unread'].map(value=>`<button type="button" role="menuitem" class="${value === waFilter ? 'sel' : ''}" data-wa-filter="${value}">${value.charAt(0).toUpperCase() + value.slice(1)}</button>`).join('');
+      const counts = getLiveWhatsAppCounts();
+      const options = [
+        { key: 'today', label: 'Today', count: counts.today },
+        { key: 'contacted', label: 'Contacted', count: counts.contacted },
+        { key: 'read', label: 'Read', count: counts.read },
+        { key: 'unread', label: 'Unread', count: counts.unread }
+      ];
+      menu.innerHTML = renderDropdownOptions(options, selected, 'data-wa-filter');
       syncMenuMargin(document.getElementById('whatsappStatusMenu'));
     }
   }
-  function applyWhatsAppFilter(value){ waFilter = value; waStatus = value === 'contacted' ? 'contacted' : 'all'; waReadMode = value === 'read' || value === 'unread' ? value : 'all'; waDateMode = value === 'today' ? 'today' : 'all'; if(value === 'today') document.getElementById('whatsappDate').value = ''; syncWhatsAppFilters(); renderWhatsApp(); }
+  function applyWhatsAppFilter(value){
+    waFilter = value;
+    waStatus = value === 'contacted' ? 'contacted' : 'all';
+    waReadMode = value === 'read' || value === 'unread' ? value : 'all';
+    waDateMode = value === 'today' ? 'today' : 'all';
+    const wDate = document.getElementById('whatsappDate');
+    if(wDate) wDate.value = '';
+    const wNative = document.getElementById('whatsappDate-picker');
+    if(wNative) wNative.value = '';
+    syncDateDisplay();
+    syncWhatsAppFilters();
+    renderWhatsApp();
+  }
   document.getElementById('page-whatsapp').addEventListener('click', event=>{ const button = event.target.closest('[data-wa-filter]'); if(button) applyWhatsAppFilter(button.dataset.waFilter); });
-  document.getElementById('whatsappStatusMenuButton').addEventListener('click', event=>{ event.stopPropagation(); const menu=document.getElementById('whatsappStatusMenu'); const button=document.getElementById('whatsappStatusMenuButton'); const open=menu.classList.toggle('open'); button.setAttribute('aria-expanded', String(open)); syncMenuMargin(menu); });
+  document.getElementById('whatsappStatusMenuButton').addEventListener('click', event=>{ toggleNavDropdown('whatsappStatusMenu', 'whatsappStatusMenuButton', event); });
   document.getElementById('whatsappStatusMenuList').addEventListener('click', event=>{
     event.stopPropagation();
     const button = event.target.closest('[data-wa-filter]');
@@ -3360,7 +3754,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   syncWhatsAppFilters();
   document.getElementById('whatsappExport').addEventListener('click', ()=>{    const rows = waRows();
     if(!rows.length){ showToast('No data available to export'); return; }
-    exportCsv(`turfon24-whatsapp-enquiries-${new Date().toISOString().slice(0,10)}.csv`, [{key:'name',label:'Name'},{key:'phone',label:'Phone'},{key:'email',label:'Email'},{key:'message',label:'Message'},{key:'enquiryDate',label:'Enquiry Date'},{key:'received',label:'Received'},{key:'status',label:'Status'}], rows.map(w=>({name:w.name,phone:w.mobile,email:w.email,message:w.message,enquiryDate:formatDateDDMMYYYY(w.createdAt),received:w.createdAt,status:w.status})));
+    exportCsv(`turfon24-whatsapp-enquiries-${new Date().toISOString().slice(0,10)}.csv`, [{key:'name',label:'Name'},{key:'phone',label:'Phone'},{key:'email',label:'Email'},{key:'message',label:'Message'},{key:'enquiryDate',label:'Enquiry Date'},{key:'status',label:'Status'}], rows.map(w=>({name:w.name,phone:w.mobile,email:w.email,message:w.message,enquiryDate:formatDateDDMMYYYY(w.createdAt),status:w.status})));
   });
   if(adminSessionReady) loadAdminWhatsApp();
 
@@ -3405,11 +3799,10 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeBookingHtml(c.email)}">${escapeBookingHtml(c.email)}</td>
       <td style="min-width:280px; max-width:420px; white-space:normal; word-break:break-word; line-height:1.45; font-size:12px;">${escapeBookingHtml(message)}</td>
       <td>${escapeBookingHtml(formatDateDDMMYYYY(c.createdAt))}</td>
-      <td>${escapeBookingHtml(formatDateDDMMYYYY(c.updatedAt))}</td>
       <td><span class="badge ${isRead ? 'confirmed' : statusBadgeClass(c.status)}">${escapeBookingHtml(displayStatus)}</span></td>
       <td><div class="row-actions" onclick="event.stopPropagation()"><button onclick="viewChatbotDetails('${escapeBookingHtml(c._id)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>${readAction}<button onclick="markChatbotContacted('${escapeBookingHtml(c._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 10h8"/></svg></button><button class="danger" onclick="deleteChatbot('${escapeBookingHtml(c._id)}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button></div></td>
     </tr>`;
-    }).join('') : `<tr><td colspan="8" class="tbl-empty">${chatStatus === 'all' ? 'No chatbot conversations found' : 'No ' + (chatStatus === 'new' ? 'New' : chatStatus === 'contacted' ? 'Contacted' : 'Resolved') + ' conversations found'}</td></tr>`;
+    }).join('') : `<tr><td colspan="7" class="tbl-empty">${chatStatus === 'all' ? 'No chatbot conversations found' : 'No ' + (chatStatus === 'new' ? 'New' : chatStatus === 'contacted' ? 'Contacted' : 'Resolved') + ' conversations found'}</td></tr>`;
     const targetEl = document.getElementById('chatbotBody');
     if (targetEl && targetEl.innerHTML !== targetHtml) targetEl.innerHTML = targetHtml;
   }
@@ -3487,7 +3880,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   async function loadAdminChatbot(isBackground = false){
     const chatBody = document.getElementById('chatbotBody');
     if(!liveChatbotLoaded && !isBackground && chatBody && !liveChatbot.length){
-      chatBody.innerHTML = '<tr><td colspan="8" class="tbl-empty">Loading chatbot conversations...</td></tr>';
+      chatBody.innerHTML = '<tr><td colspan="7" class="tbl-empty">Loading chatbot conversations...</td></tr>';
     }
     try {
       const response = await fetch('/api/admin/chatbot-conversations', {credentials:'include'});
@@ -3496,9 +3889,9 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       liveChatbotLoaded = true;
       liveChatbot = Array.isArray(data.conversations) ? data.conversations.map(conversation => ({...conversation, read: conversation.read === true || locallyReadChatbot.has(String(conversation._id))})) : [];
       renderChatbot();
-      const newChatCount = liveChatbot.filter(c => !c.read && String(c.status || '').toLowerCase() !== 'contacted' && String(c.status || '').toLowerCase() !== 'resolved').length;
       const chatNotice = document.getElementById('chatbotNavNotice');
-      if(chatNotice){ chatNotice.textContent = newChatCount > 99 ? '99+' : (newChatCount > 0 ? String(newChatCount) : ''); chatNotice.classList.toggle('show', newChatCount > 0); }
+      if(chatNotice){ chatNotice.textContent = ''; chatNotice.classList.remove('show'); }
+      syncChatbotFilters();
     } catch(error) {
       if(!isBackground){
         liveChatbot = [];
@@ -3508,16 +3901,37 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     }
   }
   function syncChatbotFilters(){
-    document.querySelectorAll('[data-chat-filter]').forEach(item=>item.classList.toggle('sel', item.dataset.chatFilter === chatFilter));
+    const currentValue = chatDateMode === 'today' ? 'today' : chatDateMode === 'custom' ? '' : chatFilter || 'all';
+    const selected = ['all','today','contacted','read','unread'].includes(currentValue) ? currentValue : '';
+    document.querySelectorAll('[data-chat-filter]').forEach(item=>item.classList.toggle('sel', item.dataset.chatFilter === selected));
     const menu = document.getElementById('chatbotStatusMenuList');
     if(menu) {
-      menu.innerHTML = ['today','contacted','read','unread'].map(value=>`<button type="button" role="menuitem" class="${value === chatFilter ? 'sel' : ''}" data-chat-filter="${value}">${value.charAt(0).toUpperCase() + value.slice(1)}</button>`).join('');
+      const counts = getLiveChatbotCounts();
+      const options = [
+        { key: 'today', label: 'Today', count: counts.today },
+        { key: 'contacted', label: 'Contacted', count: counts.contacted },
+        { key: 'read', label: 'Read', count: counts.read },
+        { key: 'unread', label: 'Unread', count: counts.unread }
+      ];
+      menu.innerHTML = renderDropdownOptions(options, selected, 'data-chat-filter');
       syncMenuMargin(document.getElementById('chatbotStatusMenu'));
     }
   }
-  function applyChatbotFilter(value){ chatFilter = value; chatStatus = value === 'contacted' ? 'contacted' : 'all'; chatReadMode = value === 'read' || value === 'unread' ? value : 'all'; chatDateMode = value === 'today' ? 'today' : 'all'; if(value === 'today') document.getElementById('chatDate').value = ''; syncChatbotFilters(); renderChatbot(); }
+  function applyChatbotFilter(value){
+    chatFilter = value;
+    chatStatus = value === 'contacted' ? 'contacted' : 'all';
+    chatReadMode = value === 'read' || value === 'unread' ? value : 'all';
+    chatDateMode = value === 'today' ? 'today' : 'all';
+    const cDate = document.getElementById('chatDate');
+    if(cDate) cDate.value = '';
+    const cNative = document.getElementById('chatDate-picker');
+    if(cNative) cNative.value = '';
+    syncDateDisplay();
+    syncChatbotFilters();
+    renderChatbot();
+  }
   document.getElementById('page-chatbot').addEventListener('click', event=>{ const button = event.target.closest('[data-chat-filter]'); if(button) applyChatbotFilter(button.dataset.chatFilter); });
-  document.getElementById('chatbotStatusMenuButton').addEventListener('click', event=>{ event.stopPropagation(); const menu=document.getElementById('chatbotStatusMenu'); const button=document.getElementById('chatbotStatusMenuButton'); const open=menu.classList.toggle('open'); button.setAttribute('aria-expanded', String(open)); syncMenuMargin(menu); });
+  document.getElementById('chatbotStatusMenuButton').addEventListener('click', event=>{ toggleNavDropdown('chatbotStatusMenu', 'chatbotStatusMenuButton', event); });
   document.getElementById('chatbotStatusMenuList').addEventListener('click', event => {
     event.stopPropagation();
     const button = event.target.closest('[data-chat-filter]');
@@ -3544,7 +3958,6 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
         {key:'email', label:'Email'},
         {key:'message', label:'Questions asked'},
         {key:'enquiryDate', label:'Enquiry date'},
-        {key:'updatedAt', label:'Date'},
         {key:'status', label:'Status'}
       ], rows.map(c=>({
         name: c.name || '—',
@@ -3552,7 +3965,6 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
         email: c.email || '—',
         message: chatMessage(c),
         enquiryDate: formatDateDDMMYYYY(c.createdAt),
-        updatedAt: formatDateDDMMYYYY(c.updatedAt),
         status: displayEnquiryStatus(c.status)
       })));
     });
@@ -3654,26 +4066,36 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const duration = escapeBookingHtml(`${booking.duration || 0} hr${Number(booking.duration) === 1 ? '' : 's'}`);
     const amount = `₹${Number(booking.amount || 0).toLocaleString('en-IN')}`;
 
-    const rowClass = isPending ? 'booking-row-pending-new' : isConfirmed ? 'booking-row-confirmed-old' : 'booking-row-cancelled';
-    const idDisplay = isPending 
+    const isNormalPending = isPending && (bookingStatus === 'PENDING' || isNavigatedFromDashboardPending);
+
+    const rowClass = (isPending && !isNormalPending)
+      ? 'booking-row-pending-new'
+      : isConfirmed
+        ? 'booking-row-confirmed-old'
+        : (isPending && isNormalPending)
+          ? ''
+          : 'booking-row-cancelled';
+    const idDisplay = (isPending && !isNormalPending) 
       ? `<div style="display:flex; align-items:center; gap:6px;"><span class="mono">${id}</span><span class="pill-new-booking">NEW</span></div>`
       : `<span class="mono">${id}</span>`;
 
     const statusBadge = isPending
-      ? `<span class="badge pending pulse-badge"><span class="badge-dot-amber"></span>Pending</span>`
+      ? (isNormalPending
+          ? `<span class="badge pending">Pending</span>`
+          : `<span class="badge pending pulse-badge"><span class="badge-dot-amber"></span>Pending</span>`)
       : isConfirmed
         ? `<span class="badge confirmed"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12.5l5 5L20 6"/></svg>Confirmed</span>`
         : `<span class="badge cancelled">${bookingStatusLabels[status] || escapeBookingHtml(status)}</span>`;
 
     const paymentBadge = `<span class="badge ${payment === 'CONFIRMED' ? 'confirmed' : payment === 'CANCELLED' ? 'cancelled' : 'pending'}">${paymentStatusLabels[payment] || escapeBookingHtml(payment)}</span>`;
 
-    const bookedOnDisplay = isPending
+    const bookedOnDisplay = (isPending && !isNormalPending)
       ? `<span class="booked-on-pill new">${escapeBookingHtml(bookingCreatedDate)}</span>`
       : `<span class="booked-on-pill old">${escapeBookingHtml(bookingCreatedDate)}</span>`;
 
     const confirmActionBtn = isPending
       ? `<button class="btn-confirm-highlight" onclick="confirmBookingStatus('${id}')" title="Confirm new booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12.5l5 5L20 6"/></svg></button>`
-      : `<button onclick="confirmBookingStatus('${id}')" title="Confirm booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button>`;
+      : '';
 
     return `<tr class="${rowClass}" onclick="openBookingDetail('${id}')" style="cursor:pointer;"><td class="mono">${idDisplay}</td><td><strong>${customer}</strong></td><td>${bookedOnDisplay}</td><td class="mono">${mobile}</td><td>${date}</td><td>${slot}</td><td>${time}</td><td>${slotDurations || duration}</td><td class="mono"><strong>${amount}</strong></td><td>${paymentBadge}</td><td>${statusBadge}</td><td><div class="row-actions" onclick="event.stopPropagation()">${confirmActionBtn}<button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="danger" onclick="deleteBooking('${id}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td></tr>`;
   }
@@ -3805,9 +4227,9 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       liveBookingsLoaded = true;
       liveBookings = Array.isArray(data.bookings) ? data.bookings : [];
       renderBookings();
-      const pendingCount = liveBookings.filter(b => effectiveBookingStatus(b) === 'PENDING').length;
       const bookNotice = document.getElementById('bookingsNavNotice');
-      if(bookNotice){ bookNotice.textContent = pendingCount > 99 ? '99+' : (pendingCount > 0 ? String(pendingCount) : ''); bookNotice.classList.toggle('show', pendingCount > 0); }
+      if(bookNotice){ bookNotice.textContent = ''; bookNotice.classList.remove('show'); }
+      syncBookingStatusOptions();
     } catch(error) {
       if(requestId !== bookingRequestId) return;
       if(!isBackground){
@@ -3834,7 +4256,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       if (modalTitle) modalTitle.textContent = 'Booking details';
       document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Booking ID</span><span class="mono">${escapeBookingHtml(booking._id)}</span></div><div class="detail-row"><span>Customer</span><span>${escapeBookingHtml(booking.name || booking.customerName || '—')}</span></div><div class="detail-row"><span>Mobile</span><span class="mono"><a href="tel:${escapeBookingHtml(booking.mobile)}" style="color:var(--neon); text-decoration:none;">${escapeBookingHtml(booking.mobile)}</a></span></div><div class="detail-row"><span>Date</span><span>${escapeBookingHtml(bookingDateLabel(booking.date))}</span></div><div class="detail-row"><span>Slots</span><span>${detailSlotHtml}</span></div><div class="detail-row"><span>Time slot</span><span>${escapeBookingHtml(booking.time)}</span></div><div class="detail-row"><span>Duration</span><span>${escapeBookingHtml(booking.duration)} hrs</span></div><div class="detail-row"><span>Amount</span><span class="mono" style="color:var(--neon); font-size:15px; font-weight:700;">₹${Number(booking.amount || 0).toLocaleString('en-IN')}</span></div><div class="detail-row"><span>Payment status</span><span class="badge verified">${escapeBookingHtml(paymentStatusLabels[paymentStatus] || paymentStatus)}</span></div><div class="detail-row"><span>Payment reference</span><span class="mono">${escapeBookingHtml(booking.paymentReference)}</span></div><div class="detail-row"><span>Booking status</span><span class="badge ${status.toLowerCase()}">${escapeBookingHtml(bookingStatusLabels[status] || status)}</span></div><div class="detail-row"><span>Total bookings</span><span>${escapeBookingHtml(customer.totalBookings ?? '—')}</span></div><div class="detail-row"><span>Total spent</span><span>₹${Number(customer.totalSpent || 0).toLocaleString('en-IN')}</span></div><div class="detail-row"><span>Payment method</span><span>${escapeBookingHtml(payment.method || '—')}</span></div>
       <div class="detail-modal-actions" style="margin-top:20px; display:flex; gap:8px; flex-wrap:wrap; border-top:1px solid rgba(255,255,255,0.08); padding-top:16px;">
-        <button type="button" class="btn btn-glow" style="flex:1; min-width:105px; padding:10px 14px; font-size:12.5px;" onclick="confirmBookingStatus('${escapeBookingHtml(booking._id)}'); closeModal('detailModal');">Confirm</button>
+        ${status !== 'CONFIRMED' ? `<button type="button" class="btn btn-glow" style="flex:1; min-width:105px; padding:10px 14px; font-size:12.5px;" onclick="confirmBookingStatus('${escapeBookingHtml(booking._id)}'); closeModal('detailModal');">Confirm</button>` : ''}
         <button type="button" class="btn btn-ghost" style="flex:1; min-width:95px; padding:10px 14px; font-size:12.5px; color:var(--red); border-color:rgba(255,107,107,0.4);" onclick="updateBookingStatus('${escapeBookingHtml(booking._id)}','CANCELLED'); closeModal('detailModal');">Cancel</button>
         <button type="button" class="btn btn-ghost" style="padding:10px 16px; font-size:12.5px;" onclick="closeModal('detailModal')">Close</button>
       </div>`;
@@ -3890,9 +4312,14 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     });
   }
   function applyBookingFilter(value){
+    isNavigatedFromDashboardPending = false;
     bookingStatus = value === 'today' ? 'ALL' : value ? String(value).toUpperCase() : 'ALL';
     bookingDateMode = value === 'today' ? 'today' : 'all';
-    if (value === 'today') document.getElementById('bookingDate').value = '';
+    const bDate = document.getElementById('bookingDate');
+    if (bDate) bDate.value = '';
+    const bPicker = document.getElementById('bookingDate-picker');
+    if (bPicker) bPicker.value = '';
+    syncDateDisplay();
     syncBookingFilters();
     syncBookingStatusOptions();
     loadAdminBookings();
@@ -3911,17 +4338,14 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     }
   });
   document.getElementById('bookingStatusMenuButton').addEventListener('click', (event) => {
-    event.stopPropagation();
-    const menu = document.getElementById('bookingStatusMenu');
-    const button = document.getElementById('bookingStatusMenuButton');
-    const isOpen = menu.classList.toggle('open');
-    button.setAttribute('aria-expanded', String(isOpen));
-    syncMenuMargin(menu);
+    toggleNavDropdown('bookingStatusMenu', 'bookingStatusMenuButton', event);
   });
   document.addEventListener('click', (event) => {
     [['bookingStatusMenu', 'bookingStatusMenuButton'], ['paymentStatusMenu', 'paymentStatusMenuButton'], ['enquiryStatusMenu', 'enquiryStatusMenuButton'], ['whatsappStatusMenu', 'whatsappStatusMenuButton'], ['chatbotStatusMenu', 'chatbotStatusMenuButton']].forEach(([menuId, buttonId]) => {
       const menu = document.getElementById(menuId);
-      if(!menu || menu.contains(event.target)) return;
+      if(!menu) return;
+      const navItem = menu.closest('.nav-item');
+      if(navItem && navItem.contains(event.target)) return;
       menu.classList.remove('open');
       syncMenuMargin(menu);
       document.getElementById(buttonId)?.setAttribute('aria-expanded', 'false');
@@ -3957,10 +4381,24 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const key = parsed.getFullYear() + '-' + String(parsed.getMonth() + 1).padStart(2, '0') + '-' + String(parsed.getDate()).padStart(2, '0');
     return key === localTodayKey();
   }
+  function paymentMatchesDate(payment){
+    if (paymentDateMode === 'all') return true;
+    const dateValue = payment?.paidAt || payment?.createdAt;
+    if(!dateValue) return false;
+    const parsed = new Date(dateValue);
+    if(Number.isNaN(parsed.getTime())) return false;
+    const key = parsed.getFullYear() + '-' + String(parsed.getMonth() + 1).padStart(2, '0') + '-' + String(parsed.getDate()).padStart(2, '0');
+    if (paymentDateMode === 'today') return key === localTodayKey();
+    if (paymentDateMode === 'custom') {
+      const selected = document.getElementById('paymentDate')?.value || '';
+      return Boolean(selected) && key === selected;
+    }
+    return true;
+  }
   function updatePaymentAmountLabel(){
     const label = document.getElementById('paymentsAmountLabel');
     if(!label) return;
-    label.textContent = paymentDateMode === 'today' ? "Today's amount received" : 'Total amount received';
+    label.textContent = paymentDateMode === 'today' ? "Today's amount received" : (paymentDateMode === 'custom' ? "Selected date amount received" : 'Total amount received');
   }
   function parsePaymentAmount(val){
     if(typeof val === 'number') return Number.isFinite(val) ? val : 0;
@@ -3993,8 +4431,9 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       if(!response.ok) throw new Error(data.message || 'Unable to load payment records.');
       if(requestId !== paymentRequestId) return;
       payments = Array.isArray(data.sessions) ? data.sessions.slice().sort((first, second) => (Date.parse(second.createdAt || second.paidAt || '') || 0) - (Date.parse(first.createdAt || first.paidAt || '') || 0)) : [];
+      syncPaymentStatusOptions();
 
-      const rows = payments.filter(payment => paymentMatchesStatus(payment) && (paymentDateMode !== 'today' || paymentIsToday(payment)));
+      const rows = payments.filter(payment => paymentMatchesStatus(payment) && paymentMatchesDate(payment));
       document.getElementById('paymentsBody').innerHTML = rows.length ? rows.map(p=>{
         const booking = p.bookingData || {};
         const name = paymentValue(booking, ['name','customerName']);
@@ -4021,7 +4460,11 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       document.getElementById('paymentsTotalCount').textContent = String(confirmedSessions.length);
       document.getElementById('paymentsTotalAmount').textContent = '₹' + totalAmount.toLocaleString('en-IN');
       document.getElementById('paymentsCountLabel').textContent = 'Payment sessions';
-      document.getElementById('paymentsFoot').textContent = 'Showing payment sessions from the server';
+      document.getElementById('paymentsFoot').textContent = paymentDateMode === 'today'
+        ? "Showing today's received payments"
+        : (paymentDateMode === 'custom' && document.getElementById('paymentDate')?.value)
+          ? `Showing received payments for ${formatDisplayDate(document.getElementById('paymentDate')?.value)}`
+          : 'Showing payment sessions from the server';
     } catch (error) {
       if(requestId !== paymentRequestId) return;
       document.getElementById('paymentsBody').innerHTML = `<tr><td colspan="8" class="tbl-empty">${escapePaymentHtml(error.message)}</td></tr>`;
@@ -4062,10 +4505,22 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       paymentStatus = value;
       paymentDateMode = 'all';
     }
+    const pDate = document.getElementById('paymentDate');
+    if (pDate) pDate.value = '';
+    const pPicker = document.getElementById('paymentDate-picker');
+    if (pPicker) pPicker.value = '';
+    syncDateDisplay();
     updatePaymentAmountLabel();
     syncPaymentStatusOptions();
     renderPayments();
   }
+  document.getElementById('paymentDate')?.addEventListener('change', () => {
+    paymentDateMode = 'custom';
+    paymentStatus = 'all';
+    updatePaymentAmountLabel();
+    syncPaymentStatusOptions();
+    renderPayments();
+  });
   document.getElementById('paymentStatusFilters').addEventListener('click', (event) => {
     const filterButton = event.target.closest('[data-payment-filter]');
     if(filterButton) applyPaymentFilter(filterButton.dataset.paymentFilter);
@@ -4080,12 +4535,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     }
   });
   document.getElementById('paymentStatusMenuButton').addEventListener('click', (event) => {
-    event.stopPropagation();
-    const menu = document.getElementById('paymentStatusMenu');
-    const button = document.getElementById('paymentStatusMenuButton');
-    const isOpen = menu.classList.toggle('open');
-    button.setAttribute('aria-expanded', String(isOpen));
-    syncMenuMargin(menu);
+    toggleNavDropdown('paymentStatusMenu', 'paymentStatusMenuButton', event);
   });
   syncPaymentStatusOptions();
   document.getElementById('paymentSearch').addEventListener('input', renderPayments);
