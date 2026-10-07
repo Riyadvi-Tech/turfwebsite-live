@@ -308,7 +308,7 @@
   .dist-card:hover{transform:translateY(-1px);}
   .dist-card.dist-pending{
     border:1px solid rgba(245,184,65,0.35);
-    background:linear-gradient(135deg,rgba(245,184,65,0.08) 0%,rgba(20,29,25,0.6) 100%);
+    background:rgba(20,29,25,0.6);
   }
   .dist-card.dist-pending:hover{
     border-color:var(--amber);
@@ -365,29 +365,118 @@
   .s-dot.red{background:var(--red);}
   .s-dot.pulse{animation:radarPing2 1.6s ease-in-out infinite;}
 
+  /* Separate Box Cards for Bookings */
+  .bookings-cards-wrap{
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+  }
+  .booking-box-card{
+    background:var(--glass);
+    border:1px solid var(--border);
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
+    transition:border-color .2s ease;
+  }
+  .booking-box-card.pending-box-card,
+  .booking-box-card.confirmed-box-card,
+  .booking-box-card.cancelled-box-card{
+    border-color:var(--border);
+    background:var(--glass);
+  }
+  .booking-box-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:13px 18px;
+    background:rgba(15,22,19,0.95);
+    border-bottom:1px solid var(--border);
+  }
+  .booking-box-card.pending-box-card .booking-box-header,
+  .booking-box-card.confirmed-box-card .booking-box-header,
+  .booking-box-card.cancelled-box-card .booking-box-header{
+    border-bottom-color:var(--border);
+  }
+  .box-header-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:11.5px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+  }
+  .box-header-title strong{font-weight:700;}
+  .pending-box-card .box-header-title strong{color:var(--amber);}
+  .confirmed-box-card .box-header-title strong{color:var(--neon);}
+  .cancelled-box-card .box-header-title strong{color:var(--red);}
+  .box-badge{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:12px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .box-badge.amber{
+    background:rgba(245,184,65,0.2);
+    color:var(--amber);
+    border:1px solid rgba(245,184,65,0.35);
+  }
+  .box-badge.green{
+    background:rgba(57,255,122,0.18);
+    color:var(--neon);
+    border:1px solid rgba(57,255,122,0.3);
+  }
+  .box-badge.red{
+    background:rgba(255,107,107,0.18);
+    color:var(--red);
+    border:1px solid rgba(255,107,107,0.3);
+  }
+  .box-tagline{
+    font-size:10px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    padding:2px 7px;
+    border-radius:4px;
+  }
+  .box-tagline.amber{
+    background:rgba(245,184,65,0.15);
+    color:var(--amber);
+    border:1px solid rgba(245,184,65,0.3);
+  }
+  .booking-box-card .table-wrap{
+    border:none;
+    border-radius:0;
+    background:transparent;
+  }
+
   /* Booking Row Styling Distinction */
   tr.booking-row-pending-new{
-    background:linear-gradient(90deg, rgba(245,184,65,0.12) 0%, rgba(245,184,65,0.02) 100%) !important;
-    border-left:4px solid var(--amber) !important;
+    background:transparent !important;
+    border-left:none !important;
   }
   tr.booking-row-pending-new:hover{
-    background:linear-gradient(90deg, rgba(245,184,65,0.2) 0%, rgba(245,184,65,0.05) 100%) !important;
+    background:rgba(255,255,255,0.03) !important;
   }
   tr.booking-row-confirmed-old{
-    border-left:4px solid rgba(57,255,122,0.35) !important;
-    background:rgba(255,255,255,0.015);
+    border-left:none !important;
+    background:transparent;
   }
   tr.booking-row-confirmed-old:hover{
-    background:rgba(57,255,122,0.04) !important;
+    background:rgba(255,255,255,0.03) !important;
   }
 
   /* Tags & Badges */
-  .pill-new-booking{display:inline-block; padding:2px 6px; border-radius:4px; background:var(--amber); color:#000; font-family:'Space Grotesk',sans-serif; font-size:9px; font-weight:800; letter-spacing:0.06em; box-shadow:0 0 8px rgba(245,184,65,0.5); animation:pulseBadge 2s infinite;}
-  .badge-dot-amber{display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--amber); box-shadow:0 0 6px var(--amber); margin-right:5px; animation:radarPing2 1.5s ease-in-out infinite;}
-  .badge.pending.pulse-badge{background:rgba(245,184,65,0.16); border:1px solid rgba(245,184,65,0.4); color:var(--amber); font-weight:600;}
-  .booked-on-pill{font-family:'JetBrains Mono',monospace; font-size:11px;}
-  .booked-on-pill.new{color:var(--amber); font-weight:600;}
-  .booked-on-pill.old{color:var(--muted);}
+  .pill-new-booking{display:none !important;}
+  .badge-dot-amber{display:none !important;}
+  .booked-on-pill{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted) !important;}
+  .booked-on-pill.new{color:var(--muted) !important; font-weight:normal !important;}
+  .booked-on-pill.old{color:var(--muted) !important;}
   .btn-confirm-highlight{
     width:28px !important;
     height:28px !important;
@@ -765,27 +854,35 @@
   #page-bookings th:last-child, #page-bookings td:last-child{min-width:145px; width:145px; padding-right:16px;}
   #page-bookings .row-actions{min-width:130px; display:flex; align-items:center; gap:6px; white-space:nowrap;}
   #page-enquiries .table-wrap{overflow-x:auto; overflow-y:hidden;}
-  #page-enquiries table{min-width:1440px;}
-  #page-enquiries th:nth-child(1), #page-enquiries td:nth-child(1){min-width:110px;}
-  #page-enquiries th:nth-child(2), #page-enquiries td:nth-child(2){min-width:125px;}
+  #page-enquiries table{min-width:var(--enq-tbl-min-width, 1020px); transition:min-width .2s ease;}
+  #page-enquiries th:nth-child(1), #page-enquiries td:nth-child(1){min-width:100px; width:1%; white-space:nowrap;}
+  #page-enquiries th:nth-child(2), #page-enquiries td:nth-child(2){min-width:95px; width:1%; white-space:nowrap;}
   #page-enquiries th:nth-child(3), #page-enquiries td:nth-child(3){min-width:110px;}
-  #page-enquiries th:nth-child(4), #page-enquiries td:nth-child(4){min-width:110px;}
-  #page-enquiries th:nth-child(5), #page-enquiries td:nth-child(5){min-width:110px;}
-  #page-enquiries th:nth-child(6), #page-enquiries td:nth-child(6){min-width:105px;}
-  #page-enquiries th:nth-child(7), #page-enquiries td:nth-child(7){min-width:105px;}
-  #page-enquiries th:nth-child(8), #page-enquiries td:nth-child(8){min-width:60px;}
-  #page-enquiries th:nth-child(9), #page-enquiries td:nth-child(9){min-width:120px;}
-  #page-enquiries th:nth-child(10), #page-enquiries td:nth-child(10), #page-enquiries .enquiry-message-cell{
-    min-width:320px;
-    max-width:500px;
-    width:380px;
+  #page-enquiries th:nth-child(4), #page-enquiries td:nth-child(4){min-width:105px; width:1%; white-space:nowrap;}
+  #page-enquiries th:nth-child(5), #page-enquiries td:nth-child(5){min-width:95px; width:1%; white-space:nowrap;}
+  #page-enquiries th:nth-child(6), #page-enquiries td:nth-child(6){min-width:95px; width:1%; white-space:nowrap;}
+  #page-enquiries th:nth-child(7), #page-enquiries td:nth-child(7){min-width:55px; width:1%; text-align:center;}
+  #page-enquiries th:nth-child(8), #page-enquiries td:nth-child(8){min-width:90px; width:1%;}
+  #page-enquiries th:nth-child(9), #page-enquiries td:nth-child(9), #page-enquiries .enquiry-message-cell{
+    width:var(--enq-msg-width, auto);
+    min-width:var(--enq-msg-min-width, 85px);
+    max-width:480px;
     white-space:normal;
     word-break:break-word;
-    line-height:1.55;
+    line-height:1.45;
+    transition:width .2s ease, min-width .2s ease;
   }
-  #page-enquiries th:nth-child(11), #page-enquiries td:nth-child(11){min-width:100px;}
-  #page-enquiries th:last-child, #page-enquiries td:last-child{min-width:128px; padding-right:20px;}
-  #page-enquiries .row-actions{min-width:120px; white-space:nowrap;}
+  #page-enquiries table[data-msg-mode="none"] th:nth-child(9),
+  #page-enquiries table[data-msg-mode="none"] td:nth-child(9),
+  #page-enquiries table[data-msg-mode="none"] .enquiry-message-cell{
+    width:1% !important;
+    min-width:80px !important;
+    max-width:95px !important;
+    white-space:nowrap !important;
+  }
+  #page-enquiries th:nth-child(10), #page-enquiries td:nth-child(10){min-width:90px; width:1%; white-space:nowrap;}
+  #page-enquiries th:last-child, #page-enquiries td:last-child{min-width:120px; width:1%; padding-right:16px;}
+  #page-enquiries .row-actions{min-width:110px; white-space:nowrap;}
   #page-enquiries .row-actions button[title^="View"], #page-whatsapp .row-actions button[title^="View"], #page-chatbot .row-actions button[title^="View"]{order:4;}
   #page-payments .table-wrap{overflow-x:auto; overflow-y:hidden;}
   #page-payments table{min-width:1040px;}
@@ -873,7 +970,7 @@
   .cal-cell.is-mixed-slot:hover{border-color:#C084FC; box-shadow:0 8px 24px rgba(168,85,247,0.18), 0 0 12px rgba(57,255,122,0.12);}
 
   /* Pending Day Card */
-  .cal-cell.is-pending{border-color:rgba(245,184,65,0.4); background:linear-gradient(180deg, rgba(245,184,65,0.08) 0%, rgba(15,22,19,0.92) 100%);}
+  .cal-cell.is-pending{border-color:rgba(245,184,65,0.4); background:rgba(15,22,19,0.92);}
   .cal-cell.is-pending:hover{border-color:#F5B841; box-shadow:0 8px 24px rgba(245,184,65,0.15);}
 
   /* Card Header: day number + weekday + slot tag */
@@ -1070,16 +1167,36 @@
 
   /* Desktop Only Message Section Refinements */
   @media (min-width: 1001px) {
-    #page-enquiries table{min-width:1440px;}
-    #page-enquiries th:nth-child(10),
-    #page-enquiries td:nth-child(10),
+    #page-enquiries table{min-width:var(--enq-tbl-min-width, 1020px);}
+    #page-enquiries th:nth-child(9),
+    #page-enquiries td:nth-child(9),
     #page-enquiries .enquiry-message-cell{
-      min-width:320px !important;
-      max-width:520px !important;
-      width:380px !important;
+      width:var(--enq-msg-width, auto) !important;
+      min-width:var(--enq-msg-min-width, 85px) !important;
+      max-width:480px !important;
       white-space:normal !important;
       word-break:break-word !important;
-      line-height:1.55 !important;
+      line-height:1.45 !important;
+    }
+    #page-enquiries table[data-msg-mode="none"] th:nth-child(9),
+    #page-enquiries table[data-msg-mode="none"] td:nth-child(9),
+    #page-enquiries table[data-msg-mode="none"] .enquiry-message-cell{
+      width:1% !important;
+      min-width:80px !important;
+      max-width:95px !important;
+      white-space:nowrap !important;
+    }
+    #page-enquiries th:nth-child(10),
+    #page-enquiries td:nth-child(10){
+      min-width:90px !important;
+      width:1% !important;
+      white-space:nowrap !important;
+    }
+    #page-enquiries th:last-child,
+    #page-enquiries td:last-child{
+      min-width:120px !important;
+      width:1% !important;
+      white-space:nowrap !important;
     }
     #page-whatsapp th:nth-child(4),
     #page-whatsapp td:nth-child(4){
@@ -1148,14 +1265,23 @@
     .table-wrap::-webkit-scrollbar-track{background:rgba(255,255,255,0.02);}
     table{min-width:640px;}
     #page-bookings table{min-width:1100px;}
-    #page-enquiries table{min-width:1220px;}
+    #page-enquiries table{min-width:var(--enq-tbl-min-width-mob, 960px);}
     #page-payments table{min-width:920px;}
     #page-whatsapp table{min-width:1060px;}
     #page-chatbot table{min-width:1060px;}
     #page-whatsapp th:nth-child(4), #page-whatsapp td:nth-child(4),
-    #page-chatbot th:nth-child(4), #page-chatbot td:nth-child(4),
-    #page-enquiries th:nth-child(10), #page-enquiries td:nth-child(10),
-    #page-enquiries .enquiry-message-cell{min-width:240px; max-width:360px; white-space:normal; word-break:break-word; line-height:1.45; font-size:12px;}
+    #page-chatbot th:nth-child(4), #page-chatbot td:nth-child(4){min-width:240px; max-width:360px; white-space:normal; word-break:break-word; line-height:1.45; font-size:12px;}
+    #page-enquiries th:nth-child(9), #page-enquiries td:nth-child(9),
+    #page-enquiries .enquiry-message-cell{min-width:var(--enq-msg-min-width-mob, 75px); max-width:380px; white-space:normal; word-break:break-word; line-height:1.4; font-size:12px;}
+    #page-enquiries table[data-msg-mode="none"] th:nth-child(9),
+    #page-enquiries table[data-msg-mode="none"] td:nth-child(9),
+    #page-enquiries table[data-msg-mode="none"] .enquiry-message-cell{
+      width:1% !important;
+      min-width:70px !important;
+      max-width:85px !important;
+      white-space:nowrap !important;
+    }
+    #page-enquiries th:nth-child(10), #page-enquiries td:nth-child(10){min-width:85px; width:1%; white-space:nowrap;}
     #page-whatsapp td:nth-child(3), #page-chatbot td:nth-child(3){max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
     #page-bookings th, #page-bookings td, #page-payments th, #page-payments td, #page-enquiries th, #page-enquiries td, #page-whatsapp th, #page-whatsapp td, #page-chatbot th, #page-chatbot td{padding:11px 12px;}
     #page-enquiries th:last-child, #page-enquiries td:last-child, #page-whatsapp th:last-child, #page-whatsapp td:last-child, #page-chatbot th:last-child, #page-chatbot td:last-child{min-width:128px; padding-right:16px;}
@@ -1642,19 +1768,16 @@
         <button class="btn btn-ghost toolbar-export-btn" id="bookingExport" title="Export hourly bookings as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         <div class="toolbar-actions">
           <div class="booking-status-filters" id="bookingStatusFilters" aria-label="Booking status filter">
-            <button type="button" class="status-filter-btn sel" data-booking-filter="all">All</button>
-            <button type="button" class="status-filter-btn" data-booking-filter="today">Today</button>
+            <button type="button" class="status-filter-btn" data-booking-filter="all">All</button>
+            <button type="button" class="status-filter-btn sel" data-booking-filter="today">Today</button>
           </div>
           <span class="date-wrap"><span class="date-ph placeholder">dd/mm/yyyy</span><input id="bookingDate" class="date-filter" type="text" readonly aria-label="Choose booking date" title="Choose booking date"><input id="bookingDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         </div>
       </div>
-      <div class="table-wrap" id="bookingsTableWrap">
-        <table>
-          <thead><tr><th>Booking ID</th><th>Customer</th><th>Booked On</th><th>Mobile</th><th>Play Date</th><th>Slot</th><th>Time</th><th>Duration</th><th>Amount</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody id="bookingsBody"></tbody>
-        </table>
-        <div class="table-foot"><span id="bookingsTableFoot">Showing all bookings</span></div>
+      <div class="bookings-cards-wrap" id="bookingsTableWrap">
+        <!-- Box cards for pending, confirmed, cancelled bookings -->
       </div>
+      <div class="table-foot" style="margin-top:16px;"><span id="bookingsTableFoot">Showing all bookings</span></div>
     </div>
 
     <!-- PAYMENT CONFIRMATION -->
@@ -1675,14 +1798,14 @@
         <div class="toolbar-actions">
           <div class="payment-status-filters" id="paymentStatusFilters" aria-label="Payment confirmation filter">
             <button type="button" class="status-filter-btn" data-payment-filter="all">All</button>
-            <button type="button" class="status-filter-btn" data-payment-filter="today">Today</button>
+            <button type="button" class="status-filter-btn sel" data-payment-filter="today">Today</button>
           </div>
           <span class="date-wrap"><span class="date-ph placeholder">dd/mm/yyyy</span><input id="paymentDate" class="date-filter" type="text" readonly aria-label="Choose payment date" title="Choose payment date"><input id="paymentDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         </div>
       </div>
       <div class="table-wrap" id="paymentsTableWrap">
         <table>
-          <thead><tr><th>Booking ID</th><th>Customer</th><th>Mobile</th><th>Booking Date</th><th>Date</th><th>Amount received</th><th>Payment status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Booking ID</th><th>Booked On</th><th>Customer</th><th>Mobile</th><th>Date</th><th>Amount received</th><th>Payment status</th><th>Actions</th></tr></thead>
           <tbody id="paymentsBody"></tbody>
         </table>
         <div class="table-foot"><span id="paymentsFoot">Showing today&rsquo;s received payments</span></div>
@@ -1695,14 +1818,14 @@
         <input id="enquirySearch" type="text" placeholder="Search by name, mobile, booking ID...">
         <button class="btn btn-ghost toolbar-export-btn" id="enquiryExport" title="Export enquiries as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         <div class="toolbar-actions">
-          <div class="filt-pill sel" data-enquiry-filter="all">All</div>
-          <div class="filt-pill" data-enquiry-filter="today">Today</div>
+          <div class="filt-pill" data-enquiry-filter="all">All</div>
+          <div class="filt-pill sel" data-enquiry-filter="today">Today</div>
           <span class="date-wrap"><span class="date-ph placeholder">dd/mm/yyyy</span><input id="enquiryDate" class="date-filter" type="text" readonly aria-label="Choose enquiry date" title="Choose enquiry date"><input id="enquiryDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         </div>
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Enquiry ID</th><th>Booking request date</th><th>Customer</th><th>Mobile</th><th>Booking Date</th><th>Booking start</th><th>Booking end</th><th>Days</th><th>Preferred</th><th>Message</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Enquiry ID</th><th>Booked On</th><th>Customer</th><th>Mobile</th><th>Start Date</th><th>End Date</th><th>Days</th><th>Preferred</th><th>Message</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="enquiriesBody"></tbody>
         </table>
         <div class="table-foot"><span>Showing all enquiries</span></div>
@@ -1740,8 +1863,8 @@
         <input type="text" id="whatsappSearch" placeholder="Search by name, mobile...">
         <button class="btn btn-ghost toolbar-export-btn" id="whatsappExport" title="Export WhatsApp enquiries as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         <div class="toolbar-actions">
-          <div class="filt-pill sel" data-wa-filter="all">All</div>
-          <div class="filt-pill" data-wa-filter="today">Today</div>
+          <div class="filt-pill" data-wa-filter="all">All</div>
+          <div class="filt-pill sel" data-wa-filter="today">Today</div>
           <span class="date-wrap"><span class="date-ph placeholder">dd/mm/yyyy</span><input class="date-filter" type="text" readonly id="whatsappDate" aria-label="Choose WhatsApp enquiry date" title="Choose WhatsApp enquiry date"><input id="whatsappDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         </div>
       </div>
@@ -1760,8 +1883,8 @@
         <input type="text" id="chatSearch" placeholder="Search by name, mobile...">
         <button class="btn btn-ghost toolbar-export-btn" id="chatbotExport" title="Export chatbot conversations as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         <div class="toolbar-actions">
-          <div class="filt-pill sel" data-chat-filter="all">All</div>
-          <div class="filt-pill" data-chat-filter="today">Today</div>
+          <div class="filt-pill" data-chat-filter="all">All</div>
+          <div class="filt-pill sel" data-chat-filter="today">Today</div>
           <span class="date-wrap"><span class="date-ph placeholder">dd/mm/yyyy</span><input class="date-filter" type="text" readonly id="chatDate" aria-label="Choose chatbot date" title="Choose chatbot date"><input id="chatDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         </div>
       </div>
@@ -2342,6 +2465,23 @@
     else restorePageFilters(page);
     if(window.innerWidth <= 1000 && !keepSidebarOpen) closeMobileSidebar();
   }
+  function openNavSectionMenu(page){
+    const nav = document.querySelector(`.nav-item[data-page="${page}"]`);
+    const menu = nav?.querySelector('.booking-status-menu');
+    if(menu){
+      document.querySelectorAll('.booking-status-menu.open').forEach(otherMenu => {
+        if(otherMenu !== menu){
+          otherMenu.classList.remove('open');
+          otherMenu.querySelector('.nav-dropdown-trigger')?.setAttribute('aria-expanded', 'false');
+          syncMenuMargin(otherMenu);
+        }
+      });
+      menu.classList.add('open');
+      const triggerBtn = menu.querySelector('.nav-dropdown-trigger');
+      if(triggerBtn) triggerBtn.setAttribute('aria-expanded', 'true');
+      syncMenuMargin(menu);
+    }
+  }
   document.querySelectorAll('.nav-item[data-page]').forEach(item=>{
     item.addEventListener('click', event=>{
       if(event.target.closest('.booking-status-menu-list') || event.target.closest('.nav-dropdown-trigger')){
@@ -2358,6 +2498,9 @@
       const menu = item.querySelector('.booking-status-menu');
       let willOpen = false;
       if(menu){
+        if(document.getElementById('sidebar')?.classList.contains('collapsed')){
+          document.getElementById('sidebar').classList.remove('collapsed');
+        }
         willOpen = !menu.classList.contains('open');
         document.querySelectorAll('.booking-status-menu.open').forEach(otherMenu => {
           if(otherMenu !== menu){
@@ -2370,6 +2513,7 @@
         const triggerBtn = menu.querySelector('.nav-dropdown-trigger');
         if(triggerBtn) triggerBtn.setAttribute('aria-expanded', String(willOpen));
         syncMenuMargin(menu);
+        return;
       }
 
       openAdminPage(p, cardMode, willOpen);
@@ -2400,7 +2544,8 @@
     document.getElementById('sidebarBackdrop').classList.remove('show');
   }
   function cpGo(p){
-    document.querySelector('.nav-item[data-page="'+p+'"]').click();
+    openNavSectionMenu(p);
+    openAdminPage(p);
     closeCmdPalette();
   }
 
@@ -2486,7 +2631,14 @@
     }
   }
   function markAllNotificationsRead(){
-    document.querySelectorAll('.notification-item.unread').forEach(item=>item.classList.remove('unread'));
+    document.querySelectorAll('.notification-item.unread').forEach(item=>{
+      item.classList.remove('unread');
+      const type = item.dataset.notificationType;
+      const itemId = item.dataset.itemId;
+      if(type && itemId){
+        markActivityItemVisited(type, itemId);
+      }
+    });
     syncNotificationBadge(0);
   }
   function markSectionNotificationsRead(type){
@@ -2871,6 +3023,8 @@
     if(!document.querySelectorAll('#activityList .activity-row').length){
       document.getElementById('activityList').innerHTML = '<div class="tbl-empty">No recent activity</div>';
     }
+    document.querySelectorAll(`.notification-item[data-item-id="${strId}"]`).forEach(el => el.classList.remove('unread'));
+    syncNotificationBadge();
   }
   window.markActivityItemVisited = markActivityItemVisited;
 
@@ -2978,10 +3132,8 @@
     const activity = rawActivity.filter(item => !isActivityItemVisited(item));
     renderNotifications(activity);
 
-    // Sync notification bell badge count (1, 2, 3...)
-    const msgOnlyCount = values.unreadWa + values.unreadChat;
-    const totalNotifyCount = values.totalUnread || activity.length || msgOnlyCount;
-    syncNotificationBadge(totalNotifyCount);
+    // Sync notification bell badge count to match actual unread notifications in panel
+    syncNotificationBadge(activity.length);
 
     // Sync sidebar badges (1, 2, 3...)
     syncAllNavNotices(stats);
@@ -3166,38 +3318,52 @@
   }
 
   function syncBookingStatusOptions(){
-    const currentValue = bookingDateMode === 'today' ? 'today' : bookingDateMode === 'custom' ? '' : String(bookingStatus || 'ALL').toLowerCase();
-    const selected = ['all','pending','confirmed','cancelled','today'].includes(currentValue) ? currentValue : '';
-    document.querySelectorAll('[data-booking-filter]').forEach(button => {
-      button.classList.toggle('sel', button.dataset.bookingFilter === selected);
+    document.querySelectorAll('#bookingStatusFilters [data-booking-filter]').forEach(button => {
+      button.classList.toggle('sel', button.dataset.bookingFilter === bookingDateMode);
     });
     const menu = document.getElementById('bookingStatusMenuList');
     if(!menu) return;
     const counts = getLiveBookingCounts();
+    const statusKey = bookingStatus ? String(bookingStatus).toLowerCase() : 'all';
+    let selectedMenuKey = '';
+    if (['pending', 'confirmed', 'cancelled'].includes(statusKey)) {
+      selectedMenuKey = statusKey;
+    } else if (bookingDateMode === 'today') {
+      selectedMenuKey = 'today';
+    } else {
+      selectedMenuKey = 'today';
+    }
     const menuOptions = [
       { key: 'today', label: 'Today', count: counts.today },
       { key: 'pending', label: 'Pending', count: counts.pending },
       { key: 'confirmed', label: 'Confirmed', showCount: false },
       { key: 'cancelled', label: 'Cancelled', showCount: false }
     ];
-    menu.innerHTML = renderDropdownOptions(menuOptions, selected, 'data-booking-filter');
+    menu.innerHTML = renderDropdownOptions(menuOptions, selectedMenuKey, 'data-booking-filter');
     syncMenuMargin(document.getElementById('bookingStatusMenu'));
   }
 
   function syncPaymentStatusOptions(){
-    const selected = paymentDateMode === 'today' ? 'today' : paymentDateMode === 'custom' ? '' : String(paymentStatus || 'all').toLowerCase();
-    document.querySelectorAll('[data-payment-filter]').forEach(button => {
-      button.classList.toggle('sel', button.dataset.paymentFilter === selected);
+    document.querySelectorAll('#paymentStatusFilters [data-payment-filter]').forEach(button => {
+      button.classList.toggle('sel', button.dataset.paymentFilter === paymentDateMode);
     });
     const menu = document.getElementById('paymentStatusMenuList');
     if(!menu) return;
     const counts = getLivePaymentCounts();
+    const statusKey = paymentStatus ? String(paymentStatus).toLowerCase() : 'all';
+    let selectedMenuKey = '';
+    if (['confirmed', 'cancelled', 'paid', 'pending'].includes(statusKey)) {
+      selectedMenuKey = statusKey;
+    } else if (paymentDateMode === 'today') {
+      selectedMenuKey = 'today';
+    } else {
+      selectedMenuKey = 'today';
+    }
     const menuOptions = [
       { key: 'today', label: 'Today', count: counts.today },
-      { key: 'confirmed', label: 'Confirmed', count: counts.confirmed },
-      { key: 'cancelled', label: 'Cancelled', count: counts.cancelled }
+      { key: 'confirmed', label: 'Confirmed', count: counts.confirmed }
     ];
-    menu.innerHTML = renderDropdownOptions(menuOptions, selected, 'data-payment-filter');
+    menu.innerHTML = renderDropdownOptions(menuOptions, selectedMenuKey, 'data-payment-filter');
     syncMenuMargin(document.getElementById('paymentStatusMenu'));
   }
 
@@ -3265,46 +3431,41 @@
   function navigateDashboardCard(metric, page){
     dashboardCardFilterContext = {metric, page};
     isNavigatedFromDashboardPending = (metric === 'pendingConf' && page === 'bookings');
+    openNavSectionMenu(page);
     if(page === 'bookings'){
       bookingStatus = metric === 'pendingConf' ? 'PENDING' : metric === 'completed' ? 'COMPLETED' : metric === 'cancelled' ? 'CANCELLED' : 'ALL';
       bookingDateMode = metric === 'today' ? 'today' : 'all';
       document.getElementById('bookingDate').value = '';
-      const nav = document.querySelector('.nav-item[data-page="bookings"]');
-      if(nav) nav.click();
+      openAdminPage('bookings', dashboardCardFilterContext, true);
       loadAdminBookings();
       return;
     }
     if(page === 'payments'){
       paymentStatus = metric === 'paid' ? 'paid' : metric === 'pendingPay' ? 'payment_pending' : 'all';
       paymentDateMode = 'all';
-      const nav = document.querySelector('.nav-item[data-page="payments"]');
-      if(nav) nav.click();
+      openAdminPage('payments', dashboardCardFilterContext, true);
       renderPayments();
       return;
     }
     if(page === 'enquiries'){
       enquiryStatus = 'all'; enquiryDateMode = 'all';
-      const nav = document.querySelector('.nav-item[data-page="enquiries"]');
-      if(nav) nav.click();
+      openAdminPage('enquiries', dashboardCardFilterContext, true);
       loadAdminEnquiries();
       return;
     }
     if(page === 'whatsapp'){
       waStatus = 'all'; waDateMode = 'all';
-      const nav = document.querySelector('.nav-item[data-page="whatsapp"]');
-      if(nav) nav.click();
+      openAdminPage('whatsapp', dashboardCardFilterContext, true);
       loadAdminWhatsApp();
       return;
     }
     if(page === 'chatbot'){
       chatStatus = 'all'; chatDateMode = 'all';
-      const nav = document.querySelector('.nav-item[data-page="chatbot"]');
-      if(nav) nav.click();
+      openAdminPage('chatbot', dashboardCardFilterContext, true);
       loadAdminChatbot();
       return;
     }
-    const nav = document.querySelector(`.nav-item[data-page="${page}"]`);
-    if(nav) nav.click();
+    openAdminPage(page, null, false);
   }
 
   let dashboardLoadedOnce = false;
@@ -3335,19 +3496,20 @@
   document.getElementById('activityList').innerHTML = '<div class="tbl-empty">Loading dashboard...</div>';
 
   const bstatusLbl = {confirmed:'Confirmed', pending:'Pending', cancelled:'Cancelled'};
-  document.getElementById('bookingsBody').innerHTML = '<tr><td colspan="12" class="tbl-empty">Loading bookings...</td></tr>';
+  const initialBookingsWrap = document.getElementById('bookingsTableWrap');
+  if(initialBookingsWrap) initialBookingsWrap.innerHTML = '<div class="booking-box-card"><div class="table-wrap"><table><tbody><tr><td colspan="12" class="tbl-empty">Loading bookings...</td></tr></tbody></table></div></div>';
   function openBookingDetail(bookingId){ loadBookingDetail(bookingId); }
 
   // ---- enquiries table ----
   const enquiries = [];
   const enqBadge = {'New':'verified','Contacted':'pending','Quotation Sent':'pending','Confirmed':'confirmed','Closed':'cancelled'};
-document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class="tbl-empty">Loading enquiries...</td></tr>';
+document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class="tbl-empty">Loading enquiries...</td></tr>';
 
   // ---- WhatsApp enquiries table ----
   let waStatus = 'all';
   let waReadMode = 'all';
   let waFilter = 'all';
-  let waDateMode = 'all';
+  let waDateMode = 'today';
   let liveWhatsApp = [];
   function escapeWhatsAppHtml(value){ return String(value ?? '—').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])); }
   function canonicalEnquiryStatus(value){
@@ -3502,7 +3664,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   let liveEnquiries = [];
   let enquiryStatus = 'all';
   let enquiryReadMode = 'all';
-  let enquiryDateMode = 'all';
+  let enquiryDateMode = 'today';
   let enquiryFilter = 'all';
   let enquiryRequestId = 0;
   const enquiryStatusLabels = {new:'New', contacted:'Contacted', quotation_sent:'Quotation Sent', confirmed:'Confirmed', closed:'Closed'};
@@ -3530,19 +3692,60 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       return (!search || searchable.includes(search)) && (enquiryStatus === 'all' || status === enquiryStatus) && readMatches && (!enquiryDate || createdDate === enquiryDate);
     });
   }
+  function updateEnquiryTableSpacing(rows){
+    const enqTable = document.querySelector('#page-enquiries table');
+    if(!enqTable) return;
+    let maxMsgLen = 0;
+    (rows || []).forEach(e => {
+      const val = String(e?.requirements || '').trim();
+      if(val && val !== '—' && val.toLowerCase() !== 'none'){
+        if(val.length > maxMsgLen) maxMsgLen = val.length;
+      }
+    });
+
+    if(maxMsgLen === 0){
+      enqTable.dataset.msgMode = 'none';
+      enqTable.style.setProperty('--enq-msg-width', '85px');
+      enqTable.style.setProperty('--enq-msg-min-width', '85px');
+      enqTable.style.setProperty('--enq-msg-min-width-mob', '70px');
+      enqTable.style.setProperty('--enq-tbl-min-width', '1020px');
+      enqTable.style.setProperty('--enq-tbl-min-width-mob', '960px');
+    } else if(maxMsgLen <= 30){
+      enqTable.dataset.msgMode = 'short';
+      enqTable.style.setProperty('--enq-msg-width', '180px');
+      enqTable.style.setProperty('--enq-msg-min-width', '180px');
+      enqTable.style.setProperty('--enq-msg-min-width-mob', '160px');
+      enqTable.style.setProperty('--enq-tbl-min-width', '1120px');
+      enqTable.style.setProperty('--enq-tbl-min-width-mob', '1040px');
+    } else if(maxMsgLen <= 65){
+      enqTable.dataset.msgMode = 'medium';
+      enqTable.style.setProperty('--enq-msg-width', '260px');
+      enqTable.style.setProperty('--enq-msg-min-width', '260px');
+      enqTable.style.setProperty('--enq-msg-min-width-mob', '220px');
+      enqTable.style.setProperty('--enq-tbl-min-width', '1220px');
+      enqTable.style.setProperty('--enq-tbl-min-width-mob', '1120px');
+    } else {
+      enqTable.dataset.msgMode = 'long';
+      enqTable.style.setProperty('--enq-msg-width', '340px');
+      enqTable.style.setProperty('--enq-msg-min-width', '320px');
+      enqTable.style.setProperty('--enq-msg-min-width-mob', '260px');
+      enqTable.style.setProperty('--enq-tbl-min-width', '1280px');
+      enqTable.style.setProperty('--enq-tbl-min-width-mob', '1180px');
+    }
+  }
   function renderEnquiries(message){
     const rows = enquiryRows();
+    updateEnquiryTableSpacing(rows);
     const targetHtml = rows.length ? rows.map(enquiry=>{
       const status = canonicalEnquiryStatus(enquiry.status);
       const name = enquiry.name || String(enquiry.summary || '').split(' extended booking enquiry for ')[0] || '—';
       const enquiryDate = formatDateDDMMYYYY(enquiry.createdAt);
-      const createdDisplay = formatDateDDMMYYYY(enquiry.createdAt);
       const requirements = escapeEnquiryHtml(enquiry.requirements || '—');
       const isRead = enquiry.read === true || locallyReadEnquiries.has(String(enquiry._id));
       const readAction = isRead ? '' : `<button onclick="markEnquiryRead('${escapeEnquiryHtml(enquiry._id)}')" title="Mark as read"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18v12H3z"/><path d="m4 7 8 6 8-6"/><path d="m8 15 2 2 5-5"/></svg></button>`;
       const displayStatus = isRead && status === 'contacted' ? 'Read / Contacted' : isRead ? 'Read' : (enquiryStatusLabels[status] || displayEnquiryStatus(status));
-      return `<tr><td class="mono">${escapeEnquiryHtml(enquiry._id)}</td><td>${escapeEnquiryHtml(enquiryDate)}</td><td>${escapeEnquiryHtml(name)}</td><td class="mono">${escapeEnquiryHtml(enquiry.mobile)}</td><td>${escapeEnquiryHtml(createdDisplay)}</td><td>${escapeEnquiryHtml(enquiry.startDate)}</td><td>${escapeEnquiryHtml(enquiry.endDate)}</td><td>${escapeEnquiryHtml(enquiryDays(enquiry.startDate, enquiry.endDate))}</td><td>${escapeEnquiryHtml(enquiry.preferredTime)}</td><td class="enquiry-message-cell">${requirements}</td><td><span class="badge ${isRead ? 'confirmed' : statusBadgeClass(status)}">${escapeEnquiryHtml(displayStatus)}</span></td><td><div class="row-actions"><button onclick="loadEnquiryDetail('${escapeEnquiryHtml(enquiry._id)}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>${readAction}<button onclick="markEnquiryContacted('${escapeEnquiryHtml(enquiry._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 10h8"/></svg></button><button class="danger" onclick="deleteEnquiry('${escapeEnquiryHtml(enquiry._id)}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button></div></td></tr>`;
-    }).join('') : `<tr><td colspan="12" class="tbl-empty">${escapeEnquiryHtml(message || 'No enquiries found')}</td></tr>`;
+      return `<tr><td class="mono">${escapeEnquiryHtml(enquiry._id)}</td><td>${escapeEnquiryHtml(enquiryDate)}</td><td>${escapeEnquiryHtml(name)}</td><td class="mono">${escapeEnquiryHtml(enquiry.mobile)}</td><td>${escapeEnquiryHtml(enquiry.startDate)}</td><td>${escapeEnquiryHtml(enquiry.endDate)}</td><td>${escapeEnquiryHtml(enquiryDays(enquiry.startDate, enquiry.endDate))}</td><td>${escapeEnquiryHtml(enquiry.preferredTime)}</td><td class="enquiry-message-cell">${requirements}</td><td><span class="badge ${isRead ? 'confirmed' : statusBadgeClass(status)}">${escapeEnquiryHtml(displayStatus)}</span></td><td><div class="row-actions"><button onclick="loadEnquiryDetail('${escapeEnquiryHtml(enquiry._id)}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>${readAction}<button onclick="markEnquiryContacted('${escapeEnquiryHtml(enquiry._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 10h8"/></svg></button><button class="danger" onclick="deleteEnquiry('${escapeEnquiryHtml(enquiry._id)}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button></div></td></tr>`;
+    }).join('') : `<tr><td colspan="11" class="tbl-empty">${escapeEnquiryHtml(message || 'No enquiries found')}</td></tr>`;
     const targetEl = document.getElementById('enquiriesBody');
     if (targetEl && targetEl.innerHTML !== targetHtml) targetEl.innerHTML = targetHtml;
   }
@@ -3559,7 +3762,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     if(mobile.length >= 3) params.set('mobile', mobile);
     const eBody = document.getElementById('enquiriesBody');
     if(!liveEnquiriesLoaded && !isBackground && eBody && !liveEnquiries.length){
-      eBody.innerHTML = '<tr><td colspan="12" class="tbl-empty">Loading enquiries...</td></tr>';
+      eBody.innerHTML = '<tr><td colspan="11" class="tbl-empty">Loading enquiries...</td></tr>';
     }
     try {
       const response = await fetch('/api/admin/extended-enquiries?' + params.toString(), {credentials:'include'});
@@ -3656,26 +3859,41 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     } catch(error) { showToast(error.message); }
   }
   function syncEnquiryFilters(){
-    const currentValue = enquiryDateMode === 'today' ? 'today' : enquiryDateMode === 'custom' ? '' : enquiryFilter || 'all';
-    const selected = ['all','today','contacted','read','unread'].includes(currentValue) ? currentValue : '';
-    document.querySelectorAll('[data-enquiry-filter]').forEach(button => button.classList.toggle('sel', button.dataset.enquiryFilter === selected));
+    document.querySelectorAll('#page-enquiries .toolbar-actions [data-enquiry-filter]').forEach(button => {
+      button.classList.toggle('sel', button.dataset.enquiryFilter === enquiryDateMode);
+    });
     const menu = document.getElementById('enquiryStatusMenuList');
     if(!menu) return;
     const counts = getLiveEnquiryCounts();
+    let selectedMenuKey = '';
+    if(enquiryStatus === 'contacted') selectedMenuKey = 'contacted';
+    else if(enquiryReadMode === 'read') selectedMenuKey = 'read';
+    else if(enquiryReadMode === 'unread') selectedMenuKey = 'unread';
+    else if(enquiryDateMode === 'today') selectedMenuKey = 'today';
+    else selectedMenuKey = 'today';
     const options = [
       { key: 'today', label: 'Today', count: counts.today },
       { key: 'contacted', label: 'Contacted', count: counts.contacted },
       { key: 'read', label: 'Read', count: counts.read },
       { key: 'unread', label: 'Unread', count: counts.unread }
     ];
-    menu.innerHTML = renderDropdownOptions(options, selected, 'data-enquiry-filter');
+    menu.innerHTML = renderDropdownOptions(options, selectedMenuKey, 'data-enquiry-filter');
     syncMenuMargin(document.getElementById('enquiryStatusMenu'));
   }
   function applyEnquiryFilter(value){
-    enquiryFilter = value;
-    enquiryStatus = value === 'contacted' ? 'contacted' : 'all';
-    enquiryReadMode = value === 'read' || value === 'unread' ? value : 'all';
-    enquiryDateMode = value === 'today' ? 'today' : 'all';
+    if (value === 'today') {
+      enquiryFilter = 'today';
+      enquiryStatus = 'all';
+      enquiryReadMode = 'all';
+      enquiryDateMode = 'today';
+    } else if (value === 'all') {
+      enquiryDateMode = 'all';
+    } else {
+      enquiryFilter = value;
+      enquiryStatus = value === 'contacted' ? 'contacted' : 'all';
+      enquiryReadMode = value === 'read' || value === 'unread' ? value : 'all';
+      enquiryDateMode = 'today';
+    }
     const eDate = document.getElementById('enquiryDate');
     if(eDate) eDate.value = '';
     const eNative = document.getElementById('enquiryDate-picker');
@@ -3686,7 +3904,19 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   }
   document.getElementById('page-enquiries').addEventListener('click', event => {
     const filterButton = event.target.closest('[data-enquiry-filter]');
-    if(filterButton) applyEnquiryFilter(filterButton.dataset.enquiryFilter);
+    if(!filterButton) return;
+    if(filterButton.closest('.toolbar-actions')){
+      const filter = filterButton.dataset.enquiryFilter;
+      if(filter === 'all') enquiryDateMode = 'all';
+      else if(filter === 'today') enquiryDateMode = 'today';
+      const eDate = document.getElementById('enquiryDate');
+      if(eDate) eDate.value = '';
+      const eNative = document.getElementById('enquiryDate-picker');
+      if(eNative) eNative.value = '';
+      syncDateDisplay();
+      syncEnquiryFilters();
+      loadAdminEnquiries();
+    }
   });
   document.getElementById('enquiryStatusMenuButton').addEventListener('click', event => {
     toggleNavDropdown('enquiryStatusMenu', 'enquiryStatusMenuButton', event);
@@ -3706,27 +3936,40 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   document.getElementById('enquiryExport').addEventListener('click', ()=>exportCsv(`extended-enquiries-${new Date().toISOString().slice(0,10)}.csv`, [{key:'id',label:'Enquiry ID'},{key:'mobile',label:'Mobile'},{key:'start',label:'Start Date'},{key:'end',label:'End Date'},{key:'preferred',label:'Preferred Time'},{key:'status',label:'Status'},{key:'summary',label:'Summary'}], enquiryRows().map(enquiry=>({id:enquiry._id,mobile:enquiry.mobile,start:enquiry.startDate,end:enquiry.endDate,preferred:enquiry.preferredTime,status:enquiry.status,summary:enquiry.summary}))));
   if(adminSessionReady) loadAdminEnquiries();
   function syncWhatsAppFilters(){
-    const currentValue = waDateMode === 'today' ? 'today' : waDateMode === 'custom' ? '' : waFilter || 'all';
-    const selected = ['all','today','contacted','read','unread'].includes(currentValue) ? currentValue : '';
-    document.querySelectorAll('[data-wa-filter]').forEach(item=>item.classList.toggle('sel', item.dataset.waFilter === selected));
+    document.querySelectorAll('#page-whatsapp .toolbar-actions [data-wa-filter]').forEach(item=>item.classList.toggle('sel', item.dataset.waFilter === waDateMode));
     const menu = document.getElementById('whatsappStatusMenuList');
     if(menu) {
       const counts = getLiveWhatsAppCounts();
+      let selectedMenuKey = '';
+      if(waStatus === 'contacted') selectedMenuKey = 'contacted';
+      else if(waReadMode === 'read') selectedMenuKey = 'read';
+      else if(waReadMode === 'unread') selectedMenuKey = 'unread';
+      else if(waDateMode === 'today') selectedMenuKey = 'today';
+      else selectedMenuKey = 'today';
       const options = [
         { key: 'today', label: 'Today', count: counts.today },
         { key: 'contacted', label: 'Contacted', count: counts.contacted },
         { key: 'read', label: 'Read', count: counts.read },
         { key: 'unread', label: 'Unread', count: counts.unread }
       ];
-      menu.innerHTML = renderDropdownOptions(options, selected, 'data-wa-filter');
+      menu.innerHTML = renderDropdownOptions(options, selectedMenuKey, 'data-wa-filter');
       syncMenuMargin(document.getElementById('whatsappStatusMenu'));
     }
   }
   function applyWhatsAppFilter(value){
-    waFilter = value;
-    waStatus = value === 'contacted' ? 'contacted' : 'all';
-    waReadMode = value === 'read' || value === 'unread' ? value : 'all';
-    waDateMode = value === 'today' ? 'today' : 'all';
+    if (value === 'today') {
+      waFilter = 'today';
+      waStatus = 'all';
+      waReadMode = 'all';
+      waDateMode = 'today';
+    } else if (value === 'all') {
+      waDateMode = 'all';
+    } else {
+      waFilter = value;
+      waStatus = value === 'contacted' ? 'contacted' : 'all';
+      waReadMode = value === 'read' || value === 'unread' ? value : 'all';
+      waDateMode = 'today';
+    }
     const wDate = document.getElementById('whatsappDate');
     if(wDate) wDate.value = '';
     const wNative = document.getElementById('whatsappDate-picker');
@@ -3735,7 +3978,22 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     syncWhatsAppFilters();
     renderWhatsApp();
   }
-  document.getElementById('page-whatsapp').addEventListener('click', event=>{ const button = event.target.closest('[data-wa-filter]'); if(button) applyWhatsAppFilter(button.dataset.waFilter); });
+  document.getElementById('page-whatsapp').addEventListener('click', event=>{
+    const button = event.target.closest('[data-wa-filter]');
+    if(!button) return;
+    if(button.closest('.toolbar-actions')){
+      const filter = button.dataset.waFilter;
+      if(filter === 'all') waDateMode = 'all';
+      else if(filter === 'today') waDateMode = 'today';
+      const wDate = document.getElementById('whatsappDate');
+      if(wDate) wDate.value = '';
+      const wNative = document.getElementById('whatsappDate-picker');
+      if(wNative) wNative.value = '';
+      syncDateDisplay();
+      syncWhatsAppFilters();
+      renderWhatsApp();
+    }
+  });
   document.getElementById('whatsappStatusMenuButton').addEventListener('click', event=>{ toggleNavDropdown('whatsappStatusMenu', 'whatsappStatusMenuButton', event); });
   document.getElementById('whatsappStatusMenuList').addEventListener('click', event=>{
     event.stopPropagation();
@@ -3763,7 +4021,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   let chatStatus = 'all';
   let chatReadMode = 'all';
   let chatFilter = 'all';
-  let chatDateMode = 'all';
+  let chatDateMode = 'today';
   function chatMessage(conversation){
     return conversation.lastMessage || conversation.messages?.[conversation.messages.length - 1]?.message || '—';
   }
@@ -3901,27 +4159,40 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     }
   }
   function syncChatbotFilters(){
-    const currentValue = chatDateMode === 'today' ? 'today' : chatDateMode === 'custom' ? '' : chatFilter || 'all';
-    const selected = ['all','today','contacted','read','unread'].includes(currentValue) ? currentValue : '';
-    document.querySelectorAll('[data-chat-filter]').forEach(item=>item.classList.toggle('sel', item.dataset.chatFilter === selected));
+    document.querySelectorAll('#page-chatbot .toolbar-actions [data-chat-filter]').forEach(item=>item.classList.toggle('sel', item.dataset.chatFilter === chatDateMode));
     const menu = document.getElementById('chatbotStatusMenuList');
     if(menu) {
       const counts = getLiveChatbotCounts();
+      let selectedMenuKey = '';
+      if(chatStatus === 'contacted') selectedMenuKey = 'contacted';
+      else if(chatReadMode === 'read') selectedMenuKey = 'read';
+      else if(chatReadMode === 'unread') selectedMenuKey = 'unread';
+      else if(chatDateMode === 'today') selectedMenuKey = 'today';
+      else selectedMenuKey = 'today';
       const options = [
         { key: 'today', label: 'Today', count: counts.today },
         { key: 'contacted', label: 'Contacted', count: counts.contacted },
         { key: 'read', label: 'Read', count: counts.read },
         { key: 'unread', label: 'Unread', count: counts.unread }
       ];
-      menu.innerHTML = renderDropdownOptions(options, selected, 'data-chat-filter');
+      menu.innerHTML = renderDropdownOptions(options, selectedMenuKey, 'data-chat-filter');
       syncMenuMargin(document.getElementById('chatbotStatusMenu'));
     }
   }
   function applyChatbotFilter(value){
-    chatFilter = value;
-    chatStatus = value === 'contacted' ? 'contacted' : 'all';
-    chatReadMode = value === 'read' || value === 'unread' ? value : 'all';
-    chatDateMode = value === 'today' ? 'today' : 'all';
+    if (value === 'today') {
+      chatFilter = 'today';
+      chatStatus = 'all';
+      chatReadMode = 'all';
+      chatDateMode = 'today';
+    } else if (value === 'all') {
+      chatDateMode = 'all';
+    } else {
+      chatFilter = value;
+      chatStatus = value === 'contacted' ? 'contacted' : 'all';
+      chatReadMode = value === 'read' || value === 'unread' ? value : 'all';
+      chatDateMode = 'today';
+    }
     const cDate = document.getElementById('chatDate');
     if(cDate) cDate.value = '';
     const cNative = document.getElementById('chatDate-picker');
@@ -3930,7 +4201,22 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     syncChatbotFilters();
     renderChatbot();
   }
-  document.getElementById('page-chatbot').addEventListener('click', event=>{ const button = event.target.closest('[data-chat-filter]'); if(button) applyChatbotFilter(button.dataset.chatFilter); });
+  document.getElementById('page-chatbot').addEventListener('click', event=>{
+    const button = event.target.closest('[data-chat-filter]');
+    if(!button) return;
+    if(button.closest('.toolbar-actions')){
+      const filter = button.dataset.chatFilter;
+      if(filter === 'all') chatDateMode = 'all';
+      else if(filter === 'today') chatDateMode = 'today';
+      const cDate = document.getElementById('chatDate');
+      if(cDate) cDate.value = '';
+      const cNative = document.getElementById('chatDate-picker');
+      if(cNative) cNative.value = '';
+      syncDateDisplay();
+      syncChatbotFilters();
+      renderChatbot();
+    }
+  });
   document.getElementById('chatbotStatusMenuButton').addEventListener('click', event=>{ toggleNavDropdown('chatbotStatusMenu', 'chatbotStatusMenuButton', event); });
   document.getElementById('chatbotStatusMenuList').addEventListener('click', event => {
     event.stopPropagation();
@@ -3983,7 +4269,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   }
   let dashboardCardFilterContext = null;
   let bookingStatus = 'ALL';
-  let bookingDateMode = 'all';
+  let bookingDateMode = 'today';
   let liveBookings = [];
   let bookingRequestId = 0;
   let payFilter = 'all';
@@ -4066,79 +4352,114 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const duration = escapeBookingHtml(`${booking.duration || 0} hr${Number(booking.duration) === 1 ? '' : 's'}`);
     const amount = `₹${Number(booking.amount || 0).toLocaleString('en-IN')}`;
 
-    const isNormalPending = isPending && (bookingStatus === 'PENDING' || isNavigatedFromDashboardPending);
-
-    const rowClass = (isPending && !isNormalPending)
-      ? 'booking-row-pending-new'
-      : isConfirmed
-        ? 'booking-row-confirmed-old'
-        : (isPending && isNormalPending)
-          ? ''
-          : 'booking-row-cancelled';
-    const idDisplay = (isPending && !isNormalPending) 
-      ? `<div style="display:flex; align-items:center; gap:6px;"><span class="mono">${id}</span><span class="pill-new-booking">NEW</span></div>`
-      : `<span class="mono">${id}</span>`;
+    const rowClass = '';
+    const idDisplay = `<span class="mono">${id}</span>`;
 
     const statusBadge = isPending
-      ? (isNormalPending
-          ? `<span class="badge pending">Pending</span>`
-          : `<span class="badge pending pulse-badge"><span class="badge-dot-amber"></span>Pending</span>`)
+      ? `<span class="badge pending">Pending</span>`
       : isConfirmed
         ? `<span class="badge confirmed"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12.5l5 5L20 6"/></svg>Confirmed</span>`
         : `<span class="badge cancelled">${bookingStatusLabels[status] || escapeBookingHtml(status)}</span>`;
 
     const paymentBadge = `<span class="badge ${payment === 'CONFIRMED' ? 'confirmed' : payment === 'CANCELLED' ? 'cancelled' : 'pending'}">${paymentStatusLabels[payment] || escapeBookingHtml(payment)}</span>`;
 
-    const bookedOnDisplay = (isPending && !isNormalPending)
-      ? `<span class="booked-on-pill new">${escapeBookingHtml(bookingCreatedDate)}</span>`
-      : `<span class="booked-on-pill old">${escapeBookingHtml(bookingCreatedDate)}</span>`;
+    const bookedOnDisplay = `<span class="booked-on-pill">${escapeBookingHtml(bookingCreatedDate)}</span>`;
 
     const confirmActionBtn = isPending
-      ? `<button class="btn-confirm-highlight" onclick="confirmBookingStatus('${id}')" title="Confirm new booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12.5l5 5L20 6"/></svg></button>`
+      ? `<button class="btn-confirm-highlight" onclick="confirmBookingStatus('${id}')" title="Confirm booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12.5l5 5L20 6"/></svg></button>`
       : '';
 
-    return `<tr class="${rowClass}" onclick="openBookingDetail('${id}')" style="cursor:pointer;"><td class="mono">${idDisplay}</td><td><strong>${customer}</strong></td><td>${bookedOnDisplay}</td><td class="mono">${mobile}</td><td>${date}</td><td>${slot}</td><td>${time}</td><td>${slotDurations || duration}</td><td class="mono"><strong>${amount}</strong></td><td>${paymentBadge}</td><td>${statusBadge}</td><td><div class="row-actions" onclick="event.stopPropagation()">${confirmActionBtn}<button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="danger" onclick="deleteBooking('${id}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td></tr>`;
+    return `<tr onclick="openBookingDetail('${id}')" style="cursor:pointer;"><td class="mono">${idDisplay}</td><td><strong>${customer}</strong></td><td>${bookedOnDisplay}</td><td class="mono">${mobile}</td><td>${date}</td><td>${slot}</td><td>${time}</td><td>${slotDurations || duration}</td><td class="mono"><strong>${amount}</strong></td><td>${paymentBadge}</td><td>${statusBadge}</td><td><div class="row-actions" onclick="event.stopPropagation()">${confirmActionBtn}<button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="danger" onclick="deleteBooking('${id}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td></tr>`;
+  }
+
+  const BOOKINGS_THEAD_HTML = '<thead><tr><th>Booking ID</th><th>Customer</th><th>Booked On</th><th>Mobile</th><th>Play Date</th><th>Slot</th><th>Time</th><th>Duration</th><th>Amount</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>';
+
+  function renderBookingBoxCard(type, title, dotColor, badgeClass, rows, dateLabel, tagline){
+    const count = rows.length;
+    const taglineHtml = tagline ? `<span class="box-tagline ${badgeClass}">${tagline}</span>` : '';
+    const tableBodyHtml = count > 0
+      ? rows.map(bookingRowHtml).join('')
+      : `<tr><td colspan="12" class="tbl-empty">No ${type.toLowerCase()} bookings ${dateLabel || 'found'}</td></tr>`;
+
+    return `
+      <div class="booking-box-card ${type.toLowerCase()}-box-card">
+        <div class="booking-box-header">
+          <div class="box-header-title">
+            <span class="s-dot ${dotColor}"></span>
+            <strong>${title}</strong>
+            <span class="box-badge ${badgeClass}">${count}</span>
+            ${taglineHtml}
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            ${BOOKINGS_THEAD_HTML}
+            <tbody>
+              ${tableBodyHtml}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
   }
 
   function renderBookings(message){
-    const rows = bookingRows();
+    const cardsWrap = document.getElementById('bookingsTableWrap');
+    if (!cardsWrap) return;
 
-    const tableBody = document.getElementById('bookingsBody');
-    if (!tableBody) return;
-
-    if (!rows.length) {
-      tableBody.innerHTML = `<tr><td colspan="12" class="tbl-empty">${escapeBookingHtml(message || 'No bookings found')}</td></tr>`;
+    if (message) {
+      cardsWrap.innerHTML = `
+        <div class="booking-box-card">
+          <div class="table-wrap">
+            <table>
+              ${BOOKINGS_THEAD_HTML}
+              <tbody>
+                <tr><td colspan="12" class="tbl-empty">${escapeBookingHtml(message)}</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
       const tableFoot = document.getElementById('bookingsTableFoot');
-      if (tableFoot) tableFoot.textContent = message ? escapeBookingHtml(message) : 'Showing 0 bookings';
+      if (tableFoot) tableFoot.textContent = escapeBookingHtml(message);
       return;
     }
 
+    const rows = bookingRows();
+    const dateLabel = bookingDateMode === 'today' ? 'for today' : bookingDateMode === 'custom' ? 'for the selected date' : '';
     let renderedHtml = '';
+
     if (bookingStatus === 'ALL') {
       const pendingRows = rows.filter(b => effectiveBookingStatus(b) === 'PENDING');
-      const confirmedRows = rows.filter(b => effectiveBookingStatus(b) === 'CONFIRMED');
-      const otherRows = rows.filter(b => effectiveBookingStatus(b) !== 'PENDING' && effectiveBookingStatus(b) !== 'CONFIRMED');
+      const confirmedRows = rows.filter(b => {
+        const s = effectiveBookingStatus(b);
+        return s === 'CONFIRMED' || s === 'COMPLETED';
+      });
+      const cancelledRows = rows.filter(b => {
+        const s = effectiveBookingStatus(b);
+        return s === 'CANCELLED' || (!['PENDING', 'CONFIRMED', 'COMPLETED'].includes(s));
+      });
 
-      if (pendingRows.length > 0 && confirmedRows.length > 0) {
-        renderedHtml += `<tr class="table-section-divider section-pending"><td colspan="12"><div class="section-divider-content"><span class="s-dot amber pulse"></span><strong>PENDING NEW BOOKINGS</strong> (${pendingRows.length}) &mdash; Action Required</div></td></tr>`;
-        renderedHtml += pendingRows.map(bookingRowHtml).join('');
-        renderedHtml += `<tr class="table-section-divider section-confirmed"><td colspan="12"><div class="section-divider-content"><span class="s-dot green"></span><strong>CONFIRMED OLD BOOKINGS</strong> (${confirmedRows.length})</div></td></tr>`;
-        renderedHtml += confirmedRows.map(bookingRowHtml).join('');
-        if (otherRows.length > 0) {
-          renderedHtml += `<tr class="table-section-divider section-other"><td colspan="12"><div class="section-divider-content"><span class="s-dot red"></span><strong>OTHER / CANCELLED BOOKINGS</strong> (${otherRows.length})</div></td></tr>`;
-          renderedHtml += otherRows.map(bookingRowHtml).join('');
-        }
-      } else {
-        renderedHtml = rows.map(bookingRowHtml).join('');
-      }
+      renderedHtml += renderBookingBoxCard('Pending', 'PENDING BOOKINGS', 'amber', 'amber', pendingRows, dateLabel, '');
+      renderedHtml += renderBookingBoxCard('Confirmed', 'CONFIRMED BOOKINGS', 'green', 'green', confirmedRows, dateLabel, '');
+      renderedHtml += renderBookingBoxCard('Cancelled', 'CANCELLED BOOKINGS', 'red', 'red', cancelledRows, dateLabel, '');
+    } else if (bookingStatus === 'PENDING') {
+      renderedHtml = renderBookingBoxCard('Pending', 'PENDING BOOKINGS', 'amber', 'amber', rows, dateLabel, '');
+    } else if (bookingStatus === 'CONFIRMED' || bookingStatus === 'COMPLETED') {
+      renderedHtml = renderBookingBoxCard('Confirmed', 'CONFIRMED BOOKINGS', 'green', 'green', rows, dateLabel, '');
+    } else if (bookingStatus === 'CANCELLED') {
+      renderedHtml = renderBookingBoxCard('Cancelled', 'CANCELLED BOOKINGS', 'red', 'red', rows, dateLabel, '');
     } else {
-      renderedHtml = rows.map(bookingRowHtml).join('');
+      const label = (bookingStatusLabels[bookingStatus] || bookingStatus).toUpperCase();
+      renderedHtml = renderBookingBoxCard(label, `${label} BOOKINGS`, 'green', 'green', rows, dateLabel, '');
     }
 
-    if (tableBody.innerHTML !== renderedHtml) {
-      tableBody.innerHTML = renderedHtml;
+    if (cardsWrap.innerHTML !== renderedHtml) {
+      cardsWrap.innerHTML = renderedHtml;
     }
-    const countText = `Showing ${rows.length} booking${rows.length === 1 ? '' : 's'}`;
+    const statusLabel = bookingStatus && bookingStatus !== 'ALL' ? bookingStatus.toLowerCase() + ' ' : '';
+    const dateLabelText = bookingDateMode === 'today' ? ' for today' : bookingDateMode === 'custom' ? ' for selected date' : '';
+    const countText = `Showing ${rows.length} ${statusLabel}booking${rows.length === 1 ? '' : 's'}${dateLabelText}`;
     const tableFoot = document.getElementById('bookingsTableFoot');
     if (tableFoot && tableFoot.textContent !== countText) tableFoot.textContent = countText;
   }
@@ -4215,9 +4536,9 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
     const rawSearch = document.getElementById('bookingSearch').value.trim();
     const mobileSearch = rawSearch.replace(/\D/g, '');
     if(mobileSearch.length >= 3) params.set('mobile', mobileSearch);
-    const bBody = document.getElementById('bookingsBody');
-    if(!liveBookingsLoaded && !isBackground && bBody && !liveBookings.length){
-      bBody.innerHTML = '<tr><td colspan="12" class="tbl-empty">Loading bookings...</td></tr>';
+    const bWrap = document.getElementById('bookingsTableWrap');
+    if(!liveBookingsLoaded && !isBackground && bWrap && !liveBookings.length){
+      bWrap.innerHTML = '<div class="booking-box-card"><div class="table-wrap"><table><tbody><tr><td colspan="12" class="tbl-empty">Loading bookings...</td></tr></tbody></table></div></div>';
     }
     try {
       const response = await fetch('/api/admin/bookings?' + params.toString(), {credentials:'include'});
@@ -4313,8 +4634,18 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   }
   function applyBookingFilter(value){
     isNavigatedFromDashboardPending = false;
-    bookingStatus = value === 'today' ? 'ALL' : value ? String(value).toUpperCase() : 'ALL';
-    bookingDateMode = value === 'today' ? 'today' : 'all';
+    if (value === 'today') {
+      bookingStatus = 'ALL';
+      bookingDateMode = 'today';
+    } else if (value === 'all') {
+      bookingDateMode = 'all';
+    } else if (value) {
+      bookingStatus = String(value).toUpperCase();
+      bookingDateMode = 'today';
+    } else {
+      bookingStatus = 'ALL';
+      bookingDateMode = 'today';
+    }
     const bDate = document.getElementById('bookingDate');
     if (bDate) bDate.value = '';
     const bPicker = document.getElementById('bookingDate-picker');
@@ -4326,14 +4657,46 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   }
   document.getElementById('bookingStatusFilters').addEventListener('click', (event) => {
     const filterButton = event.target.closest('[data-booking-filter]');
-    if(filterButton) applyBookingFilter(filterButton.dataset.bookingFilter);
+    if(!filterButton) return;
+    const filter = filterButton.dataset.bookingFilter;
+    if (filter === 'all') {
+      bookingDateMode = 'all';
+    } else if (filter === 'today') {
+      bookingDateMode = 'today';
+    }
+    const bDate = document.getElementById('bookingDate');
+    if (bDate) bDate.value = '';
+    const bPicker = document.getElementById('bookingDate-picker');
+    if (bPicker) bPicker.value = '';
+    syncDateDisplay();
+    syncBookingFilters();
+    syncBookingStatusOptions();
+    loadAdminBookings();
   });
   document.getElementById('bookingStatusMenuList').addEventListener('click', (event) => {
     event.stopPropagation();
     const filterButton = event.target.closest('[data-booking-filter]');
     if(filterButton) {
+      const filter = filterButton.dataset.bookingFilter;
       openAdminPage('bookings');
-      applyBookingFilter(filterButton.dataset.bookingFilter);
+      if (filter === 'today') {
+        bookingStatus = 'ALL';
+        bookingDateMode = 'today';
+      } else if (filter === 'all') {
+        bookingStatus = 'ALL';
+        bookingDateMode = 'today';
+      } else {
+        bookingStatus = String(filter).toUpperCase();
+        bookingDateMode = 'today'; // First it should be in today selected!
+      }
+      const bDate = document.getElementById('bookingDate');
+      if (bDate) bDate.value = '';
+      const bPicker = document.getElementById('bookingDate-picker');
+      if (bPicker) bPicker.value = '';
+      syncDateDisplay();
+      syncBookingFilters();
+      syncBookingStatusOptions();
+      loadAdminBookings();
       if(window.innerWidth <= 1000) closeMobileSidebar();
     }
   });
@@ -4363,7 +4726,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
 
   // ---- Payment sessions (server-verified records) ----
   let paymentStatus = 'all';
-  let paymentDateMode = 'all';
+  let paymentDateMode = 'today';
   let payments = [];
   let paymentRequestId = 0;
   function paymentStatusLabel(status){ return {PAYMENT_PENDING:'Pending', PAID:'Paid / Verified', CONFIRMED:'Confirmed', EXPIRED:'Expired', FAILED:'Failed', CANCELLED:'Cancelled'}[status] || status; }
@@ -4443,7 +4806,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
         const time = paymentValue(booking, ['startTime','time']);
         const status = paymentStatusLabel(p.status);
         const action = `<button onclick="viewPaymentDetails('${escapePaymentHtml(p.reference)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>` + (p.status === 'PAYMENT_PENDING' && p.source !== 'booking' ? `<button onclick="markPaymentPaid('${escapePaymentHtml(p.reference)}')" title="Mark paid after verifying the bank transaction"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12.5l5 5L20 6"/></svg></button>` : '');
-        return `<tr onclick="viewPaymentDetails('${escapePaymentHtml(p.reference)}')" style="cursor:pointer;"><td class="mono">${escapePaymentHtml(p.bookingId || p.reference)}</td><td>${escapePaymentHtml(name)}</td><td class="mono">${escapePaymentHtml(mobile)}</td><td>${escapePaymentHtml(createdDate)}</td><td>${escapePaymentHtml(date)}</td><td class="mono">₹${Number(p.amount).toLocaleString('en-IN')}</td><td><span class="badge ${paymentBadgeClass(p.status)}">${status}</span></td><td><div class="row-actions" onclick="event.stopPropagation()">${action}</div></td></tr>`;
+        return `<tr onclick="viewPaymentDetails('${escapePaymentHtml(p.reference)}')" style="cursor:pointer;"><td class="mono">${escapePaymentHtml(p.bookingId || p.reference)}</td><td>${escapePaymentHtml(createdDate)}</td><td>${escapePaymentHtml(name)}</td><td class="mono">${escapePaymentHtml(mobile)}</td><td>${escapePaymentHtml(date)}</td><td class="mono">₹${Number(p.amount).toLocaleString('en-IN')}</td><td><span class="badge ${paymentBadgeClass(p.status)}">${status}</span></td><td><div class="row-actions" onclick="event.stopPropagation()">${action}</div></td></tr>`;
       }).join('') : '<tr><td colspan="8" class="tbl-empty">No payment sessions found</td></tr>';
 
       // Summary cards in up: PAYMENT SESSIONS and TOTAL AMOUNT RECEIVED only count confirmed payments (not pending or cancelled)
@@ -4499,11 +4862,10 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
       paymentStatus = 'all';
       paymentDateMode = 'today';
     } else if (value === 'all') {
-      paymentStatus = 'all';
       paymentDateMode = 'all';
     } else {
       paymentStatus = value;
-      paymentDateMode = 'all';
+      paymentDateMode = 'today';
     }
     const pDate = document.getElementById('paymentDate');
     if (pDate) pDate.value = '';
@@ -4516,21 +4878,52 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="12" class
   }
   document.getElementById('paymentDate')?.addEventListener('change', () => {
     paymentDateMode = 'custom';
-    paymentStatus = 'all';
     updatePaymentAmountLabel();
     syncPaymentStatusOptions();
     renderPayments();
   });
   document.getElementById('paymentStatusFilters').addEventListener('click', (event) => {
     const filterButton = event.target.closest('[data-payment-filter]');
-    if(filterButton) applyPaymentFilter(filterButton.dataset.paymentFilter);
+    if(!filterButton) return;
+    const filter = filterButton.dataset.paymentFilter;
+    if (filter === 'all') {
+      paymentDateMode = 'all';
+    } else if (filter === 'today') {
+      paymentDateMode = 'today';
+    }
+    const pDate = document.getElementById('paymentDate');
+    if (pDate) pDate.value = '';
+    const pPicker = document.getElementById('paymentDate-picker');
+    if (pPicker) pPicker.value = '';
+    syncDateDisplay();
+    updatePaymentAmountLabel();
+    syncPaymentStatusOptions();
+    renderPayments();
   });
   document.getElementById('paymentStatusMenuList').addEventListener('click', (event) => {
     event.stopPropagation();
     const filterButton = event.target.closest('[data-payment-filter]');
     if(filterButton) {
+      const filter = filterButton.dataset.paymentFilter;
       openAdminPage('payments');
-      applyPaymentFilter(filterButton.dataset.paymentFilter);
+      if (filter === 'today') {
+        paymentStatus = 'all';
+        paymentDateMode = 'today';
+      } else if (filter === 'all') {
+        paymentStatus = 'all';
+        paymentDateMode = 'today';
+      } else {
+        paymentStatus = filter;
+        paymentDateMode = 'today';
+      }
+      const pDate = document.getElementById('paymentDate');
+      if (pDate) pDate.value = '';
+      const pPicker = document.getElementById('paymentDate-picker');
+      if (pPicker) pPicker.value = '';
+      syncDateDisplay();
+      updatePaymentAmountLabel();
+      syncPaymentStatusOptions();
+      renderPayments();
       if(window.innerWidth <= 1000) closeMobileSidebar();
     }
   });
