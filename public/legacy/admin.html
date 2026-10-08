@@ -1818,8 +1818,8 @@
         <input id="enquirySearch" type="text" placeholder="Search by name, mobile, booking ID...">
         <button class="btn btn-ghost toolbar-export-btn" id="enquiryExport" title="Export enquiries as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         <div class="toolbar-actions">
-          <div class="filt-pill" data-enquiry-filter="all">All</div>
-          <div class="filt-pill sel" data-enquiry-filter="today">Today</div>
+          <div class="filt-pill sel" data-enquiry-filter="all">All</div>
+          <div class="filt-pill" data-enquiry-filter="today">Today</div>
           <span class="date-wrap"><span class="date-ph placeholder">dd/mm/yyyy</span><input id="enquiryDate" class="date-filter" type="text" readonly aria-label="Choose enquiry date" title="Choose enquiry date"><input id="enquiryDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         </div>
       </div>
@@ -3021,7 +3021,7 @@
 
     document.querySelectorAll(`#activityList .activity-row[data-id="${strId}"], #activityList .activity-row[data-id="${type}:${strId}"]`).forEach(el => el.remove());
     if(!document.querySelectorAll('#activityList .activity-row').length){
-      document.getElementById('activityList').innerHTML = '<div class="tbl-empty">No recent activity</div>';
+      document.getElementById('activityList').innerHTML = '<div class="tbl-empty">No recent messages</div>';
     }
     document.querySelectorAll(`.notification-item[data-item-id="${strId}"]`).forEach(el => el.classList.remove('unread'));
     syncNotificationBadge();
@@ -3142,7 +3142,7 @@
     const messagesAlert = document.getElementById('dashboardMessagesAlert');
     const messagesAlertText = document.getElementById('dashboardMessagesAlertText');
     if(messagesAlert && messagesAlertText){
-      const totalNewMsgs = values.newMessages || msgOnlyCount || activity.filter(a => a.type === 'chat' || a.type === 'whatsapp').length;
+      const totalNewMsgs = values.newMessages || activity.filter(a => a.type === 'chat' || a.type === 'whatsapp').length;
       if(totalNewMsgs > 0){
         messagesAlert.style.display = 'inline-flex';
         messagesAlertText.textContent = `${totalNewMsgs} new message${totalNewMsgs > 1 ? 's' : ''}`;
@@ -3153,14 +3153,17 @@
 
     const actHtml = activity.length
       ? activity.map(item=>`<div class="activity-row" data-type="${escapePaymentHtml(item.type || '')}" data-id="${escapePaymentHtml(item.id || '')}" onclick="openRecentActivityItem('${escapePaymentHtml(item.type || '')}', '${escapePaymentHtml(item.id || '')}')" title="Click to view details"><span class="adot"></span>${escapePaymentHtml(item.text)}<span class="atime">${escapePaymentHtml(formatDateDDMMYYYY(item.createdAt))}</span></div>`).join('')
-      : '<div class="tbl-empty">No recent activity</div>';
+      : '<div class="tbl-empty">No recent messages</div>';
     const actEl = document.getElementById('activityList');
     if(actEl && actEl.innerHTML !== actHtml) actEl.innerHTML = actHtml;
     const latest = Array.isArray(data.recentBookings) ? data.recentBookings[0] : null;
-    if(latest){
-      document.getElementById('venueStatusSub').textContent = `Latest booking — ${latest.date || 'date unavailable'} ${latest.time || ''}`;
-    } else {
-      document.getElementById('venueStatusSub').textContent = 'No recent bookings';
+    const venueSub = document.getElementById('venueStatusSub');
+    if(venueSub){
+      if(latest){
+        venueSub.textContent = `Latest booking — ${latest.date || 'date unavailable'} ${latest.time || ''}`;
+      } else {
+        venueSub.textContent = 'No recent bookings';
+      }
     }
   }
 
@@ -3259,7 +3262,7 @@
   function getLiveEnquiryCounts(){
     const todayKey = localTodayKey();
     const list = Array.isArray(liveEnquiries) ? liveEnquiries : (typeof enquiries !== 'undefined' ? enquiries : []);
-    let today = 0, pending = 0, contacted = 0, read = 0, unread = 0;
+    let all = list.length, today = 0, pending = 0, contacted = 0, read = 0, unread = 0;
     list.forEach(e => {
       const isArr = Array.isArray(e);
       const createdDate = isArr ? String(e[8] || '').slice(0, 10) : (e.createdAt ? new Date(e.createdAt).toISOString().slice(0, 10) : '');
@@ -3273,8 +3276,9 @@
     });
     if(!list.length && latestDashboardStats){
       pending = Number(latestDashboardStats.newEnquiries ?? latestDashboardStats.unreadEnquiries ?? 0);
+      all = Number(latestDashboardStats.activeEnquiries ?? latestDashboardStats.newEnquiries ?? 0);
     }
-    return { today, pending, contacted, read, unread };
+    return { all, today, pending, contacted, read, unread };
   }
 
   function getLiveWhatsAppCounts(){
@@ -3480,9 +3484,10 @@
       const response = await fetch('/api/admin/dashboard', {credentials:'include'});
       const data = await response.json().catch(()=>({}));
       if(!response.ok) throw new Error(response.status === 401 ? 'Your admin session has expired.' : (data.message || 'Unable to load dashboard data.'));
-      dashboardLoadedOnce = true;
       renderLiveDashboard(data);
+      dashboardLoadedOnce = true;
     } catch(error) {
+      console.error('Failed to load dashboard summary:', error);
       if(!dashboardLoadedOnce){
         if(activityList) activityList.innerHTML = `<div class="tbl-empty">${escapePaymentHtml(error.message)}</div>`;
         if(statGridElement) statGridElement.innerHTML = `<div class="tbl-empty">${escapePaymentHtml(error.message)}</div>`;
@@ -3493,7 +3498,9 @@
 
   // ---- activity ----
   const activity = [];
-  document.getElementById('activityList').innerHTML = '<div class="tbl-empty">Loading dashboard...</div>';
+  if(!dashboardLoadedOnce && document.getElementById('activityList')){
+    document.getElementById('activityList').innerHTML = '<div class="tbl-empty">Loading dashboard...</div>';
+  }
 
   const bstatusLbl = {confirmed:'Confirmed', pending:'Pending', cancelled:'Cancelled'};
   const initialBookingsWrap = document.getElementById('bookingsTableWrap');
@@ -3664,7 +3671,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
   let liveEnquiries = [];
   let enquiryStatus = 'all';
   let enquiryReadMode = 'all';
-  let enquiryDateMode = 'today';
+  let enquiryDateMode = 'all';
   let enquiryFilter = 'all';
   let enquiryRequestId = 0;
   const enquiryStatusLabels = {new:'New', contacted:'Contacted', quotation_sent:'Quotation Sent', confirmed:'Confirmed', closed:'Closed'};
@@ -3753,10 +3760,6 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
   async function loadAdminEnquiries(isBackground = false){
     const requestId = ++enquiryRequestId;
     const params = new URLSearchParams({limit:'100', page:'1'});
-    if(enquiryStatus !== 'all') params.set('status', enquiryStatus);
-    const selectedDate = document.getElementById('enquiryDate').value;
-    if(enquiryDateMode === 'custom' && selectedDate) params.set('createdDate', selectedDate);
-    if(enquiryDateMode === 'today') params.set('createdDate', localTodayKey());
     const search = document.getElementById('enquirySearch').value.trim();
     const mobile = search.replace(/\D/g, '');
     if(mobile.length >= 3) params.set('mobile', mobile);
@@ -3870,7 +3873,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
     else if(enquiryReadMode === 'read') selectedMenuKey = 'read';
     else if(enquiryReadMode === 'unread') selectedMenuKey = 'unread';
     else if(enquiryDateMode === 'today') selectedMenuKey = 'today';
-    else selectedMenuKey = 'today';
+    else selectedMenuKey = '';
     const options = [
       { key: 'today', label: 'Today', count: counts.today },
       { key: 'contacted', label: 'Contacted', count: counts.contacted },
@@ -3887,6 +3890,9 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
       enquiryReadMode = 'all';
       enquiryDateMode = 'today';
     } else if (value === 'all') {
+      enquiryFilter = 'all';
+      enquiryStatus = 'all';
+      enquiryReadMode = 'all';
       enquiryDateMode = 'all';
     } else {
       enquiryFilter = value;
@@ -3900,22 +3906,27 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
     if(eNative) eNative.value = '';
     syncDateDisplay();
     syncEnquiryFilters();
-    loadAdminEnquiries();
+    renderEnquiries();
   }
   document.getElementById('page-enquiries').addEventListener('click', event => {
     const filterButton = event.target.closest('[data-enquiry-filter]');
     if(!filterButton) return;
     if(filterButton.closest('.toolbar-actions')){
       const filter = filterButton.dataset.enquiryFilter;
-      if(filter === 'all') enquiryDateMode = 'all';
-      else if(filter === 'today') enquiryDateMode = 'today';
+      if(filter === 'all') {
+        enquiryDateMode = 'all';
+        enquiryFilter = 'all';
+      } else if(filter === 'today') {
+        enquiryDateMode = 'today';
+        enquiryFilter = 'today';
+      }
       const eDate = document.getElementById('enquiryDate');
       if(eDate) eDate.value = '';
       const eNative = document.getElementById('enquiryDate-picker');
       if(eNative) eNative.value = '';
       syncDateDisplay();
       syncEnquiryFilters();
-      loadAdminEnquiries();
+      renderEnquiries();
     }
   });
   document.getElementById('enquiryStatusMenuButton').addEventListener('click', event => {
@@ -3930,8 +3941,8 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
       if(window.innerWidth <= 1000) closeMobileSidebar();
     }
   });
-  document.getElementById('enquirySearch').addEventListener('input', loadAdminEnquiries);
-  document.getElementById('enquiryDate').addEventListener('change', ()=>{ enquiryDateMode = 'custom'; syncEnquiryFilters(); loadAdminEnquiries(); });
+  document.getElementById('enquirySearch').addEventListener('input', () => renderEnquiries());
+  document.getElementById('enquiryDate').addEventListener('change', ()=>{ enquiryDateMode = 'custom'; syncEnquiryFilters(); renderEnquiries(); });
   syncEnquiryFilters();
   document.getElementById('enquiryExport').addEventListener('click', ()=>exportCsv(`extended-enquiries-${new Date().toISOString().slice(0,10)}.csv`, [{key:'id',label:'Enquiry ID'},{key:'mobile',label:'Mobile'},{key:'start',label:'Start Date'},{key:'end',label:'End Date'},{key:'preferred',label:'Preferred Time'},{key:'status',label:'Status'},{key:'summary',label:'Summary'}], enquiryRows().map(enquiry=>({id:enquiry._id,mobile:enquiry.mobile,start:enquiry.startDate,end:enquiry.endDate,preferred:enquiry.preferredTime,status:enquiry.status,summary:enquiry.summary}))));
   if(adminSessionReady) loadAdminEnquiries();
@@ -4704,6 +4715,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
     toggleNavDropdown('bookingStatusMenu', 'bookingStatusMenuButton', event);
   });
   document.addEventListener('click', (event) => {
+    if(window.innerWidth > 1000) return;
     [['bookingStatusMenu', 'bookingStatusMenuButton'], ['paymentStatusMenu', 'paymentStatusMenuButton'], ['enquiryStatusMenu', 'enquiryStatusMenuButton'], ['whatsappStatusMenu', 'whatsappStatusMenuButton'], ['chatbotStatusMenu', 'chatbotStatusMenuButton']].forEach(([menuId, buttonId]) => {
       const menu = document.getElementById(menuId);
       if(!menu) return;
