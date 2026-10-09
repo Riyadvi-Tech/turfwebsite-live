@@ -1696,7 +1696,7 @@
           </div>
         </div>
         <div style="display:flex; align-items:center; gap:12px;">
-          <div class="venue-messages-pill" id="dashboardMessagesAlert" style="display:none;" onclick="openAdminPage('chatbot')" title="Click to view new incoming messages"><span class="vmp-dot"></span><span id="dashboardMessagesAlertText">0 new messages</span></div>
+          <div class="venue-messages-pill" id="dashboardMessagesAlert" style="display:none;" onclick="openAdminPage('chatbot')" title="Click to view new incoming messages"><span class="vmp-dot"></span><span id="dashboardMessagesAlertText">0 New messages</span></div>
           <div class="mono" style="font-size:10.5px; color:var(--muted);">Live · updated just now</div>
         </div>
       </div>
@@ -1768,8 +1768,8 @@
         <button class="btn btn-ghost toolbar-export-btn" id="bookingExport" title="Export hourly bookings as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         <div class="toolbar-actions">
           <div class="booking-status-filters" id="bookingStatusFilters" aria-label="Booking status filter">
-            <button type="button" class="status-filter-btn" data-booking-filter="all">All</button>
             <button type="button" class="status-filter-btn sel" data-booking-filter="today">Today</button>
+            <button type="button" class="status-filter-btn" data-booking-filter="all">All</button>
           </div>
           <span class="date-wrap"><span class="date-ph placeholder">dd/mm/yyyy</span><input id="bookingDate" class="date-filter" type="text" readonly aria-label="Choose booking date" title="Choose booking date"><input id="bookingDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         </div>
@@ -1797,15 +1797,15 @@
         <button class="btn btn-ghost toolbar-export-btn" id="paymentExport" title="Export payment confirmations as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         <div class="toolbar-actions">
           <div class="payment-status-filters" id="paymentStatusFilters" aria-label="Payment confirmation filter">
-            <button type="button" class="status-filter-btn" data-payment-filter="all">All</button>
             <button type="button" class="status-filter-btn sel" data-payment-filter="today">Today</button>
+            <button type="button" class="status-filter-btn" data-payment-filter="all">All</button>
           </div>
           <span class="date-wrap"><span class="date-ph placeholder">dd/mm/yyyy</span><input id="paymentDate" class="date-filter" type="text" readonly aria-label="Choose payment date" title="Choose payment date"><input id="paymentDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         </div>
       </div>
       <div class="table-wrap" id="paymentsTableWrap">
         <table>
-          <thead><tr><th>Booking ID</th><th>Booked On</th><th>Customer</th><th>Mobile</th><th>Date</th><th>Amount received</th><th>Payment status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Booking ID</th><th>Booked On</th><th>Customer</th><th>Mobile</th><th>Play Date</th><th>Amount received</th><th>Payment status</th><th>Actions</th></tr></thead>
           <tbody id="paymentsBody"></tbody>
         </table>
         <div class="table-foot"><span id="paymentsFoot">Showing today&rsquo;s received payments</span></div>
@@ -1818,8 +1818,8 @@
         <input id="enquirySearch" type="text" placeholder="Search by name, mobile, booking ID...">
         <button class="btn btn-ghost toolbar-export-btn" id="enquiryExport" title="Export enquiries as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         <div class="toolbar-actions">
-          <div class="filt-pill sel" data-enquiry-filter="all">All</div>
           <div class="filt-pill" data-enquiry-filter="today">Today</div>
+          <div class="filt-pill sel" data-enquiry-filter="all">All</div>
           <span class="date-wrap"><span class="date-ph placeholder">dd/mm/yyyy</span><input id="enquiryDate" class="date-filter" type="text" readonly aria-label="Choose enquiry date" title="Choose enquiry date"><input id="enquiryDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         </div>
       </div>
@@ -1863,8 +1863,8 @@
         <input type="text" id="whatsappSearch" placeholder="Search by name, mobile...">
         <button class="btn btn-ghost toolbar-export-btn" id="whatsappExport" title="Export WhatsApp enquiries as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         <div class="toolbar-actions">
-          <div class="filt-pill" data-wa-filter="all">All</div>
           <div class="filt-pill sel" data-wa-filter="today">Today</div>
+          <div class="filt-pill" data-wa-filter="all">All</div>
           <span class="date-wrap"><span class="date-ph placeholder">dd/mm/yyyy</span><input class="date-filter" type="text" readonly id="whatsappDate" aria-label="Choose WhatsApp enquiry date" title="Choose WhatsApp enquiry date"><input id="whatsappDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         </div>
       </div>
@@ -1883,8 +1883,8 @@
         <input type="text" id="chatSearch" placeholder="Search by name, mobile...">
         <button class="btn btn-ghost toolbar-export-btn" id="chatbotExport" title="Export chatbot conversations as CSV"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Export</button>
         <div class="toolbar-actions">
-          <div class="filt-pill" data-chat-filter="all">All</div>
           <div class="filt-pill sel" data-chat-filter="today">Today</div>
+          <div class="filt-pill" data-chat-filter="all">All</div>
           <span class="date-wrap"><span class="date-ph placeholder">dd/mm/yyyy</span><input class="date-filter" type="text" readonly id="chatDate" aria-label="Choose chatbot date" title="Choose chatbot date"><input id="chatDate-picker" class="date-picker" type="date" tabindex="-1" aria-hidden="true"></span>
         </div>
       </div>
@@ -2582,7 +2582,7 @@
       syncNotificationBadge();
       return;
     }
-    list.innerHTML = safeItems.slice(0, 20).map((item) => {
+    list.innerHTML = safeItems.map((item) => {
       const text = String(item.text || 'New activity');
       const [title, ...rest] = text.split(' — ');
       const detail = rest.join(' — ') || text;
@@ -3046,6 +3046,24 @@
   }
   window.openRecentActivityItem = openRecentActivityItem;
 
+  function formatStatBadge(metric, newCount){
+    if(!newCount || newCount <= 0){
+      return `<span style="font-size:10.5px; font-weight:600; color:#39FF7A;">Live</span>`;
+    }
+    if(metric === 'pendingConf'){
+      const text = newCount > 2 ? `${newCount} Pendings` : `${newCount} Pending`;
+      return `<span class="stat-new-badge amber"><span class="badge-pulse-dot"></span>${text}</span>`;
+    }
+    if(metric === 'enq'){
+      return `<span class="stat-new-badge green"><span class="badge-pulse-dot"></span>New Extended Bookings</span>`;
+    }
+    if(metric === 'wa' || metric === 'chat'){
+      const text = `${newCount} New message${newCount > 1 ? 's' : ''}`;
+      return `<span class="stat-new-badge green"><span class="badge-pulse-dot"></span>${text}</span>`;
+    }
+    return `<span class="stat-new-badge green"><span class="badge-pulse-dot"></span>${newCount} New</span>`;
+  }
+
   function renderLiveDashboard(data){
     const stats = data.stats || {};
     const values = {
@@ -3083,11 +3101,7 @@
         const el = document.createElement('div');
         el.className = 'stat-card';
         el.dataset.metric = metric;
-        const isMsgMetric = metric === 'wa' || metric === 'chat';
-        const isPending = metric === 'pendingConf';
-        const badgePill = newCount > 0
-          ? `<span class="stat-new-badge ${isPending ? 'amber' : 'green'}"><span class="badge-pulse-dot"></span>${newCount} ${isMsgMetric ? 'new message' + (newCount > 1 ? 's' : '') : isPending ? 'pending' : 'new'}</span>`
-          : `<span style="font-size:10.5px; font-weight:600; color:#39FF7A;">Live</span>`;
+        const badgePill = formatStatBadge(metric, newCount);
 
         el.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:flex-start;"><div class="ic">${statIcons[icon]}</div><div class="badge-wrap" style="display:flex; align-items:center; gap:6px;">${badgePill}</div></div><div class="num" data-target="${value}" data-currency="${currency ? '1' : '0'}">${currency ? '₹0' : '0'}</div><div style="display:flex; justify-content:space-between; align-items:flex-end; gap:8px;"><div class="lbl">${label}</div><div class="sparkline-wrap" style="flex-shrink:0;">${sparkline([0,0,0,0,0,0,value], true)}</div></div>`;
         el.addEventListener('click', ()=>navigateDashboardCard(metric, page));
@@ -3108,13 +3122,9 @@
       cards.forEach(([metric, icon, value, label, currency, page, newCount])=>{
         const card = statGrid.querySelector(`.stat-card[data-metric="${metric}"]`);
         if(!card) return;
-        const isMsgMetric = metric === 'wa' || metric === 'chat';
-        const isPending = metric === 'pendingConf';
         const badgeWrap = card.querySelector('.badge-wrap');
         if(badgeWrap){
-          const expectedHtml = newCount > 0
-            ? `<span class="stat-new-badge ${isPending ? 'amber' : 'green'}"><span class="badge-pulse-dot"></span>${newCount} ${isMsgMetric ? 'new message' + (newCount > 1 ? 's' : '') : isPending ? 'pending' : 'new'}</span>`
-            : `<span style="font-size:10.5px; font-weight:600; color:#39FF7A;">Live</span>`;
+          const expectedHtml = formatStatBadge(metric, newCount);
           if(badgeWrap.innerHTML !== expectedHtml) badgeWrap.innerHTML = expectedHtml;
         }
         const numEl = card.querySelector('.num');
@@ -3145,7 +3155,7 @@
       const totalNewMsgs = values.newMessages || activity.filter(a => a.type === 'chat' || a.type === 'whatsapp').length;
       if(totalNewMsgs > 0){
         messagesAlert.style.display = 'inline-flex';
-        messagesAlertText.textContent = `${totalNewMsgs} new message${totalNewMsgs > 1 ? 's' : ''}`;
+        messagesAlertText.textContent = `${totalNewMsgs} New message${totalNewMsgs > 1 ? 's' : ''}`;
       } else {
         messagesAlert.style.display = 'none';
       }
@@ -3504,7 +3514,7 @@
 
   const bstatusLbl = {confirmed:'Confirmed', pending:'Pending', cancelled:'Cancelled'};
   const initialBookingsWrap = document.getElementById('bookingsTableWrap');
-  if(initialBookingsWrap) initialBookingsWrap.innerHTML = '<div class="booking-box-card"><div class="table-wrap"><table><tbody><tr><td colspan="12" class="tbl-empty">Loading bookings...</td></tr></tbody></table></div></div>';
+  if(initialBookingsWrap) initialBookingsWrap.innerHTML = '<div class="booking-box-card"><div class="table-wrap"><table><tbody><tr><td colspan="11" class="tbl-empty">Loading bookings...</td></tr></tbody></table></div></div>';
   function openBookingDetail(bookingId){ loadBookingDetail(bookingId); }
 
   // ---- enquiries table ----
@@ -3560,7 +3570,10 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
       const isRead = enquiry.read === true || locallyReadWhatsApp.has(String(enquiry._id));
       const readAction = isRead ? '' : `<button onclick="markWhatsAppRead('${escapeWhatsAppHtml(enquiry._id)}')" title="Mark as read"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18v12H3z"/><path d="m4 7 8 6 8-6"/></svg></button>`;
       const status = normalizeStatus(enquiry.status);
-      const displayStatus = isRead && status === 'contacted' ? 'Read / Contacted' : isRead ? 'Read' : displayEnquiryStatus(enquiry.status);
+      const isUnreadSelected = waReadMode === 'unread';
+      const displayStatus = (isUnreadSelected && (!isRead || status === 'new'))
+        ? 'Unread'
+        : (isRead && status === 'contacted' ? 'Read / Contacted' : isRead ? 'Read' : displayEnquiryStatus(enquiry.status));
       return `<tr onclick="viewWhatsAppDetails('${escapeWhatsAppHtml(enquiry._id)}')" style="cursor:pointer;">
         <td>${escapeWhatsAppHtml(enquiry.name)}</td>
         <td class="mono">${escapeWhatsAppHtml(enquiry.mobile)}</td>
@@ -4060,7 +4073,10 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
       const message = chatMessage(c);
       const isRead = c.read === true || locallyReadChatbot.has(String(c._id));
       const readAction = isRead ? '' : `<button onclick="markChatbotRead('${escapeBookingHtml(c._id)}')" title="Mark as read"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18v12H3z"/><path d="m4 7 8 6 8-6"/></svg></button>`;
-      const displayStatus = isRead && canonicalEnquiryStatus(c.status) === 'contacted' ? 'Read / Contacted' : isRead ? 'Read' : displayEnquiryStatus(c.status);
+      const isUnreadSelected = chatReadMode === 'unread';
+      const displayStatus = (isUnreadSelected && (!isRead || canonicalEnquiryStatus(c.status) === 'new'))
+        ? 'Unread'
+        : (isRead && canonicalEnquiryStatus(c.status) === 'contacted' ? 'Read / Contacted' : isRead ? 'Read' : displayEnquiryStatus(c.status));
       return `
     <tr data-date="${escapeBookingHtml(isoDay(c.createdAt))}" onclick="viewChatbotDetails('${escapeBookingHtml(c._id)}')" style="cursor:pointer;">
       <td>${escapeBookingHtml(c.name)}</td>
@@ -4380,17 +4396,17 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
       ? `<button class="btn-confirm-highlight" onclick="confirmBookingStatus('${id}')" title="Confirm booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12.5l5 5L20 6"/></svg></button>`
       : '';
 
-    return `<tr onclick="openBookingDetail('${id}')" style="cursor:pointer;"><td class="mono">${idDisplay}</td><td><strong>${customer}</strong></td><td>${bookedOnDisplay}</td><td class="mono">${mobile}</td><td>${date}</td><td>${slot}</td><td>${time}</td><td>${slotDurations || duration}</td><td class="mono"><strong>${amount}</strong></td><td>${paymentBadge}</td><td>${statusBadge}</td><td><div class="row-actions" onclick="event.stopPropagation()">${confirmActionBtn}<button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="danger" onclick="deleteBooking('${id}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td></tr>`;
+    return `<tr onclick="openBookingDetail('${id}')" style="cursor:pointer;"><td class="mono">${idDisplay}</td><td><strong>${customer}</strong></td><td>${bookedOnDisplay}</td><td class="mono">${mobile}</td><td>${date}</td><td>${slot}</td><td>${time}</td><td>${slotDurations || duration}</td><td class="mono"><strong>${amount}</strong></td><td>${paymentBadge}</td><td><div class="row-actions" onclick="event.stopPropagation()">${confirmActionBtn}<button class="danger" onclick="updateBookingStatus('${id}','CANCELLED')" title="Cancel booking"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="danger" onclick="deleteBooking('${id}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button><button onclick="openBookingDetail('${id}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td></tr>`;
   }
 
-  const BOOKINGS_THEAD_HTML = '<thead><tr><th>Booking ID</th><th>Customer</th><th>Booked On</th><th>Mobile</th><th>Play Date</th><th>Slot</th><th>Time</th><th>Duration</th><th>Amount</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>';
+  const BOOKINGS_THEAD_HTML = '<thead><tr><th>Booking ID</th><th>Customer</th><th>Booked On</th><th>Mobile</th><th>Play Date</th><th>Slot</th><th>Time</th><th>Duration</th><th>Amount</th><th>Payment Status</th><th>Actions</th></tr></thead>';
 
   function renderBookingBoxCard(type, title, dotColor, badgeClass, rows, dateLabel, tagline){
     const count = rows.length;
     const taglineHtml = tagline ? `<span class="box-tagline ${badgeClass}">${tagline}</span>` : '';
     const tableBodyHtml = count > 0
       ? rows.map(bookingRowHtml).join('')
-      : `<tr><td colspan="12" class="tbl-empty">No ${type.toLowerCase()} bookings ${dateLabel || 'found'}</td></tr>`;
+      : `<tr><td colspan="11" class="tbl-empty">No ${type.toLowerCase()} bookings ${dateLabel || 'found'}</td></tr>`;
 
     return `
       <div class="booking-box-card ${type.toLowerCase()}-box-card">
@@ -4425,7 +4441,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
             <table>
               ${BOOKINGS_THEAD_HTML}
               <tbody>
-                <tr><td colspan="12" class="tbl-empty">${escapeBookingHtml(message)}</td></tr>
+                <tr><td colspan="11" class="tbl-empty">${escapeBookingHtml(message)}</td></tr>
               </tbody>
             </table>
           </div>
@@ -4549,7 +4565,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
     if(mobileSearch.length >= 3) params.set('mobile', mobileSearch);
     const bWrap = document.getElementById('bookingsTableWrap');
     if(!liveBookingsLoaded && !isBackground && bWrap && !liveBookings.length){
-      bWrap.innerHTML = '<div class="booking-box-card"><div class="table-wrap"><table><tbody><tr><td colspan="12" class="tbl-empty">Loading bookings...</td></tr></tbody></table></div></div>';
+      bWrap.innerHTML = '<div class="booking-box-card"><div class="table-wrap"><table><tbody><tr><td colspan="11" class="tbl-empty">Loading bookings...</td></tr></tbody></table></div></div>';
     }
     try {
       const response = await fetch('/api/admin/bookings?' + params.toString(), {credentials:'include'});

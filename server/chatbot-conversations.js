@@ -32,17 +32,17 @@ export default async function handler(req, res) {
     const db = await getDb()
     const now = new Date()
     const conversationId = String(req.body?.conversationId || '').trim()
-    if (conversationId) {
-      if (!ObjectId.isValid(conversationId)) return fail(res, 400, 'Invalid conversation id.')
+    if (conversationId && ObjectId.isValid(conversationId)) {
       const result = await db.collection('chatbot_conversations').updateOne(
-        { _id: new ObjectId(conversationId), mobile, email },
+        { _id: new ObjectId(conversationId) },
         {
           $push: { messages: { role: 'user', message, createdAt: now } },
-          $set: { updatedAt: now, lastMessage: message },
+          $set: { updatedAt: now, lastMessage: message, name, mobile, email },
         },
       )
-      if (!result.matchedCount) return fail(res, 404, 'Chatbot conversation not found.')
-      return res.status(200).json({ success: true, conversationId, status: 'new' })
+      if (result.matchedCount > 0) {
+        return res.status(200).json({ success: true, conversationId, status: 'new' })
+      }
     }
 
     const result = await db.collection('chatbot_conversations').insertOne({

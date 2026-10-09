@@ -1,3 +1,5 @@
+import { resolve } from 'node:path'
+import { pathToFileURL } from 'node:url'
 import bookings from '../server/bookings.js'
 import chatbotConversations from '../server/chatbot-conversations.js'
 import extendedEnquiries from '../server/extended-enquiries.js'
@@ -20,10 +22,8 @@ import adminSession from '../server/admin/session.js'
 import adminSettings from '../server/admin/settings.js'
 import adminVerifyResetToken from '../server/admin/verify-reset-token.js'
 import adminWhatsappEnquiries from '../server/admin/whatsapp-enquiries.js'
-import adminWhatsappNotify from '../server/admin/whatsapp-notify.js'
 import paymentCreate from '../server/payment/create.js'
 import paymentStatus from '../server/payment/status.js'
-import sendPaymentQr from '../server/send-payment-qr.js'
 
 const handlers = {
   bookings,
@@ -48,10 +48,35 @@ const handlers = {
   'admin/settings': adminSettings,
   'admin/verify-reset-token': adminVerifyResetToken,
   'admin/whatsapp-enquiries': adminWhatsappEnquiries,
-  'admin/whatsapp-notify': adminWhatsappNotify,
   'payment/create': paymentCreate,
   'payment/status': paymentStatus,
-  'send-payment-qr': sendPaymentQr,
+}
+
+const routeFiles = {
+  bookings: './server/bookings.js',
+  'chatbot-conversations': './server/chatbot-conversations.js',
+  'extended-enquiries': './server/extended-enquiries.js',
+  settings: './server/settings.js',
+  'whatsapp-enquiries': './server/whatsapp-enquiries.js',
+  'admin/bookings': './server/admin/bookings.js',
+  'admin/chatbot-conversations': './server/admin/chatbot-conversations.js',
+  'admin/customers': './server/admin/customers.js',
+  'admin/dashboard': './server/admin/dashboard.js',
+  'admin/diagnose': './server/admin/diagnose.js',
+  'admin/extended-enquiries': './server/admin/extended-enquiries.js',
+  'admin/forgot-password': './server/admin/forgot-password.js',
+  'admin/login': './server/admin/login.js',
+  'admin/logout': './server/admin/logout.js',
+  'admin/payment-sessions': './server/admin/payment-sessions.js',
+  'admin/profile': './server/admin/profile.js',
+  'admin/reports': './server/admin/reports.js',
+  'admin/reset-password': './server/admin/reset-password.js',
+  'admin/session': './server/admin/session.js',
+  'admin/settings': './server/admin/settings.js',
+  'admin/verify-reset-token': './server/admin/verify-reset-token.js',
+  'admin/whatsapp-enquiries': './server/admin/whatsapp-enquiries.js',
+  'payment/create': './server/payment/create.js',
+  'payment/status': './server/payment/status.js',
 }
 
 function getRoute(req) {
@@ -68,19 +93,7 @@ export default async function handler(req, res) {
   const route = getRoute(req)
   let routeHandler = handlers[route]
 
-  if (process.env.NODE_ENV !== 'production') {
-    try {
-      const { resolve } = await import('node:path')
-      const { pathToFileURL } = await import('node:url')
-      const targetPath = resolve(process.cwd(), './server/' + route + '.js')
-      const mod = await import(pathToFileURL(targetPath).href + '?t=' + Date.now())
-      if (mod.default) routeHandler = mod.default
-    } catch {
-      // fallback to handlers[route]
-    }
-  }
-
-  if (!routeHandler) {
+  if (!routeHandler && !routeFiles[route]) {
     return res.status(404).json({ message: 'Not found' })
   }
 
@@ -92,6 +105,16 @@ export default async function handler(req, res) {
         success: false,
         message: 'Invalid JSON body.',
       })
+    }
+  }
+
+  if (process.env.NODE_ENV !== 'production' && routeFiles[route]) {
+    try {
+      const moduleUrl = pathToFileURL(resolve(process.cwd(), routeFiles[route])).href + '?t=' + Date.now()
+      const mod = await import(moduleUrl)
+      if (mod.default) routeHandler = mod.default
+    } catch (error) {
+      console.warn('Dev hot-reload failed for route:', route, error.message)
     }
   }
 
