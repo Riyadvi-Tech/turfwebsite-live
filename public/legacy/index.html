@@ -7272,7 +7272,7 @@
     chatUser = {name, phone, email};
     chatConversationId = null;
     try {
-      await saveChatMessage('Conversation started');
+      await saveChatMessage('-');
     } catch(error) {
       commBody.innerHTML = `<p class="comm-error">${escapeCommHtml(error.message || 'Unable to save the conversation.')}</p>`;
       return;

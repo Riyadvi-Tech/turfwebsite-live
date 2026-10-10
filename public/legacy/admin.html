@@ -411,6 +411,8 @@
   .pending-box-card .box-header-title strong{color:var(--amber);}
   .confirmed-box-card .box-header-title strong{color:var(--neon);}
   .cancelled-box-card .box-header-title strong{color:var(--red);}
+  .today-box-card .box-header-title strong,
+  .all-box-card .box-header-title strong{color:var(--neon);}
   .box-badge{
     font-family:'JetBrains Mono',monospace;
     font-size:10.5px;
@@ -888,18 +890,92 @@
   #page-payments table{min-width:1040px;}
   #page-payments th:last-child, #page-payments td:last-child{min-width:98px; padding-right:20px;}
   #page-payments .row-actions{min-width:40px; white-space:nowrap;}
-  #page-whatsapp .table-wrap{overflow-x:auto; overflow-y:hidden;}
-  #page-whatsapp table{min-width:1120px;}
-  #page-whatsapp th:last-child, #page-whatsapp td:last-child{min-width:128px; padding-right:20px;}
-  #page-whatsapp td:nth-child(3){max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  #page-whatsapp th:nth-child(4), #page-whatsapp td:nth-child(4){min-width:280px; max-width:440px; white-space:normal; word-break:break-word; line-height:1.45;}
-  #page-whatsapp .row-actions{min-width:120px; white-space:nowrap;}
-  #page-chatbot .table-wrap{overflow-x:auto; overflow-y:hidden;}
-  #page-chatbot table{min-width:1120px;}
-  #page-chatbot th:last-child, #page-chatbot td:last-child{min-width:128px; padding-right:20px;}
-  #page-chatbot td:nth-child(3){max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  #page-chatbot th:nth-child(4), #page-chatbot td:nth-child(4){min-width:280px; max-width:440px; white-space:normal; word-break:break-word; line-height:1.45;}
-  #page-chatbot .row-actions{min-width:120px; white-space:nowrap;}
+  #page-whatsapp .table-wrap,
+  #page-chatbot .table-wrap{
+    width:100% !important;
+    overflow-x:auto;
+    overflow-y:hidden;
+  }
+  #page-whatsapp table,
+  #page-chatbot table{
+    width:100% !important;
+    border-collapse:collapse;
+  }
+  #page-whatsapp th:nth-child(1), #page-whatsapp td:nth-child(1),
+  #page-chatbot th:nth-child(1), #page-chatbot td:nth-child(1){
+    min-width:115px;
+    width:1%;
+    white-space:nowrap;
+  }
+  #page-whatsapp th:nth-child(2), #page-whatsapp td:nth-child(2),
+  #page-chatbot th:nth-child(2), #page-chatbot td:nth-child(2){
+    min-width:105px;
+    width:1%;
+    white-space:nowrap;
+  }
+  #page-whatsapp th:nth-child(3), #page-whatsapp td:nth-child(3),
+  #page-chatbot th:nth-child(3), #page-chatbot td:nth-child(3){
+    min-width:140px;
+    max-width:190px;
+    width:1%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  #page-whatsapp th:nth-child(4){
+    width:var(--wa-msg-width, 105px) !important;
+    min-width:var(--wa-msg-width, 105px) !important;
+    max-width:var(--wa-msg-width, 105px) !important;
+    white-space:nowrap !important;
+  }
+  #page-whatsapp td:nth-child(4), #page-whatsapp .wa-message-cell{
+    width:var(--wa-msg-width, 105px) !important;
+    min-width:var(--wa-msg-width, 105px) !important;
+    max-width:var(--wa-msg-width, 105px) !important;
+    white-space:normal;
+    word-break:break-word;
+    line-height:1.45;
+    font-size:12px;
+  }
+  #page-chatbot th:nth-child(4){
+    width:var(--chat-msg-width, 140px) !important;
+    min-width:var(--chat-msg-width, 140px) !important;
+    max-width:var(--chat-msg-width, 140px) !important;
+    white-space:nowrap !important;
+  }
+  #page-chatbot td:nth-child(4), #page-chatbot .chat-message-cell{
+    width:var(--chat-msg-width, 140px) !important;
+    min-width:var(--chat-msg-width, 140px) !important;
+    max-width:var(--chat-msg-width, 140px) !important;
+    white-space:normal;
+    word-break:break-word;
+    line-height:1.45;
+    font-size:12px;
+  }
+  #page-whatsapp th:nth-child(5), #page-whatsapp td:nth-child(5),
+  #page-chatbot th:nth-child(5), #page-chatbot td:nth-child(5){
+    min-width:95px;
+    width:1%;
+    white-space:nowrap;
+  }
+  #page-whatsapp th:nth-child(6), #page-whatsapp td:nth-child(6),
+  #page-chatbot th:nth-child(6), #page-chatbot td:nth-child(6){
+    min-width:85px;
+    width:1%;
+    white-space:nowrap;
+  }
+  #page-whatsapp th:last-child, #page-whatsapp td:last-child,
+  #page-chatbot th:last-child, #page-chatbot td:last-child{
+    min-width:128px;
+    width:auto;
+    padding-right:20px;
+    white-space:nowrap;
+  }
+  #page-whatsapp .row-actions,
+  #page-chatbot .row-actions{
+    min-width:120px;
+    white-space:nowrap;
+  }
   /* Reduced table footer text */
   .table-foot{display:flex; justify-content:space-between; align-items:center; padding:14px 18px; font-size:11.5px; color:var(--muted); border-top:1px solid var(--border);}
 
@@ -1198,21 +1274,43 @@
       width:1% !important;
       white-space:nowrap !important;
     }
-    #page-whatsapp th:nth-child(4),
-    #page-whatsapp td:nth-child(4){
-      min-width:320px !important;
-      max-width:500px !important;
-      white-space:normal !important;
-      word-break:break-word !important;
-      line-height:1.5 !important;
+    #page-whatsapp .table-wrap,
+    #page-chatbot .table-wrap{
+      width:100% !important;
     }
-    #page-chatbot th:nth-child(4),
-    #page-chatbot td:nth-child(4){
-      min-width:320px !important;
-      max-width:500px !important;
+    #page-whatsapp table,
+    #page-chatbot table{
+      width:100% !important;
+    }
+    #page-whatsapp th:nth-child(4){
+      width:var(--wa-msg-width, 105px) !important;
+      min-width:var(--wa-msg-width, 105px) !important;
+      max-width:var(--wa-msg-width, 105px) !important;
+      white-space:nowrap !important;
+    }
+    #page-whatsapp td:nth-child(4),
+    #page-whatsapp .wa-message-cell{
+      width:var(--wa-msg-width, 105px) !important;
+      min-width:var(--wa-msg-width, 105px) !important;
+      max-width:var(--wa-msg-width, 105px) !important;
       white-space:normal !important;
       word-break:break-word !important;
-      line-height:1.5 !important;
+      line-height:1.45 !important;
+    }
+    #page-chatbot th:nth-child(4){
+      width:var(--chat-msg-width, 140px) !important;
+      min-width:var(--chat-msg-width, 140px) !important;
+      max-width:var(--chat-msg-width, 140px) !important;
+      white-space:nowrap !important;
+    }
+    #page-chatbot td:nth-child(4),
+    #page-chatbot .chat-message-cell{
+      width:var(--chat-msg-width, 140px) !important;
+      min-width:var(--chat-msg-width, 140px) !important;
+      max-width:var(--chat-msg-width, 140px) !important;
+      white-space:normal !important;
+      word-break:break-word !important;
+      line-height:1.45 !important;
     }
   }
 
@@ -1267,10 +1365,10 @@
     #page-bookings table{min-width:1100px;}
     #page-enquiries table{min-width:var(--enq-tbl-min-width-mob, 960px);}
     #page-payments table{min-width:920px;}
-    #page-whatsapp table{min-width:1060px;}
-    #page-chatbot table{min-width:1060px;}
+    #page-whatsapp table{width:auto !important; min-width:0 !important;}
+    #page-chatbot table{width:auto !important; min-width:0 !important;}
     #page-whatsapp th:nth-child(4), #page-whatsapp td:nth-child(4),
-    #page-chatbot th:nth-child(4), #page-chatbot td:nth-child(4){min-width:240px; max-width:360px; white-space:normal; word-break:break-word; line-height:1.45; font-size:12px;}
+    #page-chatbot th:nth-child(4), #page-chatbot td:nth-child(4){min-width:var(--wa-msg-min-width, 65px); max-width:360px; white-space:normal; word-break:break-word; line-height:1.45; font-size:12px;}
     #page-enquiries th:nth-child(9), #page-enquiries td:nth-child(9),
     #page-enquiries .enquiry-message-cell{min-width:var(--enq-msg-min-width-mob, 75px); max-width:380px; white-space:normal; word-break:break-word; line-height:1.4; font-size:12px;}
     #page-enquiries table[data-msg-mode="none"] th:nth-child(9),
@@ -3564,8 +3662,25 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
       return (!search || searchable.includes(search)) && (waStatus === 'all' || status === waStatus) && readMatches && (!enquiryDate || createdDate === enquiryDate);
     });
   }
+  function updateWhatsAppTableSpacing(rows){
+    const table = document.querySelector('#page-whatsapp table');
+    if(!table) return;
+    let maxMsgLen = 0;
+    (rows || []).forEach(e => {
+      const val = String(e?.message || '').trim();
+      if(val && val !== '—' && val !== '-'){
+        if(val.length > maxMsgLen) maxMsgLen = val.length;
+      }
+    });
+
+    const msgWidth = maxMsgLen <= 3
+      ? 105
+      : Math.max(105, Math.min(480, Math.round(maxMsgLen * 7.5 + 75)));
+    table.style.setProperty('--wa-msg-width', msgWidth + 'px');
+  }
   function renderWhatsApp(message){
     const rows = waRows();
+    updateWhatsAppTableSpacing(rows);
     const targetHtml = rows.length ? rows.map(enquiry=>{
       const isRead = enquiry.read === true || locallyReadWhatsApp.has(String(enquiry._id));
       const readAction = isRead ? '' : `<button onclick="markWhatsAppRead('${escapeWhatsAppHtml(enquiry._id)}')" title="Mark as read"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18v12H3z"/><path d="m4 7 8 6 8-6"/></svg></button>`;
@@ -3578,7 +3693,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
         <td>${escapeWhatsAppHtml(enquiry.name)}</td>
         <td class="mono">${escapeWhatsAppHtml(enquiry.mobile)}</td>
         <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeWhatsAppHtml(enquiry.email)}">${escapeWhatsAppHtml(enquiry.email)}</td>
-        <td style="min-width:280px; max-width:420px; white-space:normal; word-break:break-word; line-height:1.45; font-size:12px;">${escapeWhatsAppHtml(enquiry.message)}</td>
+        <td class="wa-message-cell">${escapeWhatsAppHtml(enquiry.message || '—')}</td>
         <td>${escapeWhatsAppHtml(formatDateDDMMYYYY(enquiry.createdAt))}</td>
         <td><span class="badge ${isRead ? 'confirmed' : statusBadgeClass(enquiry.status)}">${escapeWhatsAppHtml(displayStatus)}</span></td>
         <td><div class="row-actions" onclick="event.stopPropagation()"><button onclick="viewWhatsAppDetails('${escapeWhatsAppHtml(enquiry._id)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>${readAction}<button onclick="markWhatsAppContacted('${escapeWhatsAppHtml(enquiry._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 10h8"/></svg></button><button class="danger" onclick="deleteWhatsApp('${escapeWhatsAppHtml(enquiry._id)}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button></div></td>
@@ -3763,7 +3878,10 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
       const requirements = escapeEnquiryHtml(enquiry.requirements || '—');
       const isRead = enquiry.read === true || locallyReadEnquiries.has(String(enquiry._id));
       const readAction = isRead ? '' : `<button onclick="markEnquiryRead('${escapeEnquiryHtml(enquiry._id)}')" title="Mark as read"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18v12H3z"/><path d="m4 7 8 6 8-6"/><path d="m8 15 2 2 5-5"/></svg></button>`;
-      const displayStatus = isRead && status === 'contacted' ? 'Read / Contacted' : isRead ? 'Read' : (enquiryStatusLabels[status] || displayEnquiryStatus(status));
+      const isUnreadSelected = enquiryReadMode === 'unread';
+      const displayStatus = (isUnreadSelected && (!isRead || status === 'new'))
+        ? 'Unread'
+        : (isRead && status === 'contacted' ? 'Read / Contacted' : isRead ? 'Read' : (enquiryStatusLabels[status] || displayEnquiryStatus(status)));
       return `<tr><td class="mono">${escapeEnquiryHtml(enquiry._id)}</td><td>${escapeEnquiryHtml(enquiryDate)}</td><td>${escapeEnquiryHtml(name)}</td><td class="mono">${escapeEnquiryHtml(enquiry.mobile)}</td><td>${escapeEnquiryHtml(enquiry.startDate)}</td><td>${escapeEnquiryHtml(enquiry.endDate)}</td><td>${escapeEnquiryHtml(enquiryDays(enquiry.startDate, enquiry.endDate))}</td><td>${escapeEnquiryHtml(enquiry.preferredTime)}</td><td class="enquiry-message-cell">${requirements}</td><td><span class="badge ${isRead ? 'confirmed' : statusBadgeClass(status)}">${escapeEnquiryHtml(displayStatus)}</span></td><td><div class="row-actions"><button onclick="loadEnquiryDetail('${escapeEnquiryHtml(enquiry._id)}')" title="View"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>${readAction}<button onclick="markEnquiryContacted('${escapeEnquiryHtml(enquiry._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 10h8"/></svg></button><button class="danger" onclick="deleteEnquiry('${escapeEnquiryHtml(enquiry._id)}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button></div></td></tr>`;
     }).join('') : `<tr><td colspan="11" class="tbl-empty">${escapeEnquiryHtml(message || 'No enquiries found')}</td></tr>`;
     const targetEl = document.getElementById('enquiriesBody');
@@ -3810,7 +3928,12 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
       const status = canonicalEnquiryStatus(enquiry.status);
       const isClosed = status === 'closed';
       const name = enquiry.name || String(enquiry.summary || '').split(' extended booking enquiry for ')[0] || '—';
-      document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Enquiry ID</span><span class="mono">${escapeEnquiryHtml(enquiry._id)}</span></div><div class="detail-row"><span>Customer</span><span>${escapeEnquiryHtml(name)}</span></div><div class="detail-row"><span>Mobile</span><span class="mono"><a href="tel:${escapeEnquiryHtml(enquiry.mobile)}" style="color:var(--neon); text-decoration:none;">${escapeEnquiryHtml(enquiry.mobile)}</a></span></div><div class="detail-row"><span>Start date</span><span>${escapeEnquiryHtml(enquiry.startDate)}</span></div><div class="detail-row"><span>End date</span><span>${escapeEnquiryHtml(enquiry.endDate)}</span></div><div class="detail-row"><span>Preferred time</span><span>${escapeEnquiryHtml(enquiry.preferredTime)}</span></div><div class="detail-row"><span>Message</span><span style="white-space:pre-wrap; word-break:break-word; line-height:1.5; color:var(--white);">${escapeEnquiryHtml(enquiry.requirements || '—')}</span></div><div class="detail-row"><span>Summary</span><span>${escapeEnquiryHtml(enquiry.summary)}</span></div><div class="detail-row"><span>Status</span><span class="badge ${statusBadgeClass(status)}">${escapeEnquiryHtml(enquiryStatusLabels[status] || displayEnquiryStatus(status))}</span></div><div class="detail-row"><span>Created</span><span>${escapeEnquiryHtml(formatDateDDMMYYYY(enquiry.createdAt))}</span></div><div class="detail-row"><span>Updated</span><span>${escapeEnquiryHtml(formatDateDDMMYYYY(enquiry.updatedAt))}</span></div>
+      const isRead = enquiry.read === true || locallyReadEnquiries.has(String(enquiry._id));
+      const isUnreadSelected = enquiryReadMode === 'unread';
+      const displayStatus = (isUnreadSelected && (!isRead || status === 'new'))
+        ? 'Unread'
+        : (isRead && status === 'contacted' ? 'Read / Contacted' : isRead ? 'Read' : (enquiryStatusLabels[status] || displayEnquiryStatus(status)));
+      document.getElementById('detailBody').innerHTML = `<div class="detail-row"><span>Enquiry ID</span><span class="mono">${escapeEnquiryHtml(enquiry._id)}</span></div><div class="detail-row"><span>Customer</span><span>${escapeEnquiryHtml(name)}</span></div><div class="detail-row"><span>Mobile</span><span class="mono"><a href="tel:${escapeEnquiryHtml(enquiry.mobile)}" style="color:var(--neon); text-decoration:none;">${escapeEnquiryHtml(enquiry.mobile)}</a></span></div><div class="detail-row"><span>Start date</span><span>${escapeEnquiryHtml(enquiry.startDate)}</span></div><div class="detail-row"><span>End date</span><span>${escapeEnquiryHtml(enquiry.endDate)}</span></div><div class="detail-row"><span>Preferred time</span><span>${escapeEnquiryHtml(enquiry.preferredTime)}</span></div><div class="detail-row"><span>Message</span><span style="white-space:pre-wrap; word-break:break-word; line-height:1.5; color:var(--white);">${escapeEnquiryHtml(enquiry.requirements || '—')}</span></div><div class="detail-row"><span>Summary</span><span>${escapeEnquiryHtml(enquiry.summary)}</span></div><div class="detail-row"><span>Status</span><span class="badge ${isRead ? 'confirmed' : statusBadgeClass(status)}">${escapeEnquiryHtml(displayStatus)}</span></div><div class="detail-row"><span>Created</span><span>${escapeEnquiryHtml(formatDateDDMMYYYY(enquiry.createdAt))}</span></div><div class="detail-row"><span>Updated</span><span>${escapeEnquiryHtml(formatDateDDMMYYYY(enquiry.updatedAt))}</span></div>
         <div class="detail-modal-actions" style="margin-top:20px; display:flex; gap:8px; flex-wrap:wrap; border-top:1px solid rgba(255,255,255,0.08); padding-top:16px;">
           <button type="button" class="btn btn-ghost" style="flex:1; min-width:95px; padding:10px 14px; font-size:12.5px; color:var(--red); border-color:rgba(255,107,107,0.4);" onclick="deleteEnquiry('${escapeEnquiryHtml(enquiry._id)}'); closeModal('detailModal');">Delete</button>
           <button type="button" class="btn btn-ghost" style="padding:10px 16px; font-size:12.5px;" onclick="closeModal('detailModal')">Close</button>
@@ -3956,8 +4079,16 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
   });
   document.getElementById('enquirySearch').addEventListener('input', () => renderEnquiries());
   document.getElementById('enquiryDate').addEventListener('change', ()=>{ enquiryDateMode = 'custom'; syncEnquiryFilters(); renderEnquiries(); });
+  document.getElementById('enquiryExport').addEventListener('click', ()=>exportCsv(`extended-enquiries-${new Date().toISOString().slice(0,10)}.csv`, [{key:'id',label:'Enquiry ID'},{key:'mobile',label:'Mobile'},{key:'start',label:'Start Date'},{key:'end',label:'End Date'},{key:'preferred',label:'Preferred Time'},{key:'status',label:'Status'},{key:'summary',label:'Summary'}], enquiryRows().map(enquiry=>{
+    const isRead = enquiry.read === true || locallyReadEnquiries.has(String(enquiry._id));
+    const status = canonicalEnquiryStatus(enquiry.status);
+    const isUnreadSelected = enquiryReadMode === 'unread';
+    const displayStatus = (isUnreadSelected && (!isRead || status === 'new'))
+      ? 'Unread'
+      : (isRead && status === 'contacted' ? 'Read / Contacted' : isRead ? 'Read' : (enquiryStatusLabels[status] || displayEnquiryStatus(status)));
+    return {id:enquiry._id,mobile:enquiry.mobile,start:enquiry.startDate,end:enquiry.endDate,preferred:enquiry.preferredTime,status:displayStatus,summary:enquiry.summary};
+  })));
   syncEnquiryFilters();
-  document.getElementById('enquiryExport').addEventListener('click', ()=>exportCsv(`extended-enquiries-${new Date().toISOString().slice(0,10)}.csv`, [{key:'id',label:'Enquiry ID'},{key:'mobile',label:'Mobile'},{key:'start',label:'Start Date'},{key:'end',label:'End Date'},{key:'preferred',label:'Preferred Time'},{key:'status',label:'Status'},{key:'summary',label:'Summary'}], enquiryRows().map(enquiry=>({id:enquiry._id,mobile:enquiry.mobile,start:enquiry.startDate,end:enquiry.endDate,preferred:enquiry.preferredTime,status:enquiry.status,summary:enquiry.summary}))));
   if(adminSessionReady) loadAdminEnquiries();
   function syncWhatsAppFilters(){
     document.querySelectorAll('#page-whatsapp .toolbar-actions [data-wa-filter]').forEach(item=>item.classList.toggle('sel', item.dataset.waFilter === waDateMode));
@@ -4047,7 +4178,9 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
   let chatFilter = 'all';
   let chatDateMode = 'today';
   function chatMessage(conversation){
-    return conversation.lastMessage || conversation.messages?.[conversation.messages.length - 1]?.message || '—';
+    const raw = String(conversation?.lastMessage || conversation?.messages?.[conversation?.messages?.length - 1]?.message || '').trim();
+    if (!raw || raw.toLowerCase() === 'conversation started' || raw === '—') return '-';
+    return raw;
   }
   function chatRows(){
     const search = (document.getElementById('chatSearch').value || '').trim().toLowerCase();
@@ -4067,8 +4200,25 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
       return matchesStatus && matchesRead && matchesSearch && (!conversationDate || date === conversationDate);
     });
   }
+  function updateChatbotTableSpacing(rows){
+    const table = document.querySelector('#page-chatbot table');
+    if(!table) return;
+    let maxMsgLen = 0;
+    (rows || []).forEach(c => {
+      const val = String(chatMessage(c) || '').trim();
+      if(val && val !== '—' && val !== '-'){
+        if(val.length > maxMsgLen) maxMsgLen = val.length;
+      }
+    });
+
+    const msgWidth = maxMsgLen <= 5
+      ? 140
+      : Math.max(140, Math.min(480, Math.round(maxMsgLen * 7.5 + 85)));
+    table.style.setProperty('--chat-msg-width', msgWidth + 'px');
+  }
   function renderChatbot(){
     const rows = chatRows();
+    updateChatbotTableSpacing(rows);
     const targetHtml = rows.length ? rows.map(c=>{
       const message = chatMessage(c);
       const isRead = c.read === true || locallyReadChatbot.has(String(c._id));
@@ -4082,7 +4232,7 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
       <td>${escapeBookingHtml(c.name)}</td>
       <td class="mono">${escapeBookingHtml(c.mobile)}</td>
       <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeBookingHtml(c.email)}">${escapeBookingHtml(c.email)}</td>
-      <td style="min-width:280px; max-width:420px; white-space:normal; word-break:break-word; line-height:1.45; font-size:12px;">${escapeBookingHtml(message)}</td>
+      <td class="chat-message-cell">${escapeBookingHtml(message)}</td>
       <td>${escapeBookingHtml(formatDateDDMMYYYY(c.createdAt))}</td>
       <td><span class="badge ${isRead ? 'confirmed' : statusBadgeClass(c.status)}">${escapeBookingHtml(displayStatus)}</span></td>
       <td><div class="row-actions" onclick="event.stopPropagation()"><button onclick="viewChatbotDetails('${escapeBookingHtml(c._id)}')" title="View details"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>${readAction}<button onclick="markChatbotContacted('${escapeBookingHtml(c._id)}')" title="Mark as contacted"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 10h8"/></svg></button><button class="danger" onclick="deleteChatbot('${escapeBookingHtml(c._id)}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg></button></div></td>
@@ -4404,9 +4554,12 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
   function renderBookingBoxCard(type, title, dotColor, badgeClass, rows, dateLabel, tagline){
     const count = rows.length;
     const taglineHtml = tagline ? `<span class="box-tagline ${badgeClass}">${tagline}</span>` : '';
+    const emptyText = (type.toLowerCase() === 'today' || type.toLowerCase() === 'all')
+      ? `No bookings ${dateLabel || 'found'}`
+      : `No ${type.toLowerCase()} bookings ${dateLabel || 'found'}`;
     const tableBodyHtml = count > 0
       ? rows.map(bookingRowHtml).join('')
-      : `<tr><td colspan="11" class="tbl-empty">No ${type.toLowerCase()} bookings ${dateLabel || 'found'}</td></tr>`;
+      : `<tr><td colspan="11" class="tbl-empty">${emptyText}</td></tr>`;
 
     return `
       <div class="booking-box-card ${type.toLowerCase()}-box-card">
@@ -4457,19 +4610,9 @@ document.getElementById('enquiriesBody').innerHTML = '<tr><td colspan="11" class
     let renderedHtml = '';
 
     if (bookingStatus === 'ALL') {
-      const pendingRows = rows.filter(b => effectiveBookingStatus(b) === 'PENDING');
-      const confirmedRows = rows.filter(b => {
-        const s = effectiveBookingStatus(b);
-        return s === 'CONFIRMED' || s === 'COMPLETED';
-      });
-      const cancelledRows = rows.filter(b => {
-        const s = effectiveBookingStatus(b);
-        return s === 'CANCELLED' || (!['PENDING', 'CONFIRMED', 'COMPLETED'].includes(s));
-      });
-
-      renderedHtml += renderBookingBoxCard('Pending', 'PENDING BOOKINGS', 'amber', 'amber', pendingRows, dateLabel, '');
-      renderedHtml += renderBookingBoxCard('Confirmed', 'CONFIRMED BOOKINGS', 'green', 'green', confirmedRows, dateLabel, '');
-      renderedHtml += renderBookingBoxCard('Cancelled', 'CANCELLED BOOKINGS', 'red', 'red', cancelledRows, dateLabel, '');
+      const cardTitle = bookingDateMode === 'today' ? "TODAY'S BOOKINGS" : bookingDateMode === 'custom' ? "BOOKINGS" : "ALL BOOKINGS";
+      const cardType = bookingDateMode === 'today' ? 'Today' : 'All';
+      renderedHtml = renderBookingBoxCard(cardType, cardTitle, 'green', 'green', rows, dateLabel, '');
     } else if (bookingStatus === 'PENDING') {
       renderedHtml = renderBookingBoxCard('Pending', 'PENDING BOOKINGS', 'amber', 'amber', rows, dateLabel, '');
     } else if (bookingStatus === 'CONFIRMED' || bookingStatus === 'COMPLETED') {

@@ -152,8 +152,8 @@ export default async function handler(req, res) {
         createdAt: enquiry.createdAt || null,
       })),
       ...unreadChatbotList.map((conversation) => {
-        const messages = Array.isArray(conversation.messages) ? conversation.messages : []
-        const lastMessage = String(conversation.lastMessage || messages[messages.length - 1]?.message || '').trim()
+        const rawLastMessage = String(conversation.lastMessage || messages[messages.length - 1]?.message || '').trim()
+        const lastMessage = (!rawLastMessage || rawLastMessage.toLowerCase() === 'conversation started' || rawLastMessage === '-') ? '' : rawLastMessage
         const customer = String(conversation.name || 'Visitor').trim()
         return {
           id: String(conversation._id),
