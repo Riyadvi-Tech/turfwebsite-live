@@ -3493,10 +3493,9 @@
       document.querySelectorAll('#page-bookings [data-booking-status]').forEach(item => {
         const status = item.dataset.bookingStatus;
         item.style.display = visible.includes(status) ? '' : 'none';
-        item.classList.toggle('sel', status === selectedStatus && bookingDateMode !== 'today');
+        item.classList.toggle('sel', status === selectedStatus);
       });
-      const todayButton = document.querySelector('#page-bookings .today-filter');
-      if(todayButton) todayButton.classList.toggle('sel', bookingDateMode === 'today');
+      syncBookingStatusOptions();
       return;
     }
     if(page === 'payments'){
@@ -3511,32 +3510,19 @@
         item.style.display = visible.includes(status) ? '' : 'none';
         item.classList.toggle('sel', status === selectedStatus);
       });
-      const todayButton = document.querySelector('#page-payments .payment-today-filter');
-      if(todayButton) todayButton.classList.toggle('sel', paymentDateMode === 'today');
+      syncPaymentStatusOptions();
       return;
     }
     if(page === 'enquiries'){
-      document.querySelectorAll('#page-enquiries [data-enquiry-status]').forEach(item => {
-        item.style.display = item.dataset.enquiryStatus === 'all' ? '' : 'none';
-      });
-      const allButton = document.querySelector('#page-enquiries [data-enquiry-status="all"]');
-      if(allButton) allButton.classList.add('sel');
+      syncEnquiryFilters();
       return;
     }
     if(page === 'whatsapp'){
-      document.querySelectorAll('#page-whatsapp [data-wa-status]').forEach(item => {
-        item.style.display = item.dataset.waStatus === 'all' ? '' : 'none';
-      });
-      const allButton = document.querySelector('#page-whatsapp [data-wa-status="all"]');
-      if(allButton) allButton.classList.add('sel');
+      syncWhatsAppFilters();
       return;
     }
     if(page === 'chatbot'){
-      document.querySelectorAll('#page-chatbot [data-chat-status]').forEach(item => {
-        item.style.display = item.dataset.chatStatus === 'all' ? '' : 'none';
-      });
-      const allButton = document.querySelector('#page-chatbot [data-chat-status="all"]');
-      if(allButton) allButton.classList.add('sel');
+      syncChatbotFilters();
     }
   }
 
@@ -3546,33 +3532,70 @@
     openNavSectionMenu(page);
     if(page === 'bookings'){
       bookingStatus = metric === 'pendingConf' ? 'PENDING' : metric === 'completed' ? 'COMPLETED' : metric === 'cancelled' ? 'CANCELLED' : 'ALL';
-      bookingDateMode = metric === 'today' ? 'today' : 'all';
-      document.getElementById('bookingDate').value = '';
+      bookingDateMode = 'today';
+      const bDate = document.getElementById('bookingDate');
+      if (bDate) bDate.value = '';
+      const bPicker = document.getElementById('bookingDate-picker');
+      if (bPicker) bPicker.value = '';
+      syncDateDisplay();
+      syncBookingFilters();
+      syncBookingStatusOptions();
       openAdminPage('bookings', dashboardCardFilterContext, true);
       loadAdminBookings();
       return;
     }
     if(page === 'payments'){
       paymentStatus = metric === 'paid' ? 'paid' : metric === 'pendingPay' ? 'payment_pending' : 'all';
-      paymentDateMode = 'all';
+      paymentDateMode = 'today';
+      const pDate = document.getElementById('paymentDate');
+      if (pDate) pDate.value = '';
+      const pPicker = document.getElementById('paymentDate-picker');
+      if (pPicker) pPicker.value = '';
+      syncDateDisplay();
+      updatePaymentAmountLabel();
+      syncPaymentStatusOptions();
       openAdminPage('payments', dashboardCardFilterContext, true);
       renderPayments();
       return;
     }
     if(page === 'enquiries'){
-      enquiryStatus = 'all'; enquiryDateMode = 'all';
+      enquiryStatus = 'all';
+      enquiryDateMode = 'today';
+      enquiryFilter = 'today';
+      const eDate = document.getElementById('enquiryDate');
+      if (eDate) eDate.value = '';
+      const ePicker = document.getElementById('enquiryDate-picker');
+      if (ePicker) ePicker.value = '';
+      syncDateDisplay();
+      syncEnquiryFilters();
       openAdminPage('enquiries', dashboardCardFilterContext, true);
       loadAdminEnquiries();
       return;
     }
     if(page === 'whatsapp'){
-      waStatus = 'all'; waDateMode = 'all';
+      waStatus = 'all';
+      waDateMode = 'today';
+      waFilter = 'today';
+      const wDate = document.getElementById('whatsappDate');
+      if (wDate) wDate.value = '';
+      const wPicker = document.getElementById('whatsappDate-picker');
+      if (wPicker) wPicker.value = '';
+      syncDateDisplay();
+      syncWhatsAppFilters();
       openAdminPage('whatsapp', dashboardCardFilterContext, true);
       loadAdminWhatsApp();
       return;
     }
     if(page === 'chatbot'){
-      chatStatus = 'all'; chatDateMode = 'all';
+      chatStatus = 'all';
+      chatDateMode = 'today';
+      chatFilter = 'today';
+      const cDate = document.getElementById('chatDate');
+      if (cDate) cDate.value = '';
+      const cPicker = document.getElementById('chatDate-picker');
+      if (cPicker) cPicker.value = '';
+      syncDateDisplay();
+      syncChatbotFilters();
       openAdminPage('chatbot', dashboardCardFilterContext, true);
       loadAdminChatbot();
       return;
